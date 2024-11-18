@@ -15,6 +15,39 @@ export default function Sidebar() {
     }));
   };
 
+
+
+  const filterMenu = (items, searchTerm) => {
+    return items
+      .map((item) => {
+        // Check if the item matches the search term
+        const matches = item.title.toLowerCase().includes(searchTerm.toLowerCase());
+  
+        // Recursively filter submenus
+        const filteredSubmenu = item.submenu ? filterMenu(item.submenu, searchTerm) : [];
+  
+        // Include the item if it matches or if its submenu has matches
+        if (matches || filteredSubmenu.length > 0) {
+          return {
+            ...item,
+            submenu: filteredSubmenu, // Include filtered submenu
+          };
+        }
+  
+        // Exclude the item if it doesn't match and has no matching submenus
+        return null;
+      })
+      .filter(Boolean); // Remove null values
+  };
+
+
+
+
+
+
+
+
+
   const renderMenu = (items) => {
     return items.map((item, index) => (
       <div key={`${item.title}-${index}`}>
@@ -32,8 +65,10 @@ export default function Sidebar() {
             >
               {item.title}
             </Link>
-            {item.submenu && (
+            {item.submenu.length>0 && (
+              
               <span
+             
                 onClick={() => toggleSubmenu(item.title)}
                 className="cursor-pointer"
               >
@@ -49,9 +84,12 @@ export default function Sidebar() {
     ));
   };
 
-  const filteredItems = menuitems.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredItems = menuitems.filter((item) =>
+  //   item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+   const filteredItems = filterMenu(menuitems, searchTerm);
+{{console.log(filteredItems)}}
 
   return (
     <div>

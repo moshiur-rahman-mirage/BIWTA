@@ -1,32 +1,44 @@
-const menuitems = [
-    {
-      label: "Administrations",
-      to: "/administrations",
-    },
-    {
-      label: "Inventory",
-      to: "/inventory",
-    },
-    {
-      label: "Prescriptions",
-      submenu: [
-        { label: "General", to: "/settings/general" },
-        { label: "Privacy", to: "/settings/privacy" },
-        { label: "Notifications", to: "/settings/notifications" },
-      ],
-    },
-    {
-      label: "Reports",
-      submenu: [
-        { label: "Inventory", to: "/reports/inventory" },
-        { label: "Prescription", to: "/reports/prescription" },
-      ],
-    },
-    {
-      label: "Profile",
-      to: "/Profile",
-    },
-  ];
-  
-  export default menuitems;
-  
+
+
+export const menuitems = [
+  {
+    title: 'Dashboard',
+    to: '/dashboard',
+  },
+  {
+    title: 'Profile',
+    to: '/profile',
+  },
+  {
+    title: 'Settings',
+    to: '/settings',
+    submenu: [
+      {
+        title: 'General Settings',
+        to: '/settings/general',
+        submenu: [
+          {
+            title: 'Privacy',
+            to: '/settings/general/privacy',
+          },
+          {
+            title: 'Security',
+            to: '/settings/general/security',
+          },
+        ],
+      },
+      {
+        title: 'Account Settings',
+        to: '/settings/account',
+      },
+    ],
+  },
+  {
+    title: 'Notifications',
+    to: '/notifications',
+  },
+  {
+    title: 'Logout',
+    to: '/logout',
+  },
+];

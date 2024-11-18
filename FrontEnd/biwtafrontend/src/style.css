@@ -9,7 +9,7 @@
     }
     
     .menulist{
-      @apply text-sm text-black hover:bg-zab-hombtn px-2 py-0 rounded transition
+      @apply text-sm text-black hover:underline px-2 py-0 rounded transition
     }
 
   }

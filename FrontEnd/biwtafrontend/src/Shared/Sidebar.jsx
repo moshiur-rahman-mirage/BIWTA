@@ -1,21 +1,57 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import menuitems from "../Staticitems/Menuitems";
+import { menuitems } from "../Staticitems/Menuitems";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedMenu, setExpandedMenu] = useState(null);
-  // const sidebarWidth = isOpen ? 260 : 0;
+  const [expandedMenus, setExpandedMenus] = useState({});
   const sidebarWidth = 360;
 
-  const filteredItems = menuitems.filter((item) =>
-    item.label.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const toggleSubmenu = (label) => {
-    setExpandedMenu(expandedMenu === label ? null : label);
+  const toggleSubmenu = (title) => {
+    setExpandedMenus((prevState) => ({
+      ...prevState,
+      [title]: !prevState[title],
+    }));
   };
+
+  const renderMenu = (items) => {
+    return items.map((item, index) => (
+      <div key={`${item.title}-${index}`}>
+        <div className="menu-item">
+          <div className="flex justify-between items-center px-2 py-0  transition cursor-pointer">
+            <Link
+              to={item.submenu ? "#" : item.to}
+              className="menulist"
+              onClick={(e) => {
+                if (item.submenu) {
+                  e.preventDefault();
+                  toggleSubmenu(item.title);
+                }
+              }}
+            >
+              {item.title}
+            </Link>
+            {item.submenu && (
+              <span
+                onClick={() => toggleSubmenu(item.title)}
+                className="cursor-pointer"
+              >
+                {expandedMenus[item.title] ? "-" : "+"}
+              </span>
+            )}
+          </div>
+          {item.submenu && expandedMenus[item.title] && (
+            <div className="submenu ml-4">{renderMenu(item.submenu)}</div>
+          )}
+        </div>
+      </div>
+    ));
+  };
+
+  const filteredItems = menuitems.filter((item) =>
+    item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
@@ -33,74 +69,30 @@ export default function Sidebar() {
             className="w-full px-2 border rounded transition-transform duration-1000"
             style={{
               transform: isOpen ? "translateX(0)" : "translateX(-50px)",
-
             }}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
         <div
-          className={` transition-transform  duration-1000`}
+          className="transition-transform duration-1000"
           style={{
             transform: isOpen ? "translateX(0)" : "translateX(-50px)",
-
           }}
         >
-          <div className="flex flex-col px-4 ">
-            {filteredItems.length > 0 ? (
-              filteredItems.map((item, index) => (
-                <div key={index}>
-
-                  <div
-                    className="flex justify-between items-center px-0 py-0 hover:underline transition cursor-pointer"
-                    onClick={() =>
-                      item.submenu ? toggleSubmenu(item.label) : null
-                    }
-                  >
-                    <Link to={item.to || "#"} className="block">
-                      {item.label}
-                    </Link>
-
-                    {item.submenu && (
-                      <span className="no-underline">
-                        {expandedMenu === item.label ? "-" : "+"}
-                      </span>
-                    )}
-                  </div>
-
-
-                  {item.submenu && expandedMenu === item.label && (
-                    <div className="ml-4">
-                      {item.submenu.map((submenuItem, subIndex) => (
-                        <Link
-                          key={subIndex}
-                          to={submenuItem.to}
-                          className="block px-4  hover:underline"
-                        >
-                          {submenuItem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-2 text-gray-500">No matching items found</div>
-            )}
-
-          </div>
+          {filteredItems.length > 0 ? (
+            renderMenu(filteredItems)
+          ) : (
+            <div className="px-4 py-2 text-gray-500">No matching items found</div>
+          )}
         </div>
       </div>
-
-      {/* Toggle Button */}
       <button
         className="fixed top-1 z-50 p-2 bg-transparent text-white transition-all duration-1000"
         style={{
-          left: isOpen ? `${sidebarWidth + 10}px` : "10px", // Offset the button to the right edge of the sidebar
+          left: isOpen ? `${sidebarWidth + 10}px` : "10px",
         }}
         onClick={() => setIsOpen(!isOpen)}
-
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

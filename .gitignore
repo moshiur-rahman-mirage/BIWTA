@@ -1,0 +1,80 @@
+# Node.js / React
+# Dependency directories
+FrontEnd/biwtafrontend/node_modules/
+
+# Build directories
+FrontEnd/biwtafrontend/build/
+FrontEnd/biwtafrontend/dist/
+*.log
+
+# npm logs
+FrontEnd/biwtafrontend/npm-debug.log*
+FrontEnd/biwtafrontend/yarn-debug.log*
+FrontEnd/biwtafrontend/yarn-error.log*
+
+# dotenv environment variables file
+FrontEnd/biwtafrontend/.env
+
+# next.js build output
+FrontEnd/biwtafrontend/.next/
+
+# IDE & Editor files (for both frontend and backend)
+.idea/
+.vscode/
+
+# Mac specific
+.DS_Store
+
+# Windows specific
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Spring Boot (Backend)
+# Build directory for Spring Boot (output from `mvn` or `gradle` build)
+BackEnd/biwtabackend/target/
+BackEnd/biwtabackend/*.war
+BackEnd/biwtabackend/*.jar
+BackEnd/biwtabackend/*.ear
+
+# Eclipse project files
+BackEnd/biwtabackend/.classpath
+BackEnd/biwtabackend/.project
+BackEnd/biwtabackend/.settings/
+
+# IntelliJ IDEA project files
+BackEnd/biwtabackend/.idea/
+BackEnd/biwtabackend/*.iml
+
+# Maven specific
+BackEnd/biwtabackend/.mvn/
+BackEnd/biwtabackend/pom.xml.tag
+BackEnd/biwtabackend/pom.xml.releaseBackup
+BackEnd/biwtabackend/pom.xml.versionsBackup
+BackEnd/biwtabackend/dependency-reduced-pom.xml
+
+# Gradle specific
+BackEnd/biwtabackend/.gradle/
+BackEnd/biwtabackend/build/
+
+# Spring Boot log files
+BackEnd/biwtabackend/logs/
+
+# OS-specific
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+
+# Application specific
+*.properties
+*.yml
+*.yaml

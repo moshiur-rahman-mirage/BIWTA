@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .btn-nav {
+      @apply text-3xl text-zab-hombtn cursor-pointer;
+    }
+    
+    .menulist{
+      @apply text-sm text-black hover:bg-zab-hombtn px-2 py-0 rounded transition
+    }
+
+  }
+  

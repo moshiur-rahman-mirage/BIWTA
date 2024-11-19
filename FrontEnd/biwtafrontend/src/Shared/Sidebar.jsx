@@ -54,12 +54,15 @@ export default function Sidebar() {
         <div className="menu-item">
           <div className="flex justify-between items-center px-2 py-0  transition cursor-pointer">
             <Link
-              to={item.submenu ? "#" : item.to}
+              to={item.submenu.length>0 ? "#" : item.to}
+              
               className="menulist"
               onClick={(e) => {
-                if (item.submenu) {
+                if (item.submenu.length>0) {
                   e.preventDefault();
                   toggleSubmenu(item.title);
+                }else{
+                  setIsOpen(false)
                 }
               }}
             >
@@ -69,7 +72,10 @@ export default function Sidebar() {
               
               <span
              
-                onClick={() => toggleSubmenu(item.title)}
+              onClick={() => {
+                toggleSubmenu(item.title);
+                setIsOpen(!isOpen);
+              }}
                 className="cursor-pointer"
               >
                 {expandedMenus[item.title] ? "-" : "+"}
@@ -84,9 +90,6 @@ export default function Sidebar() {
     ));
   };
 
-  // const filteredItems = menuitems.filter((item) =>
-  //   item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
 
    const filteredItems = filterMenu(menuitems, searchTerm);
 {{console.log(filteredItems)}}
@@ -94,7 +97,7 @@ export default function Sidebar() {
   return (
     <div>
       <div
-        className={`fixed top-0 left-0 h-full bg-zab-sidenav border-solid border-2 border-black transition-transform duration-1000`}
+        className={`fixed z-30 top-0 left-0 h-full bg-zab-sidenav border-solid border-2 border-black transition-transform duration-1000`}
         style={{
           width: `${sidebarWidth}px`,
           transform: isOpen ? "translateX(0)" : `translateX(-${sidebarWidth}px)`,

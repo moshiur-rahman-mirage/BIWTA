@@ -2,43 +2,37 @@
 
 export const menuitems = [
   {
-    title: 'Dashboard',
-    to: '/dashboard',
-  },
-  {
-    title: 'Profile',
-    to: '/profile',
-  },
-  {
-    title: 'Settings',
-    to: '/settings',
+    title: 'Administration',
+    to: '/administrations',
     submenu: [
+
       {
-        title: 'General Settings',
-        to: '/settings/general',
-        submenu: [
+        title: 'Master Setup',
+        to: '/administrations/master',
+        submenu:[
           {
-            title: 'Privacy',
-            to: '/settings/general/privacy',
+            title:'Store',
+            to:'/administrations/master/store',
           },
-          {
-            title: 'Security',
-            to: '/settings/general/security',
-          },
-        ],
-      },
-      {
-        title: 'Account Settings',
-        to: '/settings/account',
-      },
-    ],
+          
+        ]
+      }
+    ]
   },
   {
-    title: 'Notifications',
-    to: '/notifications',
+    title: 'Personal Info',
+    to: '/personalinfo',
   },
   {
-    title: 'Logout',
-    to: '/logout',
+    title:'Prescription',
+    to:'/prescription',
   },
+  {
+    title:'product',
+    to:'/product'
+  },
+  {
+    title:'dashboard',
+    to:'/dashboard'
+  }
 ];

@@ -1,6 +1,7 @@
 package com.zaberp.zab.biwtabackend.xcodes;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -38,6 +39,7 @@ public class Xcodes {
     private String zuuserid;
 
     @Column(name = "xlong")
+    @NotBlank(message = "'Description' field is required.")
     private String xlong;
 
     @Column(name = "zactive")

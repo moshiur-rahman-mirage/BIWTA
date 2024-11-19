@@ -1,5 +1,6 @@
 package com.zaberp.zab.biwtabackend.xcodes;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,40 +16,37 @@ public class XcodesController {
         this.service = service;
     }
 
-
-
-
-
-
-
     @PostMapping
     public Xcodes createXcodes(@RequestBody Xcodes xcodes) {
         return service.save(xcodes);
     }
 
-
     @PutMapping
-    public ResponseEntity<Xcodes> updateXcodes(
-            @RequestParam Integer zid,  // Mandatory and immutable
-            @RequestParam String xtype, // Optional
-            @RequestParam String xcode, // Optional
+    public ResponseEntity<?> updateXcodes(
+            @RequestParam Integer zid,
+            @RequestParam String xtype,
+            @RequestParam String xcode,
             @RequestBody Xcodes updatedXcodes) {
 
-        XcodesId id = new XcodesId(zid, xtype, xcode);
+        if (updatedXcodes.getXlong() == null || updatedXcodes.getXlong().isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body("Validation failed: 'xlong' field is required.");
+        }
 
-        // Check if the record exists
+        XcodesId id = new XcodesId(zid, xtype, xcode);
         return service.findById(id)
                 .map(existingXcodes -> {
-                    // Preserve zid (immutable)
-                    updatedXcodes.setZid(existingXcodes.getZid());
-                    updatedXcodes.setXtype(existingXcodes.getXtype());
-                    updatedXcodes.setXcode(existingXcodes.getXcode());
+                    // Ensure zid, xtype, and xcode remain unchanged
+                    updatedXcodes.setZid(zid);
+                    updatedXcodes.setXtype(xtype);
+                    updatedXcodes.setXcode(xcode);
 
-                    // Save updated record
+                    // Update the entity
                     return ResponseEntity.ok(service.save(updatedXcodes));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @DeleteMapping
     public ResponseEntity<Void> deleteXcodes(
@@ -64,7 +62,6 @@ public class XcodesController {
             return ResponseEntity.notFound().build();
         }
     }
-
 
     @GetMapping("/search")
     public List<Xcodes> searchXcodes(

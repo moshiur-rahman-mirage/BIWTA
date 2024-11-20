@@ -1,6 +1,5 @@
-package com.zaberp.zab.biwtabackend.shared;
+package com.zaberp.zab.biwtabackend.utility;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

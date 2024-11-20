@@ -1,7 +1,7 @@
-package com.zaberp.zab.biwtabackend.xusers;
+package com.zaberp.zab.biwtabackend.model;
 
 
-import com.zaberp.zab.biwtabackend.xcodes.XcodesId;
+import com.zaberp.zab.biwtabackend.id.XusersId;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Xusers {
 
     @Id
-    @Column(name = "zid")
+    @Column(name = "zid", insertable = true, updatable = false)
     private int zid;
 
     @Column(name="ztime")
@@ -54,6 +54,9 @@ public class Xusers {
 
     public Integer getZid() {
         return zid;
+    }
+    public void setZid(Integer zid) {
+        this.zid = zid;
     }
 
     public String getZemail() {

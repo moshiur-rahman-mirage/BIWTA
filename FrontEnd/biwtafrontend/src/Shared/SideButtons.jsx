@@ -24,9 +24,9 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, onShow }) => {
                 Delete
             </button>
             {/* First Button */}
-            <button className="sidebtn bg-indigo-500 hover:bg-indigo-600" >
+            {/* <button className="sidebtn bg-indigo-500 hover:bg-indigo-600" >
                 First
-            </button>
+            </button> */}
             {/* Previous Button */}
             <button className="sidebtn bg-purple-500 hover:bg-purple-600">
                 Previous
@@ -36,9 +36,9 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, onShow }) => {
                 Next
             </button>
             {/* Last Button */}
-            <button className="sidebtn bg-gray-500 hover:bg-gray-600">
+            {/* <button className="sidebtn bg-gray-500 hover:bg-gray-600">
                 Last
-            </button>
+            </button> */}
         </div>
     );
 };

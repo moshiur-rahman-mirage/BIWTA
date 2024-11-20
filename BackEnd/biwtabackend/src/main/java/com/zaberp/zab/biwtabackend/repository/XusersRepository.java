@@ -1,7 +1,8 @@
-package com.zaberp.zab.biwtabackend.xusers;
+package com.zaberp.zab.biwtabackend.repository;
 
 
-import com.zaberp.zab.biwtabackend.xcodes.XcodesId;
+import com.zaberp.zab.biwtabackend.id.XusersId;
+import com.zaberp.zab.biwtabackend.model.Xusers;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

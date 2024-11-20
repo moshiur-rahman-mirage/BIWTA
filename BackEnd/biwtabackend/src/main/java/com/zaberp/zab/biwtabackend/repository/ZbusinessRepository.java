@@ -1,7 +1,8 @@
-package com.zaberp.zab.biwtabackend.zbusiness;
+package com.zaberp.zab.biwtabackend.repository;
 
 
 
+import com.zaberp.zab.biwtabackend.model.Zbusiness;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.zaberp.zab.biwtabackend.xusers;
+package com.zaberp.zab.biwtabackend.id;
 
 
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public class XusersId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        com.zaberp.zab.biwtabackend.xusers.XusersId xusersId = (com.zaberp.zab.biwtabackend.xusers.XusersId) o;
+        XusersId xusersId = (XusersId) o;
         return zid == xusersId.zid && Objects.equals(zemail, xusersId.zemail) && Objects.equals(xusersId, xusersId.zemail);
     }
 

@@ -1,7 +1,11 @@
-package com.zaberp.zab.biwtabackend.xcodes;
+package com.zaberp.zab.biwtabackend.service;
 
+import com.zaberp.zab.biwtabackend.model.Xcodes;
+import com.zaberp.zab.biwtabackend.repository.XcodesRepository;
+import com.zaberp.zab.biwtabackend.id.XcodesId;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +22,11 @@ public class XcodesService {
     public Xcodes save(Xcodes xcodes) {
         return repository.save(xcodes);
     }
+
+    public boolean existsByZidAndXtypeAndXcode(Integer zid, String xtype,String xcode) {
+        return repository.existsByZidAndXtypeAndXcode(zid, xtype,xcode);
+    }
+
 
     public Optional<Xcodes> findById(XcodesId id) {
         return repository.findById(id);
@@ -40,6 +49,13 @@ public class XcodesService {
     private Specification<Xcodes> xtypeEquals(String xtype) {
         return (root, query, builder) ->
                 xtype == null || xtype.isEmpty() ? builder.conjunction() : builder.equal(root.get("xtype"), xtype);
+    }
+
+
+    public List<Xcodes> searchByText(String zid,String xtype,String searchText) {
+//        return repository.findBySearchText(searchText);
+
+        return repository.findBySearchTextAndZid(zid, xtype, searchText);
     }
 
 

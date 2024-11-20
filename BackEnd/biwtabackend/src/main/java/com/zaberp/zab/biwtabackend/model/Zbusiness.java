@@ -1,4 +1,4 @@
-package com.zaberp.zab.biwtabackend.zbusiness;
+package com.zaberp.zab.biwtabackend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class Zbusiness {
 
     @Id
+    @Column(name = "zid", insertable = false, updatable = false)
     private Integer zid;
 
     private LocalDateTime ztime;

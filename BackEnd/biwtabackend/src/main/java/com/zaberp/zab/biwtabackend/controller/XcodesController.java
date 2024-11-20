@@ -1,6 +1,11 @@
-package com.zaberp.zab.biwtabackend.xcodes;
+package com.zaberp.zab.biwtabackend.controller;
 
 
+import com.zaberp.zab.biwtabackend.model.Xcodes;
+import com.zaberp.zab.biwtabackend.id.XcodesId;
+import com.zaberp.zab.biwtabackend.model.Xusers;
+import com.zaberp.zab.biwtabackend.service.XcodesService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +22,13 @@ public class XcodesController {
     }
 
     @PostMapping
-    public Xcodes createXcodes(@RequestBody Xcodes xcodes) {
-        return service.save(xcodes);
+    public ResponseEntity<?> createXcodes(@RequestBody Xcodes xcodes) {
+        if (service.existsByZidAndXtypeAndXcode(xcodes.getZid(), xcodes.getXtype(),xcodes.getXcode())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Validation failed: A code with the same type already exists.");
+        }
+        Xcodes savedXcodes = service.save(xcodes);
+        return ResponseEntity.ok(savedXcodes);
     }
 
     @PutMapping
@@ -30,7 +40,7 @@ public class XcodesController {
 
         if (updatedXcodes.getXlong() == null || updatedXcodes.getXlong().isBlank()) {
             return ResponseEntity.badRequest()
-                    .body("Validation failed: 'xlong' field is required.");
+                    .body("Validation failed: Name field is required.");
         }
 
         XcodesId id = new XcodesId(zid, xtype, xcode);
@@ -69,6 +79,16 @@ public class XcodesController {
             @RequestParam(required = false) String xtype,
             @RequestParam(required = false) String xcode) {
         return service.findXcodes(zid, xtype, xcode);
+    }
+
+    @GetMapping("/searchtext")
+    public List<Xcodes> search(
+            @RequestParam("zid") String zid,
+            @RequestParam("xtype") String xtype,
+            @RequestParam("searchText") String searchText
+    ) {
+        return service.searchByText(zid,xtype, searchText);
+
     }
 }
 

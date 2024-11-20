@@ -1,5 +1,7 @@
-package com.zaberp.zab.biwtabackend.zbusiness;
+package com.zaberp.zab.biwtabackend.controller;
 
+import com.zaberp.zab.biwtabackend.model.Zbusiness;
+import com.zaberp.zab.biwtabackend.service.ZbusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

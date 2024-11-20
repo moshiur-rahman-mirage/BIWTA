@@ -1,4 +1,6 @@
-package com.zaberp.zab.biwtabackend.zbusiness;
+package com.zaberp.zab.biwtabackend.service;
+import com.zaberp.zab.biwtabackend.model.Zbusiness;
+import com.zaberp.zab.biwtabackend.repository.ZbusinessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

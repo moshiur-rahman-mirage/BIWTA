@@ -1,11 +1,10 @@
-package com.zaberp.zab.biwtabackend.xcodes;
+package com.zaberp.zab.biwtabackend.model;
 
+import com.zaberp.zab.biwtabackend.id.XcodesId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 @Data

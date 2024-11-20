@@ -1,5 +1,8 @@
-package com.zaberp.zab.biwtabackend.xusers;
+package com.zaberp.zab.biwtabackend.controller;
 
+import com.zaberp.zab.biwtabackend.model.Xusers;
+import com.zaberp.zab.biwtabackend.id.XusersId;
+import com.zaberp.zab.biwtabackend.service.XusersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

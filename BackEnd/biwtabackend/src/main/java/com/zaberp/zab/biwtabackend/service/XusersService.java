@@ -1,6 +1,9 @@
-package com.zaberp.zab.biwtabackend.xusers;
+package com.zaberp.zab.biwtabackend.service;
 
 
+import com.zaberp.zab.biwtabackend.id.XusersId;
+import com.zaberp.zab.biwtabackend.model.Xusers;
+import com.zaberp.zab.biwtabackend.repository.XusersRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 

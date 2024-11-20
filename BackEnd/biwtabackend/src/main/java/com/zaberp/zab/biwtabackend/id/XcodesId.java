@@ -1,4 +1,4 @@
-package com.zaberp.zab.biwtabackend.xcodes;
+package com.zaberp.zab.biwtabackend.id;
 
 
 import java.io.Serializable;

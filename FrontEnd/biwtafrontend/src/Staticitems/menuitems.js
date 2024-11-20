@@ -3,16 +3,16 @@
 export const menuitems = [
   {
     title: 'Administration',
-    to: '/administrations',
+    to: 'main/administrations',
     submenu: [
 
       {
         title: 'Master Setup',
-        to: '/administrations/master',
+        to: 'administrations/master',
         submenu:[
           {
             title:'Store',
-            to:'/administrations/master/store',
+            to:'administrations/master/store',
           },
           
         ]
@@ -21,18 +21,18 @@ export const menuitems = [
   },
   {
     title: 'Personal Info',
-    to: '/personalinfo',
+    to: 'personalinfo',
   },
   {
     title:'Prescription',
-    to:'/prescription',
+    to:'prescription',
   },
   {
     title:'product',
-    to:'/product'
+    to:'product'
   },
   {
     title:'dashboard',
-    to:'/dashboard'
+    to:'dashboard'
   }
 ];

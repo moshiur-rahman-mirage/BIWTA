@@ -169,8 +169,8 @@ const Store = () => {
     // Update Store
     const handleUpdate = async () => {
         try {
-            // console.log(formData)
-            const response = await axios.put(`http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`, formData);
+            console.log(formData)
+            const response = await axios.put(`http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`, {...formData, zid: zid,xtype:'Store', zactive: checked});
             setErrors({});
             Swal.fire('Success!', 'Updated successfully', 'success');
 

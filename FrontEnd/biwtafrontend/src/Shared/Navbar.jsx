@@ -1,8 +1,20 @@
 // src/components/Navbar.jsx
 import React from "react";
 import { FaHome, FaListAlt, FaSignOutAlt, FaUnlockAlt } from "react-icons/fa";
+import { useAuth } from "../Provider/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+        logout();
+        navigate('/');
+    }
+};
+
   return (
     <div className="bg-zab-navbar  text-white p-4 h-14">
     <div className=" ml-10 flex justify-between items-center h-full">
@@ -28,8 +40,8 @@ const Navbar = () => {
         {/* <FaSignOutAlt /> */}
       </div>
 
-      <div className="flex justify-end items-center flex-1 text-3xl text-zab-hombtn">
-        <FaSignOutAlt />
+      <div className="flex justify-end items-center flex-1 text-3xl text-zab-hombtn btn-nav">
+        <FaSignOutAlt onClick={handleLogout}/>
       </div>
     </div>
   </div>

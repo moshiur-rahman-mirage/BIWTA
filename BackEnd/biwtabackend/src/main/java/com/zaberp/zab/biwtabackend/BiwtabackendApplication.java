@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 //@EnableAspectJAutoProxy
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.zaberp.zab.biwtabackend")
 public class BiwtabackendApplication {
 
 	public static void main(String[] args) {

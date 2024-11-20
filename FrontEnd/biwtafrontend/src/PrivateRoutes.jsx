@@ -1,23 +1,17 @@
-import { useContext } from "react";
-
-import { Navigate, useLocation } from "react-router-dom";
-import { AuthContext } from "./Provider/AuthProvider";
-
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 const PrivateRoutes = ({ children }) => {
-    const { user, loading } = useContext(AuthContext);
-    const location = useLocation();
-    console.log(location.pathname);
+    const { userId } = useAuth();
 
-    if (loading) {
-        return <span className="loading loading-infinity loading-lg"></span>
+    if (!userId) {
+        // If userId is not present, redirect to login
+        return <Navigate to="/login" />;
     }
 
-    if (user) {
-        return children;
-    }
-
-    return <Navigate state={location.pathname} to="/login"></Navigate>;
+    // If userId exists, render the protected component
+    return children;
 };
 
 export default PrivateRoutes;

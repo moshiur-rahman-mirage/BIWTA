@@ -92,6 +92,20 @@ public class XusersController {
             @RequestParam(required = false) String zemail) {
         return service.findXusers(zid, zemail);
     }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Xusers xusers) {
+        String zemail = xusers.getZemail();
+        String xpassword = xusers.getXpassword();
+        boolean isValid = service.validateUser(zemail, xpassword);
+
+        if (isValid) {
+            return ResponseEntity.ok("Login successful!");
+        } else {
+            return ResponseEntity.status(401).body("Invalid credentials.");
+        }
+    }
 }
 
 

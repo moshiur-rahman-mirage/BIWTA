@@ -45,6 +45,18 @@ public class Xcodes {
     @Column(name = "zactive")
     private String zactive;
 
+    @Column(name="xemail")
+    private String xemail;
+
+
+    @Column(name="xphone")
+    private String xphone;
+
+    @Column(name="xtypeobj")
+    private String xtypeobj;
+
+    @Column(name="xmadd")
+    private String xmadd;
 
     @Column(name = "xprofitcntr")
     private String xprofitcntr;

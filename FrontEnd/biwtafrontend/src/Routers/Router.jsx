@@ -7,6 +7,11 @@ import Personalinfo from "../Pages/Personalinfo";
 import Dashboard from "../Pages/Dashboard";
 import { useAuth } from "../Provider/AuthProvider";
 import ErrorPage from "../ErrorPage";
+import Department from "../Pages/Xcodes/Department";
+import Designation from "../Pages/Xcodes/Designation";
+import Section from "../Pages/Xcodes/Section";
+import ItemGroup from "../Pages/ItemGroup/ItemGroup";
+
 
 // Protected Route wrapper
 const ProtectedRoute = ({ element }) => {
@@ -29,16 +34,24 @@ const Router = createBrowserRouter([
                 element: <ProtectedRoute element={<Home />} />,
             },
             {
-                path: "/main/dashboard",
-                element: <ProtectedRoute element={<Dashboard />} />,
-            },
-            {
-                path: "/main/administrations/master/store",
+                path: "/main/administrations/codes/store",
                 element: <ProtectedRoute element={<Store />} />,
             },
             {
-                path: "/main/personalinfo",
-                element: <ProtectedRoute element={<Personalinfo />} />,
+                path: "/main/administrations/codes/department",
+                element: <ProtectedRoute element={<Department />} />,
+            },
+            {
+                path: "/main/administrations/codes/designation",
+                element: <ProtectedRoute element={<Designation />} />,
+            },
+            {
+                path: "/main/administrations/codes/section",
+                element: <ProtectedRoute element={<Section />} />,
+            },
+            {
+                path: "/main/administrations/codes/itemgroup",
+                element: <ProtectedRoute element={<ItemGroup />} />,
             },
         ],
     },

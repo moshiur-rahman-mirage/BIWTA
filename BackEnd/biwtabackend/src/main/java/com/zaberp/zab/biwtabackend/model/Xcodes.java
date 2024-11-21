@@ -51,6 +51,9 @@ public class Xcodes {
     @Column(name="xphone")
     private String xphone;
 
+    @Column(name="xgtype")
+    private String xgtype;
+
     @Column(name="xtypeobj")
     private String xtypeobj;
 

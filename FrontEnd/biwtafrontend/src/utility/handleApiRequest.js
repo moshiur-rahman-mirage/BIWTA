@@ -24,6 +24,7 @@ export const handleApiRequest = async ({
         
         Swal.fire('Success!', 'Operation completed successfully', 'success');
     } catch (error) {
+        // console.log(error)
         if (error.response && error.response.status === 400) {
             const errorMessages = error.response.data;
             if (onValidationError) onValidationError(errorMessages);
@@ -34,8 +35,16 @@ export const handleApiRequest = async ({
                 html: errorMessages,
                 confirmButtonText: 'Okay',
             });
-        } else if (onError) {
-            onError(error);
+        } else  {
+            const errorMessages=error.message
+
+            Swal.fire({
+                icon: 'error',
+                title: error.code,
+                html: errorMessages,
+                confirmButtonText: 'Okay',
+            });
+            // onError(error);
         }
     }
 };

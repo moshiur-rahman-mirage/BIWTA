@@ -34,11 +34,12 @@ function Login() {
           alert('Invalid credentials');
         }
       } catch (error) {
+        console.log("error")
         console.log(error)
         if (error.response) {
           alert('Invalid credentials');
         } else {
-          setError('An error occurred');
+          alert('An Error Occured');
         }
       }
     };

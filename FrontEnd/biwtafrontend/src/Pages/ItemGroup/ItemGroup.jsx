@@ -1,20 +1,22 @@
 import React, { useEffect, useRef } from 'react';
-import SideButtons from '../Shared/SideButtons';
-import HelmetTitle from '../utility/HelmetTitle';
+import SideButtons from '../../Shared/SideButtons';
+import HelmetTitle from '../../utility/HelmetTitle';
 import { useState } from 'react';  // Make sure to import useState
-import Caption from '../utility/Caption';
+import Caption from '../../utility/Caption';
 import Swal from 'sweetalert2';
 
-import SelectField from '../formfield/SelectField';
-import Checkbox from '../formfield/Checkbox';
+import SelectField from '../../formfield/SelectField';
+import Checkbox from '../../formfield/Checkbox';
 
 import { Box, FormControl, FormControlLabel, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import axios from 'axios';
-import { handleApiRequest } from '../utility/handleApiRequest';
+import { handleApiRequest } from '../../utility/handleApiRequest';
+import BasicList from '../Xcodes/BasicList';
+import ItemGroupList from './ItemGroupList';
 
 
 
-const Store = () => {
+const ItemGroup = () => {
     const [searchResults, setSearchResults] = useState([]); // For search results
     const [isTyping, setIsTyping] = useState(false); // To handle typing state
     const [selectedCode, setSelectedCode] = useState(''); // To store selected code
@@ -24,12 +26,13 @@ const Store = () => {
     const listRef = useRef(null);
     const formRef = useRef(null);
     const [errors, setErrors] = useState({});
-    const [zid, setZid] = useState(100000);
-    const [xtype, setXtype] = useState('Store');
-    
+    const [zid] = useState(100000);
+    const [xtype, setXtype] = useState('Item Group');
+    const apiBaseUrl = "http://localhost:8080/api/xcodes"
+    const [refreshList, setRefreshList] = useState(() => () => { });
     const [formData, setFormData] = useState({
         zid: zid,
-        xtype: 'Store',
+        xtype: xtype,
         xcode: '',
         xlong: '',
         xemail: '',
@@ -37,6 +40,7 @@ const Store = () => {
         zactive: false,
         xtypeobj: '',
         xphone: '',
+        xgtype: '',
 
 
     });
@@ -80,18 +84,17 @@ const Store = () => {
 
     const handleResultClick = (result) => {
 
-        const updatedZactive = result.zactive == 1 ? true : false;
-        setChecked(updatedZactive)
-        console.log(checked)
+        
         setFormData({
             xcode: result.xcode,
             xlong: result.xlong,
             xemail: result.xemail,
-            xtype:result.xtype,
+            xtype: result.xtype,
             xphone: result.xphone,
             xmadd: result.xmadd,
             xtypeobj: result.xtypeobj,
-            zactive: checked
+            xgtype: result.xgtype,
+            zactive: result.zactive
         });
         setListOpen(false);
     };
@@ -116,7 +119,15 @@ const Store = () => {
 
         setFormData({
             ...formData,
-            xtypeobj: e.target.value,
+            xtypeobj: e.target.value || '',
+        });
+    };
+
+    const handleGtypeChange = (e) => {
+        console.log(e.target.value)
+        setFormData({
+            ...formData,
+            xgtype: e.target.value || '',
         });
     };
 
@@ -125,25 +136,31 @@ const Store = () => {
 
 
 
-    const handleCheckboxChange = (event) => {
-        setChecked(event.target.checked ? 1 : 0);
 
+    const handleCheckboxChange = (event) => {
+        console.log(event.target.value)
+        setFormData((prevState) => ({
+            ...prevState,
+            zactive: event.target.checked, 
+        }));
     };
+
 
 
     const handleAdd = async () => {
         const endpoint = 'http://localhost:8080/api/xcodes';
-        const data = { 
-            ...formData, 
-            zid: zid, 
-            xtype: 'Store', 
-            zactive: checked 
+        const data = {
+            ...formData,
+            zid: zid,
+            xtype: 'Item Group',
+            zactive: checked
         };
-    
+
+
         await handleApiRequest({
             endpoint,
             data,
-            method:'POST',
+            method: 'POST',
             onSuccess: (response) => {
                 setErrors({});
                 // setFormData({
@@ -158,33 +175,48 @@ const Store = () => {
             },
         });
     };
-    
+
+    const handleItemSelect = (item) => {
+        console.log(item.zactive)
+        setFormData({
+            xcode: item.xcode,
+            xlong: item.xlong,
+            xtype: item.xtype,
+            zactive: item.zactive,
+            xgtype:item.xgtype,
+            xtypeobj:item.xtypeobj
+        });
+    };
 
 
-    const handleUpdate = async () => {
-        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
-        const data = { 
-            ...formData, 
-            zid: zid, 
-            xtype: 'Store', 
-            zactive: checked 
-        };
-    
+
+
+
+    const handleAction = async (method) => {
+        console.log(zid)
+        const endpoint = `${apiBaseUrl}?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
+        
+        const data = { ...formData,zid:zid };
+        console.log(data)
         await handleApiRequest({
             endpoint,
             data,
-            method:'PUT',
+            method,
             onSuccess: (response) => {
-                setErrors({});
+                if (method === 'DELETE') {
+                    setFormData({ xcode: '', xlong: '', xtype: xtype });
+                    setChecked(false);
+                }
+                refreshList();
             },
         });
     };
 
     const handleDelete = async () => {
-        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
+        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
         await handleApiRequest({
             endpoint,
-            method:'DELETE',
+            method: 'DELETE',
             onSuccess: (response) => {
                 setErrors({});
                 setFormData({
@@ -193,7 +225,7 @@ const Store = () => {
                     xmadd: '',
                     xphone: '',
                     xtypeobj: '',
-                    xtype: 'Store',
+                    xtype: 'Item Group',
                 });
                 setChecked(false);
             },
@@ -208,9 +240,9 @@ const Store = () => {
             xmadd: '',
             xphone: '',
             zactive: '',
-            xemail:'',
+            xemail: '',
             xtypeobj: '',
-            xtype: 'Store',
+            xtype: xtype,
         });
         setChecked(false);
         alert('Form cleared.');
@@ -222,15 +254,15 @@ const Store = () => {
 
     return (
         <div className=''>
-            <HelmetTitle title="Store" />
+            <HelmetTitle title="Item Group" />
             <div className='grid grid-cols-12'>
                 <div className="">
                     <SideButtons
-                        onAdd={handleAdd}
-                        onUpdate={handleUpdate}
-                        onDelete={handleDelete}
+                        onAdd={() => handleAction('POST')}
+                        onUpdate={() => handleAction('PUT')}
+                        onDelete={() => handleAction('DELETE')}
                         onClear={handleClear}
-                        // onShow={handleShow}
+                    // onShow={handleShow}
                     />
                 </div>
 
@@ -238,10 +270,10 @@ const Store = () => {
 
                 <div className='col-span-11 '>
 
-                    <div className='grid grid-cols-2'>
-                        <div className='border shadow-lg border-black rounded'>
+                    <div className='grid grid-cols-2  gap-2'>
+                        <div className='border shadow-lg border-black rounded  max-h-[300px]'>
                             <div className="w-full px-2  py-2  mx-auto  ">
-                                <Caption title={"Store Entry"} />
+                                <Caption title={"Item Group Entry"} />
                                 <Box
                                     component="form"
                                     sx={{
@@ -252,7 +284,7 @@ const Store = () => {
                                         // boxShadow: 3,
                                         display: 'grid',
                                         gap: 2,
-                                        mt:1,
+                                        mt: 1,
                                         gridTemplateColumns: 'repeat(3, 1fr)',
                                         borderRadius: 2,
 
@@ -302,8 +334,8 @@ const Store = () => {
                                                         key={index}
                                                         button={true}
                                                         onClick={() => handleResultClick(result)}
-                                                        style={{ display: 'flex'}}
-                                                        // sx={{border:1 }}
+                                                        style={{ display: 'flex' }}
+                                                    // sx={{border:1 }}
                                                     >
                                                         {/* Columns in List */}
                                                         <div style={{ flex: 1, textAlign: 'left' }}>{result.xcode}</div>
@@ -320,7 +352,7 @@ const Store = () => {
                                     <TextField
                                         id="xcode"
                                         name="xcode"
-                                        label="Store Code"
+                                        label="Item Group Code"
                                         value={formData.xcode}
                                         onChange={handleChange}
                                         variant="outlined"
@@ -331,68 +363,61 @@ const Store = () => {
                                     <TextField
                                         id="xlong"
                                         name="xlong"
-                                        label="Store Name"
+                                        label="Item Group Name"
                                         value={formData.xlong}
-                                        onChange={handleChange}
-                                        variant="outlined"
-                                        sx={{ gridColumn: 'span 2' }}
-                                    />
-                                    <TextField
-                                        id="xphone"
-                                        name="xphone"
-                                        label="Phone"
-                                        value={formData.xphone}
-                                        onChange={handleChange}
-                                        variant="outlined"
-                                        sx={{ gridColumn: 'span 1' }}
-                                    />
-                                    <TextField
-                                        id="xmadd"
-                                        name="xmadd"
-                                        label="Address"
-                                        value={formData.xmadd}
                                         onChange={handleChange}
                                         variant="outlined"
                                         sx={{ gridColumn: 'span 2' }}
                                     />
 
                                     <FormControl fullWidth sx={{ gridColumn: 'span 1' }}>
-                                        <InputLabel id="demo-simple-select-label">Store Type</InputLabel>
+                                        <InputLabel id="demo-simple-select-label">Item Group Type</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             name="xtypeobj"
-                                            value={formData.xtypeobj}
-                                            label="Store Type"
+                                            value={formData.xtypeobj || ''}
+                                            label="Item Group Type"
                                             onChange={handleTypeChange}
                                             // sx={{ gridColumn: 'span 1' }}
                                             sx={{ width: '100%' }}
                                         >
                                             <MenuItem value={''}>Select</MenuItem>
-                                            <MenuItem value={'Physical'}>Physical</MenuItem>
-                                            <MenuItem value={'Virtual'}>Virtual</MenuItem>
+                                            <MenuItem value={'Product'}>Product</MenuItem>
+                                            <MenuItem value={'Service'}>Service</MenuItem>
 
                                         </Select>
                                     </FormControl>
 
-                                    <TextField
-                                        id="xemail"
-                                        name="xemail"
-                                        label="Email"
-                                        value={formData.xemail}
-                                        onChange={handleChange}
-                                        variant="outlined"
-                                        sx={{ gridColumn: 'span 2' }}
-                                    />
+                                    <FormControl fullWidth sx={{ gridColumn: 'span 1' }}>
+                                        <InputLabel id="demo-simple-select-label">Item Group Nature</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            name="xgtype"
+                                            value={formData.xgtype || ''}
+                                            label="Item Group Nature"
+                                            onChange={handleGtypeChange}
+                                            // sx={{ gridColumn: 'span 1' }}
+                                            sx={{ width: '100%' }}
+                                        >
+                                            <MenuItem value={''}>Select</MenuItem>
+                                            <MenuItem value={'General'}>General</MenuItem>
+                                            <MenuItem value={'Fixed Asset'}>Fixed Asset</MenuItem>
+
+                                        </Select>
+                                    </FormControl>
 
 
+                                    <FormControl fullWidth sx={{ gridColumn: 'span 1', display: 'flex', justifyContent: 'center' }}>
+                                        <Checkbox
 
-                                    <Checkbox
-                                        checked={checked}
-                                        onChange={handleCheckboxChange}
-                                        name="Activate?"
-                                        color="primary"  // You can use 'primary', 'secondary', 'default' or 'error'
-                                    />
+                                            checked={formData.zactive}
+                                            onChange={handleCheckboxChange}
+                                            name="Activate?"
+                                            color="primary"
+                                        />
+                                    </FormControl>
 
 
 
@@ -401,8 +426,16 @@ const Store = () => {
 
                             </div>
                         </div>
-                        <div>
-
+                        <div className='border shadow-lg border-gray-500 rounded p-2'>
+                            <Caption title={`List of ${xtype}`} />
+                            <ItemGroupList
+                                xtype={xtype}
+                                apiBaseUrl={apiBaseUrl}
+                                zid={zid}
+                                onItemSelect={handleItemSelect}
+                                style={{ marginTop: '1px' }}
+                                onRefresh={(fetchData) => setRefreshList(() => fetchData)}
+                            />
                         </div>
                     </div>
 
@@ -413,4 +446,4 @@ const Store = () => {
     );
 };
 
-export default Store;
+export default ItemGroup;

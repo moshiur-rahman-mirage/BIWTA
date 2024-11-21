@@ -1,12 +1,17 @@
 package com.zaberp.zab.biwtabackend.model;
 
+import com.zaberp.zab.biwtabackend.id.PdmstId;
+import com.zaberp.zab.biwtabackend.id.XcodesId;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Data
 @Table(name = "pdmst")
+@IdClass(PdmstId.class)
 public class Pdmst {
 
     @Id
@@ -14,10 +19,10 @@ public class Pdmst {
     private int zid;
 
     @Column(name = "ztime")
-    private Date ztime;
+    private LocalDateTime ztime;
 
     @Column(name = "zutime")
-    private Date zutime;
+    private LocalDateTime zutime;
 
     @Column(name = "zauserid")
     private String zauserid;
@@ -406,6 +411,16 @@ public class Pdmst {
 
     @Column(name = "xprofdegree")
     private String xprofdegree;
+
+    @PrePersist
+    protected void onCreate() {
+        this.ztime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.zutime = LocalDateTime.now();
+    }
 
 }
 

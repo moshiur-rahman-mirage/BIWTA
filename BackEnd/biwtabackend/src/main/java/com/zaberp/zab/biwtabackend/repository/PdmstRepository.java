@@ -24,6 +24,9 @@ public interface PdmstRepository extends JpaRepository<Pdmst, PdmstId>, JpaSpeci
 
     boolean existsByZidAndXstaffAndXposition(Integer zid, String xstaff, String xposition);
 
+    boolean existsByZidAndXposition(Integer zid,String xposition);
+
+
     boolean existsByZidAndXmobile(Integer zid, String xmobile);
 
 

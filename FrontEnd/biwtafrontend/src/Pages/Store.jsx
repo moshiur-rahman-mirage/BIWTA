@@ -10,6 +10,7 @@ import Checkbox from '../formfield/Checkbox';
 
 import { Box, FormControl, FormControlLabel, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import axios from 'axios';
+import { handleApiRequest } from '../utility/handleApiRequest';
 
 
 
@@ -130,90 +131,76 @@ const Store = () => {
     };
 
 
-
-
-    // Button Handlers 
-
     const handleAdd = async () => {
-        try {
-            const response = await axios.post('http://localhost:8080/api/xcodes', { ...formData, zid: zid,xtype:'Store', zactive: checked });
-            setErrors({});
-            Swal.fire('Success!', 'Store Inserted successfully', 'success');
-
-            // Optionally reset the form
-            setFormData({
-                xcode: '',
-                xlong: '',
-                xmadd: '',
-                xemail: '',
-                xtypeobj: '',
-                xphone: '',
-               
-            });
-            setChecked(false);
-        } catch (error) {
-            if (error.response && error.response.status === 400) {
-                setErrors(error.response.data);
-                const errorMessages = error.response.data;
-               
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Errors',
-                    html: errorMessages,
-                    confirmButtonText: 'Okay',
-                });
-            }
-        }
+        const endpoint = 'http://localhost:8080/api/xcodes';
+        const data = { 
+            ...formData, 
+            zid: zid, 
+            xtype: 'Store', 
+            zactive: checked 
+        };
+    
+        await handleApiRequest({
+            endpoint,
+            data,
+            method:'POST',
+            onSuccess: (response) => {
+                setErrors({});
+                // setFormData({
+                //     xcode: '',
+                //     xlong: '',
+                //     xmadd: '',
+                //     xemail: '',
+                //     xtypeobj: '',
+                //     xphone: '',
+                // });
+                // setChecked(false);
+            },
+        });
     };
+    
 
-    // Update Store
+
     const handleUpdate = async () => {
-        try {
-            console.log(formData)
-            const response = await axios.put(`http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`, {...formData, zid: zid,xtype:'Store', zactive: checked});
-            setErrors({});
-            Swal.fire('Success!', 'Updated successfully', 'success');
-
-        } catch (error) {
-
-            if (error.response && error.response.status === 400) {
-                setErrors(error.response.data);
-                const errorMessages = errors
-                console.log(errorMessages)
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Errors',
-                    html: errorMessages,
-                    confirmButtonText: 'Okay',
-                });
-            }
-        }
+        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
+        const data = { 
+            ...formData, 
+            zid: zid, 
+            xtype: 'Store', 
+            zactive: checked 
+        };
+    
+        await handleApiRequest({
+            endpoint,
+            data,
+            method:'PUT',
+            onSuccess: (response) => {
+                setErrors({});
+            },
+        });
     };
 
-    // Delete Store
     const handleDelete = async () => {
-        try {
-            await axios.delete(`http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`);
-            alert('Store deleted successfully!');
-            // console.log('Deleted store with code:', formData.xcode);
-
-            // Optionally reset the form
-            setFormData({
-                xcode: '',
-                xlong: '',
-                xmadd: '',
-                xphone: '',
-                xtypeobj: '',
-                xtype: 'Store',
-            });
-            setChecked(false);
-        } catch (error) {
-            // console.error('Error deleting store:', error);
-            alert('Failed to delete store. Please try again.');
-        }
+        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
+        await handleApiRequest({
+            endpoint,
+            method:'DELETE',
+            onSuccess: (response) => {
+                setErrors({});
+                setFormData({
+                    xcode: '',
+                    xlong: '',
+                    xmadd: '',
+                    xphone: '',
+                    xtypeobj: '',
+                    xtype: 'Store',
+                });
+                setChecked(false);
+            },
+        });
     };
 
-    // Clear Form
+
     const handleClear = () => {
         setFormData({
             xcode: '',
@@ -229,26 +216,6 @@ const Store = () => {
         alert('Form cleared.');
     };
 
-    // Show Data
-    const handleShow = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/xcodes/${formData.xcode}`);
-            alert('Store data fetched successfully!');
-            // console.log('Fetched data:', response.data);
-
-            // Populate the form with the fetched data
-            setFormData(response.data);
-        } catch (error) {
-            // console.error('Error fetching data:', error);
-            alert('Failed to fetch store data. Please try again.');
-        }
-    };
-
-
-
-
-
-
 
 
 
@@ -263,7 +230,7 @@ const Store = () => {
                         onUpdate={handleUpdate}
                         onDelete={handleDelete}
                         onClear={handleClear}
-                        onShow={handleShow}
+                        // onShow={handleShow}
                     />
                 </div>
 
@@ -306,7 +273,7 @@ const Store = () => {
                                                 width: '600px',
                                                 maxWidth: '500px',
                                                 overflowY: 'auto',
-                                                border: '2px solid black',
+                                                border: '1px solid black',
                                                 borderRadius: '4px',
                                                 backgroundColor: '#fff', // Solid white background
                                                 zIndex: 100,
@@ -335,7 +302,8 @@ const Store = () => {
                                                         key={index}
                                                         button
                                                         onClick={() => handleResultClick(result)}
-                                                        style={{ display: 'flex' }}
+                                                        style={{ display: 'flex'}}
+                                                        // sx={{border:1 }}
                                                     >
                                                         {/* Columns in List */}
                                                         <div style={{ flex: 1, textAlign: 'left' }}>{result.xcode}</div>

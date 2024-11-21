@@ -29,9 +29,14 @@ function Login() {
           login(userId);
           navigate('/main');
         }
+        else if (response.status === 401) {
+          console.log("first")
+          alert('Invalid credentials');
+        }
       } catch (error) {
+        console.log(error)
         if (error.response) {
-          setError('Invalid credentials');
+          alert('Invalid credentials');
         } else {
           setError('An error occurred');
         }

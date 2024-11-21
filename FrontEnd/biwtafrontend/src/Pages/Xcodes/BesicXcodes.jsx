@@ -19,6 +19,7 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
     const [zid] = useState(100000);
     const listRef = useRef(null);
     const formRef = useRef(null);
+    const fontSize = '0.875rem';
     const [formData, setFormData] = useState({
         zid: zid,
         xtype: xtype,
@@ -57,21 +58,13 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
     };
 
     const handleResultClick = (result) => {
-        console.log(result)
-        if (result.zactive==1){
-            result.zactive=true
-        }else if(result.zactive==0){
-           result.zactive=false
-        }
-
         setFormData({
-            xcode: result.xcode,
-            xlong: result.xlong,
-            xtype: result.xtype,
-            zactive: result.zactive
+          ...formData,
+          ...result,
+          zactive: result.zactive === "true", // Ensure boolean conversion
         });
         setListOpen(false);
-    };
+      };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -88,12 +81,13 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
 
 
     const handleCheckboxChange = (event) => {
-        console.log(event)
+        const isChecked = event.target.checked; // Simplified logic
         setFormData((prevState) => ({
             ...prevState,
-            zactive: event.target.checked, 
+            zactive: !!isChecked,
         }));
     };
+    
 
     const handleAction = async (method) => {
         const endpoint = `${apiBaseUrl}?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
@@ -127,7 +121,7 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
             xcode: item.xcode,
             xlong: item.xlong,
             xtype: item.xtype,
-            zactive: item.zactive
+            zactive: item.zactive==="true"
         });
     };
 
@@ -230,7 +224,7 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
                                     />
                                     <Checkbox
                                         // checked={checked}
-                                        checked={formData.zactive}
+                                        checked={!!formData.zactive}
                                         onChange={handleCheckboxChange}
                                         name="Activate?"
                                         color="primary"

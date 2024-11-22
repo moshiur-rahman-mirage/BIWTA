@@ -1,16 +1,17 @@
 import React, { useEffect, useRef } from 'react';
-import SideButtons from '../Shared/SideButtons';
-import HelmetTitle from '../utility/HelmetTitle';
+import SideButtons from '../../Shared/SideButtons';
+import HelmetTitle from '../../utility/HelmetTitle';
 import { useState } from 'react';  // Make sure to import useState
-import Caption from '../utility/Caption';
+import Caption from '../../utility/Caption';
 import Swal from 'sweetalert2';
 
-import SelectField from '../formfield/SelectField';
-import Checkbox from '../formfield/Checkbox';
+import SelectField from '../../formfield/SelectField';
+import Checkbox from '../../formfield/Checkbox';
 
 import { Box, FormControl, FormControlLabel, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import axios from 'axios';
-import { handleApiRequest } from '../utility/handleApiRequest';
+import { handleApiRequest } from '../../utility/handleApiRequest';
+import { useAuth } from '../../Provider/AuthProvider';
 
 
 
@@ -24,7 +25,7 @@ const Store = () => {
     const listRef = useRef(null);
     const formRef = useRef(null);
     const [errors, setErrors] = useState({});
-    const [zid, setZid] = useState(100000);
+    const { zid } = useAuth();
     const [xtype, setXtype] = useState('Store');
     
     const [formData, setFormData] = useState({

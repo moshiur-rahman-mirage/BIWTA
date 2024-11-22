@@ -15,6 +15,9 @@ public interface XcodesRepository extends JpaRepository<Xcodes, XcodesId> , JpaS
     @Query("SELECT e FROM Xcodes e WHERE e.zid = :zid and e.xtype=:xtype and e.xcode LIKE %:searchText% OR e.xlong LIKE %:searchText%")
     List<Xcodes> findBySearchTextAndZid(@Param("zid") String zid,@Param("xtype") String xtype, @Param("searchText") String searchText);
 
+    @Query("SELECT e FROM Xcodes e WHERE e.zactive='1' and e.zid = :zid and e.xtype=:xtype and e.xcode LIKE %:searchText% OR e.xlong LIKE %:searchText%")
+    List<Xcodes> findActiveXcodesByZidAndType(@Param("zid") String zid,@Param("xtype") String xtype);
+
     boolean existsByZidAndXtypeAndXcode(Integer zid, String xtype,String xcode);
 
 

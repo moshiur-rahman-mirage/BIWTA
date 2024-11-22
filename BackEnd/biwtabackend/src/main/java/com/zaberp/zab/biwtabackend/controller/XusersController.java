@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/xusers")
@@ -95,15 +97,27 @@ public class XusersController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Xusers xusers) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Xusers xusers) {
         String zemail = xusers.getZemail();
         String xpassword = xusers.getXpassword();
         boolean isValid = service.validateUser(zemail, xpassword);
 
         if (isValid) {
-            return ResponseEntity.ok("Login successful!");
+            Xusers user = service.findByZemail(zemail);
+            int zid = user.getZid();
+            String xwh = user.getXwh();
+            String xrole = user.getXrole();
+            // Create a response map to include zid, xwh, and a success message
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Login successful!");
+            response.put("zid", zid);
+            response.put("xwh", xwh);
+            response.put("xroles",xrole);
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(401).body("Invalid credentials.");
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid credentials.");
+            return ResponseEntity.status(401).body(errorResponse);
         }
     }
 }

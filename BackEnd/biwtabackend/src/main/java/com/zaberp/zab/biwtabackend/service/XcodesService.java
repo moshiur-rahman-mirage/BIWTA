@@ -58,6 +58,10 @@ public class XcodesService {
         return repository.findBySearchTextAndZid(zid, xtype, searchText);
     }
 
+    public List<Xcodes> findActiveXcodesByZidAndXtype(String zid,String xtype) {
+        return repository.findActiveXcodesByZidAndType(zid, xtype);
+    }
+
 
     private Specification<Xcodes> xcodeEquals(String xcode) {
         return (root, query, builder) ->

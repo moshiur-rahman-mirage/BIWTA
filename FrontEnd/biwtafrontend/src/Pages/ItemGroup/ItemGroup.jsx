@@ -22,13 +22,15 @@ import axios from "axios";
 import { handleApiRequest } from "../../utility/handleApiRequest";
 
 import ItemGroupList from "./ItemGroupList";
+import { useAuth } from "../../Provider/AuthProvider";
 
 const ItemGroup = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isListOpen, setListOpen] = useState(false);
+    const { zid } = useAuth();
     const [formData, setFormData] = useState({
-        zid: 100000,
+        zid: zid,
         xtype: "Item Group",
         xcode: "",
         xlong: "",
@@ -78,7 +80,8 @@ const ItemGroup = () => {
         setFormData({
             ...formData,
             ...result,
-            zactive: result.zactive === "true", // Ensure boolean conversion
+            zid: zid,
+            zactive: parseInt(result.zactive) === 1, // Ensure boolean conversion
         });
         setListOpen(false);
     };
@@ -100,8 +103,13 @@ const ItemGroup = () => {
     }, []);
 
     // Handle checkbox toggle
-    const handleCheckboxChange = (e) => {
-        setFormData((prev) => ({ ...prev, zactive: e.target.checked }));
+    const handleCheckboxChange = (event) => {
+        const isChecked = event.target.checked; // Simplified logic
+        setFormData((prevState) => ({
+            ...prevState,
+            zid: zid,
+            zactive: isChecked ? 1 : 0,
+        }));
     };
 
     // Handle select changes
@@ -293,7 +301,7 @@ const ItemGroup = () => {
                                 onItemSelect={(item) =>
                                     setFormData({
                                         ...item,
-                                        zactive: item.zactive === "true",
+                                        zactive: parseInt(item.zactive) === 1,
                                     })
 
                                 }

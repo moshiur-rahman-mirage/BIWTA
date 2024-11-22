@@ -51,6 +51,10 @@ export const menuitems = [
             to:'administrations/codes/section',
           },
           {
+            title:'Salutation',
+            to:'administrations/codes/salutation',
+          },
+          {
             title:'Product Group',
             to:'administrations/codes/itemgroup',
           },

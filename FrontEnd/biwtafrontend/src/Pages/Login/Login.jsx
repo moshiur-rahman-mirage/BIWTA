@@ -4,7 +4,7 @@ import { FaUser, FaLock } from 'react-icons/fa'; // Material icons for UserID an
 import axios from "axios";
 
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Provider/AuthProvider';
+import { useAuth } from '../../Provider/AuthProvider';
 
 function Login() {
 
@@ -23,10 +23,18 @@ function Login() {
             zemail: userId,
             xpassword: password,
           });
-        console.log(response)
+        // console.log(response.data.zid)
         if (response.status === 200) {
-          alert('Login successful');
-          login(userId);
+         
+          const { zid } = response.data;
+          console.log(zid)
+          if (!zid) {
+            console.error("zid is missing in the response");
+            alert("An error occurred: zid not found.");
+            return;
+          }
+
+          login( userId, zid);
           navigate('/main');
         }
         else if (response.status === 401) {

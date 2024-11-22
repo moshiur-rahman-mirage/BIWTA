@@ -74,5 +74,12 @@ public class XusersService {
         return false; // User not found or invalid password
     }
 
+
+    public Xusers findByZemail(String zemail){
+        return repository.findByZemail(zemail);
+    }
+
+
+
 }
 

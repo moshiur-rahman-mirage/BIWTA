@@ -48,6 +48,8 @@ public class Xusers {
     @Column(name = "zactive")
     private String zactive;
 
+    private String  xrole;
+
     @Column(name="xwh")
     private String xwh;
 

@@ -90,5 +90,15 @@ public class XcodesController {
         return service.searchByText(zid,xtype, searchText);
 
     }
+
+
+    @GetMapping("/active")
+    public List<Xcodes> findActiveXcodesByZidAndXtype(
+            @RequestParam("zid") String zid,
+            @RequestParam("xtype") String xtype
+    ) {
+        return service.findActiveXcodesByZidAndXtype(zid,xtype);
+
+    }
 }
 

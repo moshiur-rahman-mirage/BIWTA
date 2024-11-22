@@ -1,16 +1,16 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Main from "../Layout/Main";
-import Login from "../Pages/Login";
 import Home from "../Pages/Home";
-import Store from "../Pages/Store";
-import Personalinfo from "../Pages/Personalinfo";
-import Dashboard from "../Pages/Dashboard";
 import { useAuth } from "../Provider/AuthProvider";
 import ErrorPage from "../ErrorPage";
 import Department from "../Pages/Xcodes/Department";
 import Designation from "../Pages/Xcodes/Designation";
 import Section from "../Pages/Xcodes/Section";
 import ItemGroup from "../Pages/ItemGroup/ItemGroup";
+import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
+import Login from "../Pages/Login/Login";
+import Store from "../Pages/Xcodes/Store";
+import Salutation from "../Pages/Xcodes/Salutation";
 
 
 // Protected Route wrapper
@@ -34,12 +34,20 @@ const Router = createBrowserRouter([
                 element: <ProtectedRoute element={<Home />} />,
             },
             {
+                path: "/main/personalinfo",
+                element: <ProtectedRoute element={<Pdmsthrd />} />,
+            },
+            {
                 path: "/main/administrations/codes/store",
                 element: <ProtectedRoute element={<Store />} />,
             },
             {
                 path: "/main/administrations/codes/department",
                 element: <ProtectedRoute element={<Department />} />,
+            },
+            {
+                path: "/main/administrations/codes/salutation",
+                element: <ProtectedRoute element={<Salutation />} />,
             },
             {
                 path: "/main/administrations/codes/designation",

@@ -4,12 +4,18 @@ import com.zaberp.zab.biwtabackend.id.XcodesId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "xcodes")
+@EntityListeners(AuditingEntityListener.class)
 @IdClass(XcodesId.class) // For composite primary key
 public class Xcodes {
 
@@ -26,14 +32,17 @@ public class Xcodes {
     private String xcode;
 
     @Column(nullable = false, updatable = false)
+    @CreatedDate
     private LocalDateTime ztime;
 
+    @LastModifiedDate
     @Column(name = "zutime")
     private LocalDateTime zutime;
 
+    @CreatedBy
     @Column(name = "zauserid")
     private String zauserid;
-
+    @LastModifiedBy
     @Column(name = "zuuserid")
     private String zuuserid;
 

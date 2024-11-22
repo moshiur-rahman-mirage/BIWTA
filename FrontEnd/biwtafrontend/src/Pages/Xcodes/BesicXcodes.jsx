@@ -9,14 +9,16 @@ import { Box, TextField, List, ListItem } from '@mui/material';
 import axios from 'axios';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import BasicList from './BasicList';
+import { useAuth } from '../../Provider/AuthProvider';
+
 
 const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isListOpen, setListOpen] = useState(false);
     const [checked, setChecked] = useState(false);
-    const [refreshList, setRefreshList] = useState(() => () => {});
-    const [zid] = useState(100000);
+    const [refreshList, setRefreshList] = useState(() => () => { });
+    const { zid } = useAuth();
     const listRef = useRef(null);
     const formRef = useRef(null);
     const fontSize = '0.875rem';
@@ -28,11 +30,13 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
         zactive: false,
     });
 
+    // console.log(zid)
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
+            zid: zid,
         }));
         if (name === 'xcode') {
             setIsTyping(true);
@@ -59,12 +63,13 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
 
     const handleResultClick = (result) => {
         setFormData({
-          ...formData,
-          ...result,
-          zactive: result.zactive === "true", // Ensure boolean conversion
+            ...formData,
+            ...result,
+            zid: zid,
+            zactive: parseInt(result.zactive) === 1,  // Ensure boolean conversion
         });
         setListOpen(false);
-      };
+    };
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -84,15 +89,17 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
         const isChecked = event.target.checked; // Simplified logic
         setFormData((prevState) => ({
             ...prevState,
-            zactive: !!isChecked,
+            zid: zid,
+            zactive: isChecked ? 1 : 0,
         }));
     };
-    
+
 
     const handleAction = async (method) => {
+        console.log(zid)
         const endpoint = `${apiBaseUrl}?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
-       
-        const data = { ...formData};
+
+        const data = { ...formData, zid: zid, };
         console.log("Data Updating")
         console.log(data)
         await handleApiRequest({
@@ -118,10 +125,11 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
 
     const handleItemSelect = (item) => {
         setFormData({
+            zid: zid,
             xcode: item.xcode,
             xlong: item.xlong,
             xtype: item.xtype,
-            zactive: item.zactive==="true"
+            zactive: parseInt(item.zactive) === 1,
         });
     };
 
@@ -224,7 +232,8 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
                                     />
                                     <Checkbox
                                         // checked={checked}
-                                        checked={!!formData.zactive}
+                                        checked={formData.zactive || false}
+                                        // checked={!!formData.zactive}
                                         onChange={handleCheckboxChange}
                                         name="Activate?"
                                         color="primary"
@@ -233,8 +242,8 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
                             </div>
                         </div>
                         <div className='border shadow-lg border-gray-500 rounded p-2'>
-                            
-                        <Caption title={`List of ${xtype}`} />
+
+                            <Caption title={`List of ${xtype}`} />
                             <BasicList
                                 xtype={xtype}
                                 apiBaseUrl={apiBaseUrl}

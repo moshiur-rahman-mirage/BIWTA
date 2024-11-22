@@ -15,4 +15,5 @@ public interface XusersRepository extends JpaRepository<Xusers, XusersId>, JpaSp
 
     Xusers findByZemail(String zemail);
 
+
 }

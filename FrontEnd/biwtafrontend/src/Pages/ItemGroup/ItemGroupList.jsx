@@ -95,7 +95,7 @@ const ItemGroupList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode,
                                     <Typography sx={{fontSize }} variant="subtitle1" align="left">{item.xgtype || 'N/A'}</Typography>
                                 </Box>
                                 <Box flex="0 1 15%" style={{ width: 'auto' }}>
-                                    <Typography sx={{fontSize }} variant="subtitle1" align="left">{item.zactive}</Typography>
+                                    <Typography sx={{fontSize }} variant="subtitle1" align="left">{item.zactive==='1'?'Yes':'No'}</Typography>
                                 </Box>
                             </Box>
                             {index < items.length - 1 && <Divider />}

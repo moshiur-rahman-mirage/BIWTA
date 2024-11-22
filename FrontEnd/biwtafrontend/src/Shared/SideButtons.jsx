@@ -63,7 +63,7 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, onShow }) => {
             <Button
                 variant="contained"
                 sx={{
-                    // backgroundColor: '#f97316 ',
+                    backgroundColor: '#f97316 ',
                     paddingX: 2, // equivalent to Tailwind's px-2
                     paddingY: 0.5, // equivalent to Tailwind's py-0.5
                     width: '6rem', // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
@@ -79,13 +79,13 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, onShow }) => {
                 Delete
             </Button>
 
-            <button className="sidebtn bg-purple-500 hover:bg-purple-600">
+            {/* <button className="sidebtn bg-purple-500 hover:bg-purple-600">
                 Previous
             </button>
 
             <button className="sidebtn bg-teal-500  hover:bg-teal-600">
                 Next
-            </button>
+            </button> */}
 
         </div>
     );

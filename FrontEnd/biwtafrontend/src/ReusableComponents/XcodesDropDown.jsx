@@ -3,7 +3,7 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mu
 import axios from 'axios';
 import { useAuth } from '../Provider/AuthProvider';
 
-const XcodesDropDown = ({ label, type, apiUrl, onSelect, defaultValue = '' }) => {
+const XcodesDropDown = ({ variant, label, type, apiUrl, onSelect, defaultValue = '' }) => {
 
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
@@ -35,7 +35,7 @@ const XcodesDropDown = ({ label, type, apiUrl, onSelect, defaultValue = '' }) =>
     };
 
     return (
-        <FormControl fullWidth size="small" variant="filled" >
+        <FormControl fullWidth size="small" variant={variant} >
             <InputLabel>{label}</InputLabel>
             {loading ? (
                 <CircularProgress size={24} sx={{ margin: 'auto' }} />

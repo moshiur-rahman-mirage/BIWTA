@@ -12,20 +12,39 @@ import {
     Box,
     Stack,
     FormLabel,
+    Modal,
+    Typography,
 } from '@mui/material';
 import HelmetTitle from '../../utility/HelmetTitle';
 import SideButtons from '../../Shared/SideButtons';
 import Caption from '../../utility/Caption';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import { useAuth } from '../../Provider/AuthProvider';
+import PdDependent from '../DependentInfo/PdDependent';
 
 const Pdmsthrd = () => {
     const { zid } = useAuth();
+    const [open, setOpen] = useState(false);
+    // const handleOpen = () => setOpen(true);
+    // const handleClose = () => setOpen(false);
     const apiBaseUrl = "http://localhost:8080/api/xcodes";
+    const variant = 'standard'
 
+    const handleOpen = () => {
+        document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
+        document.body.style.overflow = "hidden";
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        document.body.style.paddingRight = "";
+        document.body.style.overflow = "";
+        setOpen(false);
+      };
 
     return (
         <div className='grid grid-cols-12'>
+            <HelmetTitle title="Employee Information" />
             <div className="">
                 <SideButtons
                 // onAdd={handleAdd}
@@ -37,22 +56,49 @@ const Pdmsthrd = () => {
             </div>
             <div className='col-span-11 '>
                 <Button
-                    variant="contained"
+                    onClick={handleOpen}
+                    variant='outlined'
                     sx={{
-                       marginLeft:1,
+                        marginLeft: 1,
                         paddingX: 2, // equivalent to Tailwind's px-2
                         paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                         // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
+                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
                         height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
                         },
                     }}
                     size="medium"
-                  
+
                 >
                     Family Information
                 </Button>
+
+                {/* Modal */}
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    disablePortal
+                    disableEnforceFocus
+                    disableAutoFocus
+                >
+                    <Box sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: "1200px", // Fixed width
+                          height: "500px", // Fixed height
+                          bgcolor: "background.paper",
+                          border: "2px solid #000",
+                          boxShadow: 24,
+                          p: 4,
+                    }}>
+                        <PdDependent />
+                    </Box>
+                </Modal>
+                {/* Modal */}
+
                 <div className=' shadow-lg  rounded'>
                     <div className="w-full px-2  py-2  mx-auto  ">
                         <Caption title={"Employee Entry"} />
@@ -88,7 +134,7 @@ const Pdmsthrd = () => {
                                 <TextField
                                     label="Employee ID"
                                     size="small"
-                                    variant="filled"
+                                    variant={variant}
                                     fullWidth
                                     required
                                     sx={{ gridColumn: 'span 1' }}
@@ -106,7 +152,7 @@ const Pdmsthrd = () => {
                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
 
                                     <XcodesDropDown
-
+                                        variant={variant}
                                         label="Salutation"
                                         size="small"
                                         type="salutation"
@@ -118,21 +164,21 @@ const Pdmsthrd = () => {
                                 </Stack>
                                 <TextField
                                     label="First Name"
-                                    variant="filled"
+                                    variant={variant}
                                     size="small"
                                     fullWidth
                                     required
                                 />
                                 <TextField
                                     label="Middle Name"
-                                    variant="filled"
+                                    variant={variant}
                                     size="small"
                                     fullWidth
                                     required
                                 />
                                 <TextField
                                     label="Last Name"
-                                    variant="filled"
+                                    variant={variant}
                                     size="small"
                                     fullWidth
                                     required
@@ -153,7 +199,7 @@ const Pdmsthrd = () => {
                                 gap={2}
                                 gridTemplateColumns="repeat(4, 1fr)"
                             >
-                                <FormControl variant="filled" component="fieldset" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
+                                <FormControl variant={variant} component="fieldset" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
                                     <FormLabel id="gender-label">Gender</FormLabel>
                                     <RadioGroup
                                         row
@@ -173,12 +219,12 @@ const Pdmsthrd = () => {
                                     type="date"
                                     size='small'
                                     InputLabelProps={{ shrink: true }}
-                                    variant='filled'
+                                    variant={variant}
                                     fullWidth
                                 />
-                                <TextField size='small' variant='filled' label="National ID" fullWidth required />
+                                <TextField size='small' variant={variant} label="National ID" fullWidth required />
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Designation"
                                     size="small"
                                     type="Designation"
@@ -198,7 +244,7 @@ const Pdmsthrd = () => {
                                 gridTemplateColumns="repeat(4, 1fr)"
                             >
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Department"
                                     size="small"
                                     type="Department"
@@ -207,7 +253,7 @@ const Pdmsthrd = () => {
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Religion"
                                     size="small"
                                     type="Religion"
@@ -216,7 +262,7 @@ const Pdmsthrd = () => {
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Blood Group"
                                     size="small"
                                     type="Blood Group"
@@ -225,7 +271,7 @@ const Pdmsthrd = () => {
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Marital Status"
                                     size="small"
                                     type="Marital Status"
@@ -246,12 +292,12 @@ const Pdmsthrd = () => {
                             >
                                 <TextField label="Personal Mobile No."
                                     size='small'
-                                    variant="filled" fullWidth required />
+                                    variant={variant} fullWidth required />
                                 <TextField label="Email"
                                     size='small'
-                                    variant="filled" fullWidth required />
+                                    variant={variant} fullWidth required />
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Job Title"
                                     size="small"
                                     type="Job Title"
@@ -261,7 +307,7 @@ const Pdmsthrd = () => {
                                 />
 
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Job Location"
                                     size="small"
                                     type="Job Location"
@@ -281,7 +327,7 @@ const Pdmsthrd = () => {
                                 gridTemplateColumns="repeat(4, 1fr)"
                             >
                                 <XcodesDropDown
-
+                                    variant={variant}
                                     label="Employee Type"
                                     size="small"
                                     type="Employee Type"
@@ -294,20 +340,29 @@ const Pdmsthrd = () => {
                                     label="BMDC Registration No"
 
                                     size='small'
-                                    InputLabelProps={{ shrink: true }}
-                                    variant='filled'
+                                    // InputLabelProps={{ shrink: true }}
+                                    variant={variant}
                                     fullWidth
                                 />
 
                                 <TextField
                                     label="Credentials"
                                     size='small'
-                                    InputLabelProps={{ shrink: true }}
-                                    variant='filled'
+
+                                    variant={variant}
                                     fullWidth
                                     multiline
                                     sx={{ gridColumn: 'span 2' }}
                                 />
+                                {/* <TextField
+                                    label="Employee ID"
+                                    size="small"
+                                    variant={variant}
+                                    fullWidth
+                                    required
+                                    sx={{ gridColumn: 'span 1' }}
+                                /> */}
+
                             </Stack>
 
 
@@ -323,7 +378,7 @@ const Pdmsthrd = () => {
 
 
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -3,6 +3,7 @@ package com.zaberp.zab.biwtabackend.jwt;
 import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.service.XusersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,6 +76,33 @@ public class AuthController {
 
         // Return the response as JSON
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+        try {
+            // Extract token from "Bearer <token>" format
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            // Validate the token
+            if (!jwtTokenUtil.validateToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+
+            // Get username from token
+            String username = jwtTokenUtil.extractUsername(token);
+
+            // Fetch user details (optional)
+            Xusers user = service.findByZemail(username);
+
+            // Respond with user details
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token validation failed");
+        }
     }
 
 }

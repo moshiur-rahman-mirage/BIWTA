@@ -11,20 +11,25 @@ import { handleApiRequest } from '../../utility/handleApiRequest';
 import BasicList from './BasicList';
 import { useAuth } from '../../Provider/AuthProvider';
 import axiosInstance from '../../Middleware/axiosInstance';
+import LoadingPage from '../Loading/Loading';
 
 
 const BesicXcodes = ({ title, xtype }) => {
+
+
+    
     const [searchResults, setSearchResults] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isListOpen, setListOpen] = useState(false);
     const [checked, setChecked] = useState(false);
     const [refreshList, setRefreshList] = useState(() => () => { });
-    const { zid } = useAuth();
+    const { zid,zemail } = useAuth();
     const listRef = useRef(null);
     const formRef = useRef(null);
     const fontSize = '0.875rem';
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const inputRef = useRef(null);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         zid: zid,
         xtype: xtype,
@@ -33,7 +38,17 @@ const BesicXcodes = ({ title, xtype }) => {
         zactive: false,
     });
 
-    // console.log(zid)
+    useEffect(() => {
+        if (zid && zemail) {
+          setLoading(false);
+        }
+      }, [zid,zemail]);
+    
+      if (loading && !zid && !zemail) {
+        return <LoadingPage />; 
+      }
+
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -75,6 +90,12 @@ const BesicXcodes = ({ title, xtype }) => {
             console.error('Error fetching search results:', error);
         }
     };
+
+
+
+
+
+
 
     const handleResultClick = (result) => {
         setFormData({

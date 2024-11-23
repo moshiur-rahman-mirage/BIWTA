@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     TextField,
     MenuItem,
@@ -21,14 +21,95 @@ import Caption from '../../utility/Caption';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import { useAuth } from '../../Provider/AuthProvider';
 import PdDependent from '../DependentInfo/PdDependent';
+import { handleApiRequest } from '../../utility/handleApiRequest';
+import LoadingPage from '../Loading/Loading';
+
 
 const Pdmsthrd = () => {
-    const { zid } = useAuth();
+    const { zid,zemail } = useAuth();
+    console.log(zid)
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        if (zid && zemail) {
+          setLoading(false);
+        }
+      }, [zid,zemail]);
+    
+      if (loading && !zid && !zemail) {
+        return <LoadingPage />; 
+      }
     const [open, setOpen] = useState(false);
     // const handleOpen = () => setOpen(true);
     // const handleClose = () => setOpen(false);
-    const apiBaseUrl = "http://localhost:8080/api/xcodes";
+    const [searchResults, setSearchResults] = useState([]); // For search results
+    const [isTyping, setIsTyping] = useState(false); // To handle typing state
+    const [selectedCode, setSelectedCode] = useState(''); // To store selected code
+    const [checked, setChecked] = useState(false);
+    const [xtypeobj, setXtypeobj] = useState('');
+    const [isListOpen, setListOpen] = useState(false)
+    const listRef = useRef(null);
+    const formRef = useRef(null);
+    const [errors, setErrors] = useState({});
+    const apiBaseUrl = "http://localhost:8080/api/pdmst";
     const variant = 'standard'
+    const [dropdownValues, setDropdownValues] = useState({
+        xdesignation: "",
+        xdepartment: "",
+        xsalutation:'',
+    });
+
+
+    const [formData, setFormData] = useState({
+        zid: zid,
+        xstaff:'',
+        xname:'',
+        xbirthdate:'',
+        xlastname:'',
+        xdepartment:'',
+        xdesignation:'',
+        xmname:''
+
+
+    });
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+        
+
+            setIsTyping(true);
+            if (name === 'xstaff') {
+            fetchSearchResults(value);
+        }
+    };
+
+
+
+    const fetchSearchResults = async (query) => {
+        if (!query) {
+            setSearchResults([]);
+            setListOpen(false);
+            return;
+        }
+        try {
+            const response = await axiosInstance.get(`api/pdmst?zid=${zid}&searchText=${query}`)
+            setSearchResults(response.data);
+            setListOpen(true);
+            if (inputRef.current) {
+                const rect = inputRef.current.getBoundingClientRect();
+                setDropdownPosition({
+                    top: rect.bottom + window.scrollY,  // Position below the input field
+                    left: rect.left + window.scrollX,   // Align it with the input field
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    };
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -42,12 +123,46 @@ const Pdmsthrd = () => {
         setOpen(false);
       };
 
+
+
+
+
+
+
+      const handleAdd = async () => {
+        const endpoint = 'http://localhost:8080/api/pdmst';
+        const data = { 
+            ...formData, 
+            zid: zid,
+        };
+    
+        await handleApiRequest({
+            endpoint,
+            data,
+            method:'POST',
+            onSuccess: (response) => {
+                setErrors({});
+            },
+        });
+    };
+
+    const handleDropdownSelect = (key, value) => {
+        console.log(value)
+        setDropdownValues((prev) => ({
+            ...prev,
+            [key]: value,
+         
+        }));
+        
+    };
+    console.log(formData)
+
     return (
         <div className='grid grid-cols-12'>
             <HelmetTitle title="Employee Information" />
             <div className="">
                 <SideButtons
-                // onAdd={handleAdd}
+                onAdd={handleAdd}
                 // onUpdate={handleUpdate}
                 // onDelete={handleDelete}
                 // onClear={handleClear}
@@ -132,10 +247,14 @@ const Pdmsthrd = () => {
                                 mb={2} // margin-bottom
                             >
                                 <TextField
+                                    id='xstaff'
+                                    name='xstaff'
                                     label="Employee ID"
                                     size="small"
+                                     value={formData.xstaff}
                                     variant={variant}
                                     fullWidth
+                                    onChange={handleChange}
                                     required
                                     sx={{ gridColumn: 'span 1' }}
                                 />
@@ -152,34 +271,45 @@ const Pdmsthrd = () => {
                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
 
                                     <XcodesDropDown
+                                        id='xsalutation'
+                                        name='xsalutation'
                                         variant={variant}
                                         label="Salutation"
                                         size="small"
                                         type="salutation"
                                         apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                        // onSelect={handleSalutationSelect}
-                                        defaultValue=""
+                                        onSelect={(value) => handleDropdownSelect("xsalutation", value)} 
+                                        value={dropdownValues.xsalutation} 
                                     />
 
                                 </Stack>
                                 <TextField
                                     label="First Name"
+                                    name='xfname'
                                     variant={variant}
                                     size="small"
+                                    onChange={handleChange}
+                                    value={formData.xfname}
                                     fullWidth
                                     required
                                 />
                                 <TextField
                                     label="Middle Name"
+                                    name='xmname'
                                     variant={variant}
                                     size="small"
+                                    onChange={handleChange}
+                                    value={formData.xmname}
                                     fullWidth
                                     required
                                 />
                                 <TextField
                                     label="Last Name"
+                                    name='xlastname'
                                     variant={variant}
                                     size="small"
+                                    onChange={handleChange}
+                                    value={formData.xlastname}
                                     fullWidth
                                     required
                                 />
@@ -204,7 +334,7 @@ const Pdmsthrd = () => {
                                     <RadioGroup
                                         row
                                         aria-labelledby="gender-label"
-                                        name="gender"
+                                        name="xsex"
                                         defaultValue="Male"
                                     >
                                         <FormControlLabel value="Male" control={<Radio size="small" />} label="Male" />
@@ -218,18 +348,20 @@ const Pdmsthrd = () => {
                                     label="Date of Birth"
                                     type="date"
                                     size='small'
+                                    onChange={handleChange}
                                     InputLabelProps={{ shrink: true }}
+                                    value={formData.xbirthdate}
                                     variant={variant}
                                     fullWidth
                                 />
-                                <TextField size='small' variant={variant} label="National ID" fullWidth required />
+                                <TextField size='small' onChange={handleChange} variant={variant} label="National ID" fullWidth required />
                                 <XcodesDropDown
                                     variant={variant}
                                     label="Designation"
                                     size="small"
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    // onSelect={handleSalutationSelect}
+                                    onSelect={(value) => handleDropdownSelect("xdesignation", value)} 
                                     defaultValue=""
                                 />
                             </Stack>
@@ -249,34 +381,40 @@ const Pdmsthrd = () => {
                                     size="small"
                                     type="Department"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    // onSelect={handleSalutationSelect}
+                                    onSelect={(value) => handleDropdownSelect("xdepartment", value)} 
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
+                                    id="xreligion"
+                                    name="xreligion"
                                     variant={variant}
                                     label="Religion"
                                     size="small"
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    // onSelect={handleSalutationSelect}
+                                    onSelect={(value) => handleDropdownSelect("xreligion", value)} 
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
+                                    id="xbloodgroup"
+                                    name="xbloodgroup"
                                     variant={variant}
                                     label="Blood Group"
                                     size="small"
                                     type="Blood Group"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    // onSelect={handleSalutationSelect}
+                                    onSelect={(value) => handleDropdownSelect("xbloodgroup", value)}
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
+                                    id="xmstat"
+                                    name="xmstat"
                                     variant={variant}
                                     label="Marital Status"
                                     size="small"
                                     type="Marital Status"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    // onSelect={handleSalutationSelect}
+                                    onSelect={(value) => handleDropdownSelect("xmstat", value)}
                                     defaultValue=""
                                 />
                             </Stack>
@@ -292,9 +430,11 @@ const Pdmsthrd = () => {
                             >
                                 <TextField label="Personal Mobile No."
                                     size='small'
+                                    onChange={handleChange}
                                     variant={variant} fullWidth required />
                                 <TextField label="Email"
                                     size='small'
+                                    onChange={handleChange}
                                     variant={variant} fullWidth required />
                                 <XcodesDropDown
                                     variant={variant}

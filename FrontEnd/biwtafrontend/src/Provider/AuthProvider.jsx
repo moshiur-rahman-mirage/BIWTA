@@ -1,41 +1,150 @@
-import React, { createContext, useState, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
+import axiosInstance from "../Middleware/AxiosInstance";
 
-// Create a context to store authentication state
-const AuthContext = createContext();
+// Create Context for Authentication
+export const AuthContext = createContext(null);
 
-// Custom hook to use auth context
 export const useAuth = () => {
     return useContext(AuthContext);
 };
 
-// AuthProvider component to wrap the app and provide the auth context
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userId, setUserId] = useState(null);
-    const [zid, setZid] = useState(null);
-    const [token,setToken]=useState(null)
+    const [authState, setAuthState] = useState({
+        zid: null,
+        zemail: null,
+    });
 
-    const login = (id,zid,token) => {
-        console.log("login invoked with id:", id, "zid:", zid,'token:',token);
-        setIsAuthenticated(true);
-        setUserId(id);
-        setZid(zid);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState(null);
+    const [zid, setZid] = useState(null);
+    const [zemail, setZemail] = useState(null);
+
+    // Function to handle user login (using JWT)
+    const login = (id, zid, token) => {
+        console.log("login invoked with id:", id, "zid:", zid, "token:", token);
+
+        // Set state using passed arguments
+        setAuthState({ zid, zemail: id });
         setToken(token);
-        sessionStorage.setItem('zid', zid);
-        sessionStorage.setItem('token', token);
-        // console.log(zid)
+        setZid(zid);
+        setZemail(id);
+        // Store in sessionStorage
+        sessionStorage.setItem("zid", zid);
+        sessionStorage.setItem("zemail", id);
+        sessionStorage.setItem("token", token);
+
+        console.log("Updated login state:", { zid, zemail: id });
     };
 
+    // Function to fetch user data after login
+    const fetchUserData = async (token) => {
+        try {
+            const response = await axios.get(
+                `api/pdmst/search?zid=${authState.zid}&xstaff=${authState.zemail}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setUser(response.data);
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    };
+
+    // Function to handle user logout
     const logout = () => {
-        setIsAuthenticated(false);
-        setUserId(null);
-        setZid(null);
-        sessionStorage.removeItem('zid');
-        sessionStorage.removeItem('token');
-      };
-// console.log(userId)
+        setLoading(true);
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("zid");
+        sessionStorage.removeItem("zemail");
+
+        setAuthState({ zid: null, zemail: null });
+        setToken(null);
+        setUser(null);
+        setLoading(false);
+
+        console.log("User logged out");
+    };
+
+    // Validate user session and token on load
+    useEffect(() => {
+        const storedZid = sessionStorage.getItem("zid");
+        const storedZemail = sessionStorage.getItem("zemail");
+        const storedToken = sessionStorage.getItem("token");
+
+        if (storedZid && storedZemail && storedToken) {
+            setAuthState({ zid: storedZid, zemail: storedZemail });
+            setToken(storedToken);
+        } else {
+            setAuthState({ zid: null, zemail: null });
+        }
+    }, []);
+
+    useEffect(() => {
+        const validateUser = async () => {
+            try {
+                const response = await axiosInstance.get("/auth/validate", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                console.log("Token validation successful:", response.data);
+                setAuthState({
+                    zid: response.data.zid,
+                    zemail: response.data.zemail,
+                });
+            } catch (error) {
+                console.error("User validation failed:", error);
+                setAuthState({ zid: null, zemail: null });
+                sessionStorage.clear();
+            }
+        };
+
+        if (token && zid && zemail) {
+            validateUser();
+        }
+    }, [token, zid, zemail]);
+
+    
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const storedToken = sessionStorage.getItem("token");
+            const storedZid = sessionStorage.getItem("zid");
+            const storedZemail = sessionStorage.getItem("zemail");
+
+            if (!storedToken || !storedZid || !storedZemail) {
+                logout(); // Logout if any critical value is missing
+            } else {
+                setToken(storedToken);
+                setAuthState({ zid: storedZid, zemail: storedZemail });
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
+    }, []);
+
+
+    const authInfo = {
+        login,
+        logout,
+        zemail: authState.zemail,
+        zid: authState.zid,
+        token,
+        loading,
+        user,
+        setAuthState,
+        fetchUserData
+    };
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout,userId ,zid, setZid,token  }}>
+        <AuthContext.Provider value={authInfo}>
             {children}
         </AuthContext.Provider>
     );

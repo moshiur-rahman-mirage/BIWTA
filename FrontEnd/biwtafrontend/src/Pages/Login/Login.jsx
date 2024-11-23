@@ -5,26 +5,26 @@ import axios from "axios";
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Provider/AuthProvider';
+import axiosInstance from '../../Middleware/AxiosInstance';
 
 function Login() {
 
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login,logout } = useAuth();
     const navigate = useNavigate();
-
     const handleSubmit = async (e) => {
       e.preventDefault();
   
       console.log("called")
       try {
-        const response = await axios.post('http://localhost:8080/auth/login', {
+        const response = await axiosInstance.post('http://localhost:8080/auth/login', {
             zemail: userId,
             xpassword: password,
           });
         if (response.status === 200) {
-          console.log(response.data.token);
+          console.log(response);
           const { zid,token } = response.data;
           if (!zid) {
             console.error("zid is missing in the response");
@@ -36,15 +36,17 @@ function Login() {
           navigate('/main');
         }
         else if (response.status === 401) {
-          console.log("first")
+          logout();
           alert('Invalid credentials');
         }
       } catch (error) {
         console.log("error")
         console.log(error)
         if (error.response) {
+          logout();
           alert('Invalid credentials');
         } else {
+          logout();
           alert('An Error Occured');
         }
       }

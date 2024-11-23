@@ -17,15 +17,7 @@ const XcodesDropDown = ({ variant, label, type, apiUrl, onSelect, defaultValue =
         const fetchOptions = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${apiUrl}/search?zid=${zid}&xtype=${type}`);
-                
-                // const response = await axiosInstance.get('/api/xcodes/searchtext', {
-                //     params: {
-                //       zid: 100000,
-                //       xtype: 'Designation',
-                //       searchText: '0',
-                //     },
-                //   });
+                const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${type}`);
 
 
                 setOptions(response.data); // Update state with API response
@@ -41,8 +33,9 @@ const XcodesDropDown = ({ variant, label, type, apiUrl, onSelect, defaultValue =
 
     // Handle selection change
     const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-        if (onSelect) onSelect(event.target.value); // Pass selected value to parent component
+        const value = event.target.value;
+        setSelectedValue(value);
+        if (onSelect) onSelect(event.target.value);
     };
 
     return (

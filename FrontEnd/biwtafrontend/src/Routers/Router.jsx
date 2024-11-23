@@ -11,13 +11,11 @@ import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
 import Login from "../Pages/Login/Login";
 import Store from "../Pages/Xcodes/Store";
 import Salutation from "../Pages/Xcodes/Salutation";
+import PrivateRoutes from "../PrivateRoutes";
 
 
 // Protected Route wrapper
-const ProtectedRoute = ({ element }) => {
-    const { userId } = useAuth(); // Use useAuth hook here
-    return userId ? element : <Navigate to="/" replace />;
-};
+
 
 // Define the routes
 const Router = createBrowserRouter([
@@ -27,39 +25,39 @@ const Router = createBrowserRouter([
     },
     {
         path: "/main",
-        element: <ProtectedRoute element={<Main />} />,
+        element: <PrivateRoutes element={<Main />} />,
         children: [
             {
                 path: "/main/home",
-                element: <ProtectedRoute element={<Home />} />,
+                element: <PrivateRoutes element={<Home />} />,
             },
             {
                 path: "/main/personalinfo",
-                element: <ProtectedRoute element={<Pdmsthrd />} />,
+                element: <PrivateRoutes element={<Pdmsthrd />} />,
             },
             {
                 path: "/main/administrations/codes/store",
-                element: <ProtectedRoute element={<Store />} />,
+                element: <PrivateRoutes element={<Store />} />,
             },
             {
                 path: "/main/administrations/codes/department",
-                element: <ProtectedRoute element={<Department />} />,
+                element: <PrivateRoutes element={<Department />} />,
             },
             {
                 path: "/main/administrations/codes/salutation",
-                element: <ProtectedRoute element={<Salutation />} />,
+                element: <PrivateRoutes element={<Salutation />} />,
             },
             {
                 path: "/main/administrations/codes/designation",
-                element: <ProtectedRoute element={<Designation />} />,
+                element: <PrivateRoutes element={<Designation />} />,
             },
             {
                 path: "/main/administrations/codes/section",
-                element: <ProtectedRoute element={<Section />} />,
+                element: <PrivateRoutes element={<Section />} />,
             },
             {
                 path: "/main/administrations/codes/itemgroup",
-                element: <ProtectedRoute element={<ItemGroup />} />,
+                element: <PrivateRoutes element={<ItemGroup />} />,
             },
         ],
     },

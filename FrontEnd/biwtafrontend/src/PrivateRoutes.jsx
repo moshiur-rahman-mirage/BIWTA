@@ -1,17 +1,22 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useAuth } from './Provider/AuthProvider';
+import LoadingPage from './Pages/Loading/Loading';
+ // Make sure you're importing the auth context
 
-const PrivateRoutes = ({ children }) => {
-    const { userId } = useAuth();
+const PrivateRoutes = ({ element }) => {
+    const { zid,token } = useAuth();  
 
-    if (!userId) {
-        // If userId is not present, redirect to login
-        return <Navigate to="/login" />;
+   
+    if (!zid || !token) {
+        return <LoadingPage/>
     }
 
-    // If userId exists, render the protected component
-    return children;
+    
+        return element;
+    
+
+     
 };
 
 export default PrivateRoutes;

@@ -26,9 +26,61 @@ import LoadingPage from '../Loading/Loading';
 
 
 const Pdmsthrd = () => {
+    const [dropdownValues, setDropdownValues] = useState({
+        xdesignation: "",
+        xdepartment: "",
+        xsalutation:'',
+        xbloodgroup:'',
+        
+    });
     const { zid,zemail } = useAuth();
+    const [searchResults, setSearchResults] = useState([]);
+    const [isTyping, setIsTyping] = useState(false); // To handle typing state
+    const [selectedCode, setSelectedCode] = useState(''); // To store selected code
+    const [checked, setChecked] = useState(false);
+    const [xtypeobj, setXtypeobj] = useState('');
+    const [isListOpen, setListOpen] = useState(false)
+    const listRef = useRef(null);
+    const formRef = useRef(null);
+    const inputRef=useRef(null);
+    const [errors, setErrors] = useState({});
+    const [gender, setGender] = useState('Male');
+    const apiBaseUrl = "http://localhost:8080/api/pdmst";
+    const variant = 'standard'
     console.log(zid)
     const [loading, setLoading] = useState(true);
+
+    const [open, setOpen] = useState(false);
+    // const handleOpen = () => setOpen(true);
+    // const handleClose = () => setOpen(false);
+ // For search results
+
+
+
+
+    const [formData, setFormData] = useState({
+        zid: zid,
+        xstaff: '',
+        xname: '',
+        xbirthdate: '',
+        xlastname: '',
+        xdepartment: '',
+        xdesignation: '',
+        xmname: '',
+        xsex: 'Male',
+        xmobile: '',
+        xemail: '',
+        xjobtitle: '',
+        xlocation: '',
+        xregino: '',
+        xprofdegree: ''
+
+
+    });
+
+
+
+
     useEffect(() => {
         if (zid && zemail) {
           setLoading(false);
@@ -38,40 +90,6 @@ const Pdmsthrd = () => {
       if (loading && !zid && !zemail) {
         return <LoadingPage />; 
       }
-    const [open, setOpen] = useState(false);
-    // const handleOpen = () => setOpen(true);
-    // const handleClose = () => setOpen(false);
-    const [searchResults, setSearchResults] = useState([]); // For search results
-    const [isTyping, setIsTyping] = useState(false); // To handle typing state
-    const [selectedCode, setSelectedCode] = useState(''); // To store selected code
-    const [checked, setChecked] = useState(false);
-    const [xtypeobj, setXtypeobj] = useState('');
-    const [isListOpen, setListOpen] = useState(false)
-    const listRef = useRef(null);
-    const formRef = useRef(null);
-    const [errors, setErrors] = useState({});
-    const apiBaseUrl = "http://localhost:8080/api/pdmst";
-    const variant = 'standard'
-    const [dropdownValues, setDropdownValues] = useState({
-        xdesignation: "",
-        xdepartment: "",
-        xsalutation:'',
-    });
-
-
-    const [formData, setFormData] = useState({
-        zid: zid,
-        xstaff:'',
-        xname:'',
-        xbirthdate:'',
-        xlastname:'',
-        xdepartment:'',
-        xdesignation:'',
-        xmname:''
-
-
-    });
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -124,26 +142,56 @@ const Pdmsthrd = () => {
       };
 
 
+      const handleGenderChange = (event) => {
+        setGender(event.target.value);
+        console.log(event.target.value)
+        const formData = new FormData();
+        formData.append('xsex',gender)
+    };
 
 
-
-
-
-      const handleAdd = async () => {
+    const handleAdd = async () => {
         const endpoint = 'http://localhost:8080/api/pdmst';
         const data = { 
             ...formData, 
             zid: zid,
         };
-    
-        await handleApiRequest({
-            endpoint,
-            data,
-            method:'POST',
-            onSuccess: (response) => {
-                setErrors({});
-            },
-        });
+
+        try {
+            await handleApiRequest({
+                endpoint,
+                data,
+                method: 'POST',
+                onSuccess: (response) => {
+                    setErrors({});
+                    // Reset form after successful submission
+                    setFormData({
+                        zid: zid,
+                        xstaff: '',
+                        xname: '',
+                        xmname: '',
+                        xlastname: '',
+                        xdepartment: '',
+                        xdesignation: '',
+                        xsalutation: '',
+                        xsex: 'Male', // default value
+                        xbirthdate: '',
+                        xmobile: '',
+                        xemail: '',
+                        xjobtitle: '',
+                        xlocation: '',
+                        xregino: '',
+                        xprofdegree: ''
+                    });
+                    console.log("Employee Added Successfully", response);
+                },
+                onError: (error) => {
+                    console.error("Error adding employee:", error);
+                }
+            });
+        } catch (error) {
+            console.error("Unexpected error:", error);
+        }
     };
 
     const handleDropdownSelect = (key, value) => {
@@ -155,6 +203,7 @@ const Pdmsthrd = () => {
         }));
         
     };
+    console.log(dropdownValues)
     console.log(formData)
 
     return (
@@ -247,6 +296,7 @@ const Pdmsthrd = () => {
                                 mb={2} // margin-bottom
                             >
                                 <TextField
+                                    ref={inputRef}
                                     id='xstaff'
                                     name='xstaff'
                                     label="Employee ID"
@@ -280,16 +330,17 @@ const Pdmsthrd = () => {
                                         apiUrl={apiBaseUrl} // Replace with your API endpoint
                                         onSelect={(value) => handleDropdownSelect("xsalutation", value)} 
                                         value={dropdownValues.xsalutation} 
+                                        
                                     />
 
                                 </Stack>
                                 <TextField
                                     label="First Name"
-                                    name='xfname'
+                                    name='xname'
                                     variant={variant}
                                     size="small"
                                     onChange={handleChange}
-                                    value={formData.xfname}
+                                    value={formData.xname}
                                     fullWidth
                                     required
                                 />
@@ -336,6 +387,7 @@ const Pdmsthrd = () => {
                                         aria-labelledby="gender-label"
                                         name="xsex"
                                         defaultValue="Male"
+                                        onChange={handleGenderChange}
                                     >
                                         <FormControlLabel value="Male" control={<Radio size="small" />} label="Male" />
                                         <FormControlLabel value="Female" control={<Radio size="small" />} label="Female" />
@@ -431,26 +483,34 @@ const Pdmsthrd = () => {
                                 <TextField label="Personal Mobile No."
                                     size='small'
                                     onChange={handleChange}
+                                    value={formData.xmobile}
                                     variant={variant} fullWidth required />
                                 <TextField label="Email"
                                     size='small'
                                     onChange={handleChange}
+                                    value={formData.xemail}
                                     variant={variant} fullWidth required />
+                               
                                 <XcodesDropDown
                                     variant={variant}
                                     label="Job Title"
+                                    name="xjobtitle"
                                     size="small"
                                     type="Job Title"
+                                    onSelect={(value) => handleDropdownSelect("xjobtitle", value)}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     // onSelect={handleSalutationSelect}
                                     defaultValue=""
                                 />
 
                                 <XcodesDropDown
+                                    id='xlocation'
+                                    name='xlocation'
                                     variant={variant}
                                     label="Job Location"
                                     size="small"
                                     type="Job Location"
+                                    onSelect={(value) => handleDropdownSelect("xlocation", value)}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     // onSelect={handleSalutationSelect}
                                     defaultValue=""
@@ -470,7 +530,9 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     label="Employee Type"
                                     size="small"
+                                    name="xemptype"
                                     type="Employee Type"
+                                    onSelect={(value) => handleDropdownSelect("xlocation", value)}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     // onSelect={handleSalutationSelect}
                                     defaultValue=""
@@ -478,7 +540,8 @@ const Pdmsthrd = () => {
 
                                 <TextField
                                     label="BMDC Registration No"
-
+                                    onChange={handleChange}
+                                    value={formData.xregino}
                                     size='small'
                                     // InputLabelProps={{ shrink: true }}
                                     variant={variant}
@@ -488,20 +551,15 @@ const Pdmsthrd = () => {
                                 <TextField
                                     label="Credentials"
                                     size='small'
-
+                                    id="xprofdegree"
+                                    name="xprofdegree"
+                                    onChange={handleChange}
                                     variant={variant}
                                     fullWidth
                                     multiline
                                     sx={{ gridColumn: 'span 2' }}
                                 />
-                                {/* <TextField
-                                    label="Employee ID"
-                                    size="small"
-                                    variant={variant}
-                                    fullWidth
-                                    required
-                                    sx={{ gridColumn: 'span 1' }}
-                                /> */}
+
 
                             </Stack>
 

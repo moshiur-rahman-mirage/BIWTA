@@ -91,14 +91,18 @@ export const AuthProvider = ({ children }) => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 console.log("Token validation successful:", response.data);
-                setAuthState({
-                    zid: response.data.zid,
-                    zemail: response.data.zemail,
-                });
+                // setAuthState({
+                //     zid: response.data.zid,
+                //     zemail: response.data.zemail,
+                // });
+                if(sessionStorage.getItem('zid')!=response.data.zid || sessionStorage.getItem('zemail')!=response.data.zemail ){
+                    logout();
+                }
             } catch (error) {
                 console.error("User validation failed:", error);
-                setAuthState({ zid: null, zemail: null });
+                // setAuthState({ zid: null, zemail: null });
                 sessionStorage.clear();
+                logout();
             }
         };
 
@@ -107,7 +111,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, [token, zid, zemail]);
 
-    
+
 
     useEffect(() => {
         const handleStorageChange = () => {
@@ -117,10 +121,12 @@ export const AuthProvider = ({ children }) => {
 
             if (!storedToken || !storedZid || !storedZemail) {
                 logout(); // Logout if any critical value is missing
-            } else {
-                setToken(storedToken);
-                setAuthState({ zid: storedZid, zemail: storedZemail });
-            }
+            } 
+            // else {
+            //     setToken(storedToken);
+            //     setZid(storedZid);
+            //     setZemail(storedZemail);
+            // }
         };
 
         window.addEventListener("storage", handleStorageChange);

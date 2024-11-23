@@ -239,7 +239,7 @@ const BesicXcodes = ({ title, xtype }) => {
                                                 {searchResults.map((result, index) => (
                                                     <ListItem
                                                         key={index}
-                                                        button={true}
+                                                        button='true'
                                                         onClick={() => handleResultClick(result)}
                                                         style={{ display: 'flex' }}
                                                     >

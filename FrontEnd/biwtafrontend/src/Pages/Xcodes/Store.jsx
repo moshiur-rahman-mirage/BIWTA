@@ -12,6 +12,7 @@ import { Box, FormControl, FormControlLabel, InputLabel, List, ListItem, ListIte
 import axios from 'axios';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import { useAuth } from '../../Provider/AuthProvider';
+import axiosInstance from '../../Middleware/AxiosInstance';
 
 
 
@@ -27,7 +28,8 @@ const Store = () => {
     const [errors, setErrors] = useState({});
     const { zid } = useAuth();
     const [xtype, setXtype] = useState('Store');
-    
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const inputRef = useRef(null);
     const [formData, setFormData] = useState({
         zid: zid,
         xtype: 'Store',
@@ -67,11 +69,16 @@ const Store = () => {
             return;
         }
         try {
-            const response = await axios.get(
-                `http://localhost:8080/api/xcodes/searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`
-            );
+            const response = await axiosInstance.get(`api/xcodes/searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`)
             setSearchResults(response.data);
-            setListOpen(true); // Open dropdown
+            setListOpen(true);
+            if (inputRef.current) {
+                const rect = inputRef.current.getBoundingClientRect();
+                setDropdownPosition({
+                    top: rect.bottom + window.scrollY,  // Position below the input field
+                    left: rect.left + window.scrollX,   // Align it with the input field
+                });
+            }
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
@@ -182,7 +189,7 @@ const Store = () => {
     };
 
     const handleDelete = async () => {
-        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
+        const endpoint = `/api/xcodes?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
         await handleApiRequest({
             endpoint,
             method:'DELETE',
@@ -270,6 +277,8 @@ const Store = () => {
                                         <div ref={formRef}
                                             style={{
                                                 position: 'absolute',
+                                                top: dropdownPosition.top, // Use the dynamic top position
+                                                left: dropdownPosition.left,
                                                 maxHeight: '400px',
                                                 width: '600px',
                                                 maxWidth: '500px',
@@ -319,6 +328,7 @@ const Store = () => {
 
 
                                     <TextField
+                                    ref={inputRef}
                                         id="xcode"
                                         name="xcode"
                                         label="Store Code"

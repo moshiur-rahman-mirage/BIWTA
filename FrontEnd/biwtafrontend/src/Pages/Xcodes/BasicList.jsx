@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemText, Divider, Grid, Box, Typography } from '@mui/material';
 import axios from 'axios';
+import axiosInstance from '../../Middleware/AxiosInstance';
+
 
 const BasicList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode, xlong }) => {
     const [items, setItems] = useState([]);
@@ -19,7 +21,9 @@ const BasicList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode, xlo
     const fetchData = async () => {
         console.log("Date Fetching")
         try {
-            const response = await axios.get(`${apiBaseUrl}/search?zid=${zid}&xtype=${xtype}`);
+            // const response = await axios.get(`${apiBaseUrl}/search?zid=${zid}&xtype=${xtype}`);
+            const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${xtype}`)
+
             setItems(response.data);
             console.log(response.data)
             setLoading(false);

@@ -1,30 +1,38 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import axiosInstance from '../Middleware/AxiosInstance';
+
 
 export const handleApiRequest = async ({ 
     endpoint, 
-    method='POST',
-    data={},
-    params={},
-    headers={}, 
-    onSuccess, 
-    onError, 
+    method = 'POST',
+    data = {},
+    params = {},
+    headers = {},
+    onSuccess,
+    onError,
     onValidationError 
 }) => {
     try {
-        const response = await axios({
-            url: endpoint,
+        // Prepare the request configuration
+        const config = {
             method: method.toUpperCase(), // Ensure the method is uppercase
-            data, // Data for POST, PUT, PATCH
-            params, // Query parameters for GET, DELETE
-            headers, // Custom headers
-        });
-        
+            url: endpoint,
+            headers,
+            params, // Only for GET, DELETE
+            data, // Only for POST, PUT, PATCH
+        };
+
+        // Make the API request using axiosInstance
+        const response = await axiosInstance(config);
+
+        // Handle success response
         if (onSuccess) onSuccess(response);
-        
+
         Swal.fire('Success!', 'Operation completed successfully', 'success');
+        
     } catch (error) {
-        // console.log(error)
+        // Handle error
         if (error.response && error.response.status === 400) {
             const errorMessages = error.response.data;
             if (onValidationError) onValidationError(errorMessages);
@@ -35,16 +43,18 @@ export const handleApiRequest = async ({
                 html: errorMessages,
                 confirmButtonText: 'Okay',
             });
-        } else  {
-            const errorMessages=error.message
+        } else {
+            const errorMessages = error.message;
 
             Swal.fire({
                 icon: 'error',
-                title: error.code,
+                title: error.code || 'Error',
                 html: errorMessages,
                 confirmButtonText: 'Okay',
             });
-            // onError(error);
+
+            // Call onError callback if available
+            if (onError) onError(error);
         }
     }
 };

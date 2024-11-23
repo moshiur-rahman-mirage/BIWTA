@@ -10,9 +10,10 @@ import axios from 'axios';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import BasicList from './BasicList';
 import { useAuth } from '../../Provider/AuthProvider';
+import axiosInstance from '../../Middleware/axiosInstance';
 
 
-const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
+const BesicXcodes = ({ title, xtype }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isListOpen, setListOpen] = useState(false);
@@ -22,6 +23,8 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
     const listRef = useRef(null);
     const formRef = useRef(null);
     const fontSize = '0.875rem';
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const inputRef = useRef(null);
     const [formData, setFormData] = useState({
         zid: zid,
         xtype: xtype,
@@ -51,11 +54,23 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
             return;
         }
         try {
-            const response = await axios.get(
-                `${apiBaseUrl}/searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`
-            );
+            // const response = await axios.get(
+            //     `searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`
+            // );
+
+            const response = await axiosInstance.get(`api/xcodes/searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`)
+
             setSearchResults(response.data);
             setListOpen(true);
+
+            if (inputRef.current) {
+                const rect = inputRef.current.getBoundingClientRect();
+                setDropdownPosition({
+                    top: rect.bottom + window.scrollY,  // Position below the input field
+                    left: rect.left + window.scrollX,   // Align it with the input field
+                });
+            }
+
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
@@ -97,7 +112,8 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
 
     const handleAction = async (method) => {
         console.log(zid)
-        const endpoint = `${apiBaseUrl}?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
+        const endpoint = `/api/xcodes?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
+        // const endpoint = `/api/xcodes`;
 
         const data = { ...formData, zid: zid, };
         console.log("Data Updating")
@@ -171,6 +187,9 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
                                             ref={formRef}
                                             style={{
                                                 position: 'absolute',
+                                                top: dropdownPosition.top, // Use the dynamic top position
+                                                left: dropdownPosition.left,
+                                                // top: '220px',
                                                 maxHeight: '400px',
                                                 width: '600px',
                                                 overflowY: 'auto',
@@ -213,6 +232,7 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
                                     )}
 
                                     <TextField
+                                        ref={inputRef}
                                         id="xcode"
                                         name="xcode"
                                         label="Code"
@@ -246,7 +266,7 @@ const BesicXcodes = ({ title, xtype, apiBaseUrl }) => {
                             <Caption title={`List of ${xtype}`} />
                             <BasicList
                                 xtype={xtype}
-                                apiBaseUrl={apiBaseUrl}
+                                // apiBaseUrl={apiBaseUrl}
                                 zid={zid}
                                 onItemSelect={handleItemSelect}
                                 style={{ marginTop: '1px' }}

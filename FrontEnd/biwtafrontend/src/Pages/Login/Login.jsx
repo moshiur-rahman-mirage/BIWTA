@@ -19,22 +19,20 @@ function Login() {
   
       console.log("called")
       try {
-        const response = await axios.post('http://localhost:8080/api/xusers/login', {
+        const response = await axios.post('http://localhost:8080/auth/login', {
             zemail: userId,
             xpassword: password,
           });
-        // console.log(response.data.zid)
         if (response.status === 200) {
-         
-          const { zid } = response.data;
-          console.log(zid)
+          console.log(response.data.token);
+          const { zid,token } = response.data;
           if (!zid) {
             console.error("zid is missing in the response");
             alert("An error occurred: zid not found.");
             return;
           }
 
-          login( userId, zid);
+          login( userId, zid,token);
           navigate('/main');
         }
         else if (response.status === 401) {

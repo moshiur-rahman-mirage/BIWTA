@@ -14,6 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // HTTP methods allowed
                 .allowedHeaders("*") // Headers allowed
                 .allowCredentials(true); // Include cookies if needed
+
+        registry.addMapping("/auth/**")
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("GET", "POST");
     }
 }
 

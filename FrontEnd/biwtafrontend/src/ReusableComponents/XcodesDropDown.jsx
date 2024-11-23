@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../Provider/AuthProvider';
+import axiosInstance from '../Middleware/AxiosInstance';
 
 const XcodesDropDown = ({ variant, label, type, apiUrl, onSelect, defaultValue = '' }) => {
 
@@ -16,7 +17,17 @@ const XcodesDropDown = ({ variant, label, type, apiUrl, onSelect, defaultValue =
         const fetchOptions = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${apiUrl}/search?zid=${zid}&xtype=${type}`); // Pass type as a query parameter
+                const response = await axios.get(`${apiUrl}/search?zid=${zid}&xtype=${type}`);
+                
+                // const response = await axiosInstance.get('/api/xcodes/searchtext', {
+                //     params: {
+                //       zid: 100000,
+                //       xtype: 'Designation',
+                //       searchText: '0',
+                //     },
+                //   });
+
+
                 setOptions(response.data); // Update state with API response
             } catch (error) {
                 console.error(`Error fetching ${type} options:`, error);

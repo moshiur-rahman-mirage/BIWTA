@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,16 +30,36 @@ public class PdDependentController {
 
     @PostMapping
     public ResponseEntity<?> createPdDependent(@RequestBody PdDependent pdDependent) {
-        if (service.existsByZidAndXstaffAndXrow(pdDependent.getZid(), pdDependent.getXstaff(),pdDependent.getXrow())) {
+        // Ensure that the composite key is set
+        if (pdDependent.getZid() == 0) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: A Employee with the same staff id and relation already exists.");
+                    .body("Validation failed: Composite key (zid, xstaff) is missing.");
         }
 
+        // Validate zid
+        if (pdDependent.getZid() == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Validation failed: 'zid' is mandatory.");
+        }
 
+        // Validate xstaff
+        if (pdDependent.getXstaff() == null || pdDependent.getXstaff().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Validation failed: Employee ID (xstaff) is missing.");
+        }
 
-        PdDependent savePdDependent = service.save(pdDependent);
-        return ResponseEntity.ok(savePdDependent);
+        // Get the max xrow for the given zid and xstaff
+        Integer maxXrow = service.getMaxXrowByZidAndXstaff(pdDependent.getZid(), pdDependent.getXstaff());
+
+        // Set xrow to maxXrow + 1 for the new record
+        pdDependent.setXrow(maxXrow + 1);
+
+        // Save the entity
+        PdDependent savedPdDependent = service.save(pdDependent);
+
+        return ResponseEntity.ok(savedPdDependent);
     }
+
 
     @PutMapping
     public ResponseEntity<?> updatePdDependent(
@@ -47,21 +68,27 @@ public class PdDependentController {
             @RequestParam int xrow,
             @RequestBody PdDependent updatedPdDependent) {
 
+
         if (updatedPdDependent.getXrelation() == null || updatedPdDependent.getXrelation().isBlank()) {
             return ResponseEntity.badRequest()
                     .body("Validation failed: Relation field is required.");
         }
 
-        PdDependentId id = new PdDependentId(zid, xstaff,xrow);
-        return service.findById(id)
-                .map(existingPdmst -> {
-                    updatedPdDependent.setZid(zid);
-                    updatedPdDependent.setXstaff(xstaff);
-                    updatedPdDependent.setXrow(xrow);
+        // Create the composite key for PdDependent
+        PdDependentId id = new PdDependentId(zid, xstaff, xrow);
 
+        // Find the existing record by its composite key
+        return service.findById(id)
+                .map(existingPdDependent -> {
+
+                    updatedPdDependent.setZtime(existingPdDependent.getZtime()); // Retain existing ztime
+                    updatedPdDependent.setZutime(LocalDateTime.now()); // Set the updated time
+                    updatedPdDependent.setZauserid(existingPdDependent.getZauserid()); // Retain other necessary fields
+
+                    // Save the updated entity and return the response
                     return ResponseEntity.ok(service.save(updatedPdDependent));
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build()); // Return not found if the entity doesn't exist
     }
 
 
@@ -91,14 +118,15 @@ public class PdDependentController {
         return service.findPdDependent(zid,xstaff,xrelation);
     }
 
+
     @GetMapping("/searchtext")
     public List<PdDependent> search(
-            @RequestParam("zid") String zid,
+            @RequestParam("zid") Integer zid,
             @RequestParam("searchText") String searchText
     ) {
         return service.searchByText(zid, searchText);
-
     }
+
 
 
 }

@@ -94,6 +94,15 @@ export const menuitems = [
             title:'Store Type',
             to:'administrations/codes/storetype',
           },
+          {
+            title:'Gender',
+            to:'administrations/codes/gender',
+          },
+
+          {
+            title:'Relation',
+            to:'administrations/codes/relation',
+          },
           
         ]
       }

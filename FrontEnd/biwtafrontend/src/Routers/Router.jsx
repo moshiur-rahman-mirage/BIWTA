@@ -19,6 +19,8 @@ import EmpType from "../Pages/Xcodes/EmpType";
 import JobTitle from "../Pages/Xcodes/JobTitle";
 import Religion from "../Pages/Xcodes/Religion";
 import StoreType from "../Pages/Xcodes/StoreType";
+import Gender from "../Pages/Xcodes/Gender";
+import Relation from "../Pages/Xcodes/Relation";
 
 
 // Protected Route wrapper
@@ -93,6 +95,14 @@ const Router = createBrowserRouter([
             {
                 path: "/main/administrations/codes/storetype",
                 element: <PrivateRoutes element={<StoreType />} />,
+            },
+            {
+                path: "/main/administrations/codes/gender",
+                element: <PrivateRoutes element={<Gender />} />,
+            },
+            {
+                path: "/main/administrations/codes/relation",
+                element: <PrivateRoutes element={<Relation />} />,
             },
         ],
     },

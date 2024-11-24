@@ -47,7 +47,7 @@ public class Xcodes {
     private String zuuserid;
 
     @Column(name = "xlong")
-    @NotBlank(message = "'Description' field is required.")
+//    @NotBlank(message = "'Description' field is required.")
     private String xlong;
 
     @Column(name = "zactive")

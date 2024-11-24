@@ -13,9 +13,9 @@ import java.util.Date;
 @Table(name = "pddependent")
 @IdClass(PdDependentId.class)
 public class PdDependent {
+
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-
     private LocalDateTime ztime;
     @Column
     @Temporal(TemporalType.TIMESTAMP)

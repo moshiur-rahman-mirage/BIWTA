@@ -18,31 +18,114 @@ import SideButtons from '../../Shared/SideButtons';
 import Caption from '../../utility/Caption';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import { useAuth } from '../../Provider/AuthProvider';
+import { handleApiRequest } from '../../utility/handleApiRequest';
 
-const PdDependent = () => {
+const PdDependent = ({ xstaff, xname }) => {
     const { zid } = useAuth();
     const variant = 'standard'
+    const [isTyping, setIsTyping] = useState(false);
     const apiBaseUrl = "http://localhost:8080/api/xcodes";
+    const [formData, setFormData] = useState({
+        zid: zid,
+        zauserid: '',
+        xstaff: '',
+        xgender: '',
+        xnid: '',
+        xcontact: '',
+        xrelation: '',
+        xbirthdate: '',
+        xname: ''
+
+
+    });
+
+
+    const handleDropdownSelect = (fieldName, value) => {
+        setFormData((prevState) => ({
+            ...prevState,
+            [fieldName]: value,
+        }));
+    };
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => {
+            const updatedData = { ...prev, [name]: value };
+            return updatedData;
+        });
+        setIsTyping(true);
+    };
+
+
+
+    const handleAction = async (method) => {
+        console.log(zid);
+
+
+        const data = {
+            
+            zid: zid,
+            xstaff: xstaff,
+            zauserid: formData.zauserid,
+            xname: formData.xname,
+            xbirthdate: formData.xbirthdate,
+            xgender: formData.xgender,
+            xnid: formData.xnid,
+            xcontact: formData.xcontact,
+            xrelation: formData.xrelation,
+        };
+
+        console.log("Data Updating");
+        console.log(data);
+
+        const endpoint = "/api/pddependent";
+
+        await handleApiRequest({
+            endpoint,
+            data,
+            method,
+            onSuccess: (response) => {
+                if (method === 'DELETE') {
+
+                    setFormData({
+                        zid: zid,
+                        zauserid: '',
+                        xstaff: '',
+                        xgender: '',
+                        xnid: '',
+                        xcontact: '',
+                        xrelation: '',
+                        xbirthdate: '',
+                        xname: '',
+                    });
+                }
+
+            },
+        });
+    };
 
 
     return (
         <div className='grid grid-cols-12 gap-5'>
             <div className="">
                 <SideButtons
-                // onAdd={handleAdd}
-                // onUpdate={handleUpdate}
-                // onDelete={handleDelete}
-                // onClear={handleClear}
+                    onAdd={() => handleAction('POST')}
+                    onUpdate={() => handleAction('PUT')}
+                    onDelete={() => handleAction('DELETE')}
+                //  onClear={handleClear}
                 // onShow={handleShow}
                 />
             </div>
             <div className='col-span-11 '>
                 <div className='   rounded'>
                     <div className="w-full px-2  mx-auto  ">
-                        <Caption title={"Family Information Detail"} />
+                        <Caption title={"Family Information Detail of " + xname} />
 
 
                         <Box
+                            display="grid"
+                            gridTemplateColumns="repeat(2, 1fr)"
                             component="form"
                             sx={{
                                 '& > :not(style)': { my: 1 },
@@ -57,90 +140,116 @@ const PdDependent = () => {
                             autoComplete="off"
 
                         >
-                            {/* Row 1 */}
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(2, 1fr)"
-                                gap={2}
-                                mb={2} // margin-bottom
-                            >
-                                <TextField
-                                    label="Family member Name"
-                                    size="small"
-                                   variant={variant}
-                                    fullWidth
-                                    required
-                                    sx={{ gridColumn: 'span 1' }}
-                                />
-
-                                <TextField
-                                    label="Date of Birth"
-                                    type="date"
-                                    size='small'
-                                    InputLabelProps={{ shrink: true }}
-                                    variant={variant}
-                                    fullWidth
-                                />
-                            </Box>
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(2, 1fr)"
-                                gap={2}
-                                mb={2} // margin-bottom
-                            >
-                                <FormControl variant={variant} component="fieldset" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
-                                    <FormLabel id="gender-label">Gender</FormLabel>
-                                    <RadioGroup
-                                        row
-                                        aria-labelledby="gender-label"
-                                        name="gender"
-                                        defaultValue="Male"
-                                    >
-                                        <FormControlLabel value="Male" control={<Radio size="small" />} label="Male" />
-                                        <FormControlLabel value="Female" control={<Radio size="small" />} label="Female" />
-                                        <FormControlLabel value="Other" control={<Radio size="small" />} label="Other" />
-                                    </RadioGroup>
-                                </FormControl>
-
-
-
-                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
-
-                                    <XcodesDropDown
+                            <Box sx={{ gridColumn: 'span 1' }}>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+                                    <TextField
+                                        label="Family member Name"
+                                        name='xname'
                                         variant={variant}
-                                        label="Relation"
                                         size="small"
-                                        type="Relation"
-                                        apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                        // onSelect={handleSalutationSelect}
-                                        defaultValue=""
+                                        onChange={handleChange}
+                                        value={formData.xname}
+                                        fullWidth
+                                        required
                                     />
 
-                                </Stack>
+                                    <TextField
+                                        label="Date of Birth"
+                                        type="date"
+                                        name='xbirthdate'
+                                        value={formData.xbirthdate}
+                                        size='small'
+                                        InputLabelProps={{ shrink: true }}
+                                        variant={variant}
+                                        fullWidth
+                                    />
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+                                    <XcodesDropDown
+                                        id='xsex'
+                                        name='xsex'
+                                        variant={variant}
+                                        label="Gender"
+                                        size="small"
+                                        type="Gender"
+                                        apiUrl={apiBaseUrl}
+                                        onSelect={(value) => handleDropdownSelect("xgender", value)}
+                                        value={formData.xgender}
+
+
+                                    />
+
+
+
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
+
+                                        <XcodesDropDown
+                                            variant={variant}
+                                            label="Relation"
+                                            size="small"
+                                            type="Relation"
+                                            name='xrelation'
+                                            onSelect={(value) => handleDropdownSelect("xrelation", value)}
+                                            value={formData.xrelation}
+                                            defaultValue=""
+                                        />
+
+                                    </Stack>
+                                </Box>
+
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+                                    <TextField
+                                        id='xnid'
+                                        name='xnid'
+                                        label="NID"
+                                        size="small"
+                                        onChange={handleChange}
+                                        value={formData.xnid}
+                                        variant={variant}
+                                        fullWidth
+                                        required
+                                        sx={{ gridColumn: 'span 1' }}
+                                        InputLabelProps={{
+                                            shrink: true, // Ensures the label stays above the input field
+                                        }}
+                                    />
+
+                                    <TextField
+                                        label="Contact Number"
+                                        variant={variant}
+                                        size="small"
+                                        fullWidth
+                                        name='xcontact'
+                                        onChange={handleChange}
+                                        value={formData.xcontact}
+                                        required
+                                    />
+
+                                </Box>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 1' }}>
+
                             </Box>
 
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(2, 1fr)"
-                                gap={2}
-                                mb={2} // margin-bottom
-                            >
-                                <TextField
-                                    label="National ID"
-                                   variant={variant}
-                                    size="small"
-                                    fullWidth
-                                    required
-                                />
-                                <TextField
-                                    label="Contact Number"
-                                   variant={variant}
-                                    size="small"
-                                    fullWidth
-                                    required
-                                />
 
-                            </Box>
+
+                            {/* Row 1 */}
+
 
 
                         </Box>

@@ -340,7 +340,7 @@ const Pdmsthrd = () => {
                         boxShadow: 24,
                         p: 4,
                     }}>
-                        <PdDependent />
+                        <PdDependent xstaff={formData.xstaff} xname={formData.xname} />
                     </Box>
                 </Modal>
                 {/* Modal */}

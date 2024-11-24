@@ -2,8 +2,14 @@ package com.zaberp.zab.biwtabackend.id;
 
 
 
+
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
+
 import java.io.Serializable;
 import java.util.Objects;
+
+
 
 public class PdDependentId implements Serializable {
     private int zid;
@@ -18,6 +24,7 @@ public class PdDependentId implements Serializable {
         this.xstaff = xstaff;
         this.xrow = xrow;
     }
+
 
     // Getters, Setters, hashCode, and equals
     @Override

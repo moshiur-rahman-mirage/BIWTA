@@ -15,15 +15,13 @@ import LoadingPage from '../Loading/Loading';
 
 
 const BesicXcodes = ({ title, xtype }) => {
-
-
-    
+    const typeRef = useRef(null);
     const [searchResults, setSearchResults] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isListOpen, setListOpen] = useState(false);
     const [checked, setChecked] = useState(false);
     const [refreshList, setRefreshList] = useState(() => () => { });
-    const { zid,zemail } = useAuth();
+    const { zid, zemail } = useAuth();
     const listRef = useRef(null);
     const formRef = useRef(null);
     const fontSize = '0.875rem';
@@ -40,15 +38,39 @@ const BesicXcodes = ({ title, xtype }) => {
 
     useEffect(() => {
         if (zid && zemail) {
-          setLoading(false);
+            setLoading(false);
         }
-      }, [zid,zemail]);
-    
-      if (loading && !zid && !zemail) {
-        return <LoadingPage />; 
-      }
+    }, [zid, zemail]);
 
-    
+
+    useEffect(() => {
+        // Add event listener to the input field
+        const handleKeyDown = (event) => {
+            if (event.key === 'Enter') {
+                handleAction('POST'); 
+            }
+        };
+
+        const currentInput = inputRef.current;
+        if (currentInput) {
+            currentInput.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            if (currentInput) {
+                currentInput.removeEventListener('keydown', handleKeyDown);
+            }
+        };
+    }, [formData]);
+
+
+
+    if (loading && !zid && !zemail) {
+        return <LoadingPage />;
+    }
+
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -171,7 +193,7 @@ const BesicXcodes = ({ title, xtype }) => {
     };
 
     return (
-        <div className=''>
+        <div ref={typeRef} className=''>
             <HelmetTitle title={title} />
             <div className='grid grid-cols-12'>
                 <div>

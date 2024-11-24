@@ -3,12 +3,18 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mu
 import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
-const XcodesDropDown = ({ variant = "outlined",value, label, type, onSelect, defaultValue = '' }) => {
+const XcodesDropDown = ({ 
+    variant = "outlined", 
+    value, // Value passed down from parent
+    label, 
+    type, 
+    onSelect, 
+    defaultValue = '' 
+}) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
     const [loading, setLoading] = useState(false); // Show loading indicator
-    const [selectedValue, setSelectedValue] = useState(defaultValue); // Track selected value
-
+console.log(value)
     // Fetch options dynamically based on type
     useEffect(() => {
         const fetchOptions = async () => {
@@ -27,15 +33,21 @@ const XcodesDropDown = ({ variant = "outlined",value, label, type, onSelect, def
         if (type) fetchOptions(); // Fetch only if type is provided
     }, [type, zid]); // Add zid and type as dependencies
 
+    // Update selected value when `value` prop changes
     useEffect(() => {
-        setSelectedValue(defaultValue);
-    }, [defaultValue]);
+        if (value !== undefined) {
+            // Ensure the `value` prop is applied correctly
+            setSelectedValue(value);
+        }
+    }, [value]);
+
+    const [selectedValue, setSelectedValue] = useState(defaultValue); // Track selected value
 
     // Handle selection change
     const handleChange = (event) => {
-        const value = event.target.value;
-        setSelectedValue(value); // Update selected value
-        if (onSelect) onSelect(value); // Call parent callback
+        const newValue = event.target.value;
+        setSelectedValue(newValue); // Update selected value
+        if (onSelect) onSelect(newValue); // Call parent callback
     };
 
     return (
@@ -45,13 +57,13 @@ const XcodesDropDown = ({ variant = "outlined",value, label, type, onSelect, def
                 <CircularProgress size={24} sx={{ margin: 'auto' }} />
             ) : (
                 <Select
-                    value={selectedValue}
+                    value={selectedValue || ''} // Use selectedValue for the dropdown value
                     onChange={handleChange}
                     label={label}
                     displayEmpty
                 >
-                    <MenuItem value="N/A">
-                        Pick
+                    <MenuItem value="">
+                        
                     </MenuItem>
                     {options.map((option, index) => (
                         <MenuItem key={index} value={option.value || option.xcode}>

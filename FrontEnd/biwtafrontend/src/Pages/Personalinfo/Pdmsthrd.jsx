@@ -14,8 +14,6 @@ import {
     FormLabel,
     Modal,
     Typography,
-    List,
-    ListItem,
 } from '@mui/material';
 import HelmetTitle from '../../utility/HelmetTitle';
 import SideButtons from '../../Shared/SideButtons';
@@ -42,10 +40,15 @@ const Pdmsthrd = () => {
 
     const fieldConfig = [
         { header: 'ID', field: 'xstaff' },
+        { header: 'Salut', field: 'xsalute' },
         { header: 'Name', field: 'xname' },
         { header: 'Department', field: 'xdeptname' },
         { header: 'Designation', field: 'xdesignation' },
         { header: 'Mobile', field: 'xmobile' },
+        { header: 'Employee Type', field: 'xemptype' },
+        { header: 'Location', field: 'xlocation' },
+        { header: 'Marital Status', field: 'xmstat' },
+        { header: 'NID', field: 'xnid' },
     ];
 
     const { zid, zemail } = useAuth();
@@ -133,7 +136,7 @@ const Pdmsthrd = () => {
         setFormData((prevState) => ({
             ...prevState,
             ...result,
-            zid: zid,
+            zid:zid,
         }));
         // console.log("FormData after update: ", formData);
         setDropdownOpen(false);
@@ -195,8 +198,8 @@ const Pdmsthrd = () => {
             [fieldName]: value,
         }));
     };
-
-
+   
+   
     if (loading && !zid && !zemail) {
         return <LoadingPage />;
     }
@@ -283,7 +286,7 @@ const Pdmsthrd = () => {
                                 mb={2}
                             >
 
-                                {/* <DynamicDropdown
+                                <DynamicDropdown
                                     isOpen={isDropdownOpen}
                                     onClose={() => setDropdownOpen(false)}
                                     
@@ -291,58 +294,9 @@ const Pdmsthrd = () => {
                                     data={searchResults}
                                     headers={fieldConfig.map((config) => config.header)}
                                     onSelect={handleResultClick}
-                                    dropdownWidth={600}
+                                    dropdownWidth={800}
                                     dropdownHeight={400}
-                                /> */}
-
-                                {isListOpen && searchResults.length > 0 && (
-                                    <div
-                                        ref={formRef}
-                                        style={{
-                                            position: 'absolute',
-                                            top: dropdownPosition.top, // Use the dynamic top position
-                                            left: dropdownPosition.left,
-                                            // top: '220px',
-                                            maxHeight: '400px',
-                                            width: '600px',
-                                            overflowY: 'auto',
-                                            border: '1px solid black',
-                                            borderRadius: '4px',
-                                            backgroundColor: '#fff',
-                                            zIndex: 100,
-                                            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                padding: '10px',
-                                                fontWeight: 'bold',
-                                                backgroundColor: '#f0f0f0',
-                                                borderBottom: '1px solid gray',
-                                            }}
-                                        >
-                                            <div style={{ flex: 1, textAlign: 'left' }}>Code</div>
-                                            <div style={{ flex: 2, textAlign: 'left' }}>Name</div>
-                                            <div style={{ flex: 1, textAlign: 'left' }}>Type</div>
-                                        </div>
-
-                                        <List>
-                                            {searchResults.map((result, index) => (
-                                                <ListItem
-                                                    key={index}
-                                                    button='true'
-                                                    onClick={() => handleResultClick(result)}
-                                                    style={{ display: 'flex' }}
-                                                >
-                                                    <div style={{ flex: 1, textAlign: 'left' }}>{result.xcode}</div>
-                                                    <div style={{ flex: 2, textAlign: 'left' }}>{result.xlong}</div>
-                                                    <div style={{ flex: 1, textAlign: 'left' }}>{result.xtype}</div>
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </div>
-                                )}
+                                />
                                 <TextField
                                     ref={triggerRef}
                                     id='xstaff'
@@ -403,7 +357,8 @@ const Pdmsthrd = () => {
                                         type="salutation"
                                         apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xsalute", value)}
-                                        value={dropdownValues.xsalute}
+                                        value={formData.xsalute} 
+                                    
 
                                     />
 
@@ -480,7 +435,9 @@ const Pdmsthrd = () => {
                                     name='xnid'
                                     onChange={handleChange}
                                     variant={variant}
+                                    InputLabelProps={{ shrink: true }}
                                     label="National ID"
+                                    value={formData.xnid}
                                     fullWidth required
                                 />
 
@@ -492,6 +449,7 @@ const Pdmsthrd = () => {
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdesignation", value)}
+                                    value={formData.xdesignation} 
                                     defaultValue=""
                                 />
                             </Stack>
@@ -511,9 +469,10 @@ const Pdmsthrd = () => {
                                     label="Department"
                                     size="small"
                                     type="Department"
-
+                                   
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdeptname", value)}
+                                    value={formData.xdeptname} 
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -525,6 +484,7 @@ const Pdmsthrd = () => {
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xreligion", value)}
+                                    value={formData.xreligion} 
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -536,6 +496,7 @@ const Pdmsthrd = () => {
                                     type="Blood Group"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xbloodgroup", value)}
+                                    value={formData.xbloodgroup} 
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -547,6 +508,7 @@ const Pdmsthrd = () => {
                                     type="Marital Status"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xmstat", value)}
+                                    value={formData.xmstat}
                                     defaultValue=""
                                 />
                             </Stack>
@@ -580,6 +542,7 @@ const Pdmsthrd = () => {
                                     size="small"
                                     type="Job Title"
                                     onSelect={(value) => handleDropdownSelect("xjobtitle", value)}
+                                    value={formData.xjobtitle}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     // onSelect={handleSalutationSelect}
                                     defaultValue=""
@@ -593,6 +556,7 @@ const Pdmsthrd = () => {
                                     size="small"
                                     type="Job Location"
                                     onSelect={(value) => handleDropdownSelect("xlocation", value)}
+                                    value={formData.xlocation}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     // onSelect={handleSalutationSelect}
                                     defaultValue=""
@@ -614,7 +578,8 @@ const Pdmsthrd = () => {
                                     size="small"
                                     name="xemptype"
                                     type="Employee Type"
-                                    onSelect={(value) => handleDropdownSelect("xlocation", value)}
+                                    onSelect={(value) => handleDropdownSelect("xemptype", value)}
+                                    value={formData.xemptype}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     // onSelect={handleSalutationSelect}
                                     defaultValue=""

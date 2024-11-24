@@ -337,7 +337,7 @@ const Store = () => {
                                                 {searchResults.map((result, index) => (
                                                     <ListItem
                                                         key={index}
-                                                        button={true}
+                                                        button='true'
                                                         onClick={() => handleResultClick(result)}
                                                         style={{ display: 'flex' }}
                                                     // sx={{border:1 }}
@@ -422,7 +422,7 @@ const Store = () => {
                                         type="Store Type"
                                         // apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xtypeobj", value)}
-                                        value={formData.xtypeobj} // Ensure this binds correctly
+                                        value={formData.xtypeobj} 
 
                                     />
 

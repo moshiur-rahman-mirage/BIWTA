@@ -2,7 +2,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import axiosInstance from '../Middleware/AxiosInstance';
 
-
 export const handleApiRequest = async ({ 
     endpoint, 
     method = 'POST',
@@ -31,31 +30,71 @@ export const handleApiRequest = async ({
         // Handle success response
         if (onSuccess) onSuccess(response);
 
-        Swal.fire('Success!', 'Operation completed successfully', 'success');
+        // Display success SweetAlert with custom z-index
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Operation completed successfully',
+            // Set z-index here to ensure it appears above other modals
+        });
         
     } catch (error) {
         // Handle error
         if (error.response && error.response.status === 400) {
             const errorMessages = error.response.data;
-            if (onValidationError) onValidationError(errorMessages);
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Errors',
-                html: errorMessages,
-                confirmButtonText: 'Okay',
-            });
+            if (typeof errorMessages === 'object') {
+                let formattedErrors = '';
+                for (const field in errorMessages) {
+                    formattedErrors += `${field}: ${errorMessages[field].join(', ')}<br>`;
+                }
+                if (onValidationError) onValidationError(formattedErrors);
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Errors',
+                    html: formattedErrors,
+                    confirmButtonText: 'Okay',
+                     // Set z-index here to ensure it appears above other modals
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Errors',
+                    text: errorMessages,
+                    confirmButtonText: 'Okay',
+                     // Set z-index here to ensure it appears above other modals
+                });
+            }
         } else {
             const errorMessages = error.message;
 
-            Swal.fire({
-                icon: 'error',
-                title: error.code || 'Error',
-                html: errorMessages,
-                confirmButtonText: 'Okay',
-            });
+            if (error.code === 'ECONNABORTED') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'The request took too long to respond. Please try again later.',
+                    confirmButtonText: 'Okay',
+                     // Set z-index here to ensure it appears above other modals
+                });
+            } else if (error.response && error.response.status >= 500) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: 'There was an issue with the server. Please try again later.',
+                    confirmButtonText: 'Okay',
+                     // Set z-index here to ensure it appears above other modals
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: error.code || 'Error',
+                    html: errorMessages,
+                    confirmButtonText: 'Okay',
+                     // Set z-index here to ensure it appears above other modals
+                });
+            }
 
-            // Call onError callback if available
             if (onError) onError(error);
         }
     }

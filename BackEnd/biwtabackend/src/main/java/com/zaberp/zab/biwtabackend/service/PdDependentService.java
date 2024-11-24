@@ -92,5 +92,10 @@ public class PdDependentService {
     }
 
 
+    public List<PdDependent> findByZidAndXstaff(int zid, String xstaff) {
+        return repository.findByZidAndXstaff(zid, xstaff);
+    }
+
+
 }
 

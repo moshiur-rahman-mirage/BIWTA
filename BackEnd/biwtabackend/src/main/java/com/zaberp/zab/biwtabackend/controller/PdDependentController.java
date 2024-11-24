@@ -128,6 +128,13 @@ public class PdDependentController {
     }
 
 
+    @GetMapping("/pddependents") public ResponseEntity<List<PdDependent>>
+    getPdDependents( @RequestParam("zid") int zid, @RequestParam("xstaff") String xstaff) {
+        List<PdDependent> pdDependents = service.findByZidAndXstaff(zid, xstaff);
+        return ResponseEntity.ok(pdDependents);
+    }
+
+
 
 }
 

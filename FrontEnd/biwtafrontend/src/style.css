@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 
+
+.swal2-container { z-index: 9000 !important; /* Adjust as needed */ }
+
 @layer components {
     .btn-nav {
       @apply text-3xl text-zab-hombtn cursor-pointer;

@@ -3,18 +3,21 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mu
 import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
-const XcodesDropDown = ({ 
-    variant = "outlined", 
+const XcodesDropDown = ({
+    variant = "outlined",
     value, // Value passed down from parent
-    label, 
-    type, 
-    onSelect, 
-    defaultValue = '' 
+    label,
+    type,
+    onSelect,
+    defaultValue = '',
+    fontSize = '0.875rem', // Default font size for options
+    captionSize = '0.75rem', // Default font size for the label
 }) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
     const [loading, setLoading] = useState(false); // Show loading indicator
-console.log(value)
+    const [selectedValue, setSelectedValue] = useState(defaultValue); // Track selected value
+
     // Fetch options dynamically based on type
     useEffect(() => {
         const fetchOptions = async () => {
@@ -36,12 +39,9 @@ console.log(value)
     // Update selected value when `value` prop changes
     useEffect(() => {
         if (value !== undefined) {
-            // Ensure the `value` prop is applied correctly
-            setSelectedValue(value);
+            setSelectedValue(value); // Ensure the `value` prop is applied correctly
         }
     }, [value]);
-
-    const [selectedValue, setSelectedValue] = useState(defaultValue); // Track selected value
 
     // Handle selection change
     const handleChange = (event) => {
@@ -52,7 +52,13 @@ console.log(value)
 
     return (
         <FormControl fullWidth size="small" variant={variant}>
-            <InputLabel>{label}</InputLabel>
+            <InputLabel
+                sx={{
+                    fontSize: captionSize,
+                }}
+            >
+                {label}
+            </InputLabel>
             {loading ? (
                 <CircularProgress size={24} sx={{ margin: 'auto' }} />
             ) : (
@@ -61,12 +67,24 @@ console.log(value)
                     onChange={handleChange}
                     label={label}
                     displayEmpty
+                    sx={{
+                        '& .MuiMenuItem-root': {
+                            fontSize, // Apply fontSize to menu items
+                        },
+                        fontSize, // Apply fontSize to selected value in dropdown
+                    }}
                 >
                     <MenuItem value="">
-                        
+                        <span style={{ fontSize }}></span>
                     </MenuItem>
                     {options.map((option, index) => (
-                        <MenuItem key={index} value={option.value || option.xcode}>
+                        <MenuItem
+                            key={index}
+                            value={option.value || option.xcode}
+                            sx={{
+                                fontSize, // Apply fontSize to each menu item
+                            }}
+                        >
                             {option.xcode}
                         </MenuItem>
                     ))}

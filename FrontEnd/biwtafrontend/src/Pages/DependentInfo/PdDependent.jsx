@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+
 import {
     TextField,
     MenuItem,
@@ -19,12 +20,15 @@ import Caption from '../../utility/Caption';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import { useAuth } from '../../Provider/AuthProvider';
 import { handleApiRequest } from '../../utility/handleApiRequest';
+import GenericList from '../../ReusableComponents/GenericList';
 
 const PdDependent = ({ xstaff, xname }) => {
     const { zid } = useAuth();
     const variant = 'standard'
     const [isTyping, setIsTyping] = useState(false);
-    const apiBaseUrl = "http://localhost:8080/api/xcodes";
+    const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
+    const [refreshTrigger, setRefreshTrigger] = useState(false);
+    const apiBaseUrl = `api/pddependent/pddependents?zid=${zid}&xstaff=${xstaff}`;
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -34,7 +38,8 @@ const PdDependent = ({ xstaff, xname }) => {
         xcontact: '',
         xrelation: '',
         xbirthdate: '',
-        xname: ''
+        xname: '',
+        xrow: ''
 
 
     });
@@ -46,6 +51,21 @@ const PdDependent = ({ xstaff, xname }) => {
             [fieldName]: value,
         }));
     };
+
+
+    const handleRefresh = useCallback(() => {
+        if (refreshCallback) {
+            refreshCallback(); // Call the fetch function from the child
+        }
+    }, [refreshCallback]);
+
+    useEffect(() => {
+
+        if (refreshTrigger) {
+            handleRefresh();
+            setRefreshTrigger(false); // Reset trigger
+        }
+    }, [refreshTrigger, handleRefresh]);
 
 
     const handleChange = (e) => {
@@ -64,7 +84,7 @@ const PdDependent = ({ xstaff, xname }) => {
 
 
         const data = {
-            
+
             zid: zid,
             xstaff: xstaff,
             zauserid: formData.zauserid,
@@ -74,6 +94,7 @@ const PdDependent = ({ xstaff, xname }) => {
             xnid: formData.xnid,
             xcontact: formData.xcontact,
             xrelation: formData.xrelation,
+
         };
 
         console.log("Data Updating");
@@ -86,6 +107,8 @@ const PdDependent = ({ xstaff, xname }) => {
             data,
             method,
             onSuccess: (response) => {
+            handleRefresh();  
+                setRefreshTrigger(true);
                 if (method === 'DELETE') {
 
                     setFormData({
@@ -98,6 +121,7 @@ const PdDependent = ({ xstaff, xname }) => {
                         xrelation: '',
                         xbirthdate: '',
                         xname: '',
+                        xrow: 0
                     });
                 }
 
@@ -105,9 +129,13 @@ const PdDependent = ({ xstaff, xname }) => {
         });
     };
 
+    const handleOnRefresh = useCallback((refreshFn) => {
+        setRefreshCallback(() => refreshFn);
+    }, []);
+
 
     return (
-        <div className='grid grid-cols-12 gap-5'>
+        <div className='grid grid-cols-12 gap-5 z-40'>
             <div className="">
                 <SideButtons
                     onAdd={() => handleAction('POST')}
@@ -120,7 +148,7 @@ const PdDependent = ({ xstaff, xname }) => {
             <div className='col-span-11 '>
                 <div className='   rounded'>
                     <div className="w-full px-2  mx-auto  ">
-                        <Caption title={"Family Information Detail of " + xname} />
+
 
 
                         <Box
@@ -140,13 +168,21 @@ const PdDependent = ({ xstaff, xname }) => {
                             autoComplete="off"
 
                         >
-                            <Box sx={{ gridColumn: 'span 1' }}>
+                            <Box sx={{
+                                gridColumn: 'span 1',
+                                border: '1px solid #ccc', // Light gray border
+                                borderRadius: '8px', // Optional: Rounded corners
+                                padding: 2,
+                            }}>
+                                <Caption title={"Family Information Detail of " + xname} />
                                 <Box
                                     display="grid"
+
                                     gridTemplateColumns="repeat(2, 1fr)"
                                     gap={2}
                                     mb={2} // margin-bottom
                                 >
+
                                     <TextField
                                         label="Family member Name"
                                         name='xname'
@@ -156,17 +192,36 @@ const PdDependent = ({ xstaff, xname }) => {
                                         value={formData.xname}
                                         fullWidth
                                         required
+                                        sx={{
+                                            '& .MuiInputLabel-root': {
+                                                fontSize: '0.85rem',
+                                            },
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '0.85rem',
+                                            },
+                                        }}
                                     />
 
                                     <TextField
                                         label="Date of Birth"
                                         type="date"
                                         name='xbirthdate'
-                                        value={formData.xbirthdate}
                                         size='small'
+                                        onChange={handleChange}
                                         InputLabelProps={{ shrink: true }}
+                                        value={formData.xbirthdate}
                                         variant={variant}
                                         fullWidth
+
+                                        sx={{
+                                            '& .MuiInputLabel-root': {
+                                                fontSize: '0.85rem',
+                                            },
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '0.85rem',
+                                            },
+                                        }}
+
                                     />
                                 </Box>
                                 <Box
@@ -185,6 +240,8 @@ const PdDependent = ({ xstaff, xname }) => {
                                         apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
+                                        fontSize="0.8rem" // Smaller font size for dropdown options
+                                        captionSize="0.8rem"
 
 
                                     />
@@ -210,8 +267,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                 <Box
                                     display="grid"
                                     gridTemplateColumns="repeat(2, 1fr)"
+                                    border
                                     gap={2}
                                     mb={2} // margin-bottom
+
                                 >
                                     <TextField
                                         id='xnid'
@@ -223,7 +282,16 @@ const PdDependent = ({ xstaff, xname }) => {
                                         variant={variant}
                                         fullWidth
                                         required
-                                        sx={{ gridColumn: 'span 1' }}
+                                        sx={{
+                                            '& .MuiInputLabel-root': {
+                                                fontSize: '0.85rem',
+                                            },
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '0.85rem',
+                                            },
+                                            gridColumn: 'span 1'
+                                        }}
+
                                         InputLabelProps={{
                                             shrink: true, // Ensures the label stays above the input field
                                         }}
@@ -238,11 +306,42 @@ const PdDependent = ({ xstaff, xname }) => {
                                         onChange={handleChange}
                                         value={formData.xcontact}
                                         required
+                                        sx={{
+                                            '& .MuiInputLabel-root': {
+                                                fontSize: '0.85rem',
+                                            },
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '0.85rem',
+                                            },
+
+                                        }}
                                     />
 
                                 </Box>
                             </Box>
-                            <Box sx={{ gridColumn: 'span 1' }}>
+                            <Box sx={{
+                                gridColumn: 'span 1',
+                                border: '1px solid #ccc', // Light gray border
+                                borderRadius: '8px', // Optional: Rounded corners
+                                padding: 2,
+                            }}>
+
+                                <GenericList
+                                    apiUrl={apiBaseUrl}
+                                    caption="Dependents List"
+                                    columns={[
+                                        { field: 'xname', title: 'Name', width: '40%' },
+                                        { field: 'xrelation', title: 'Relation', width: '30%' },
+                                        { field: 'xcontact', title: 'Contact?', width: '30%', align: 'center' },
+                                    ]}
+                                    //  additionalParams={{ zid: zid,xrelation:xrelation }}
+                                    onItemSelect={(item) => console.log('Selected Item:', item)}
+                                    onRefresh={handleOnRefresh}
+                                    captionFont="3.9rem"
+                                    bodyFont=".9rem"
+
+
+                                />
 
                             </Box>
 

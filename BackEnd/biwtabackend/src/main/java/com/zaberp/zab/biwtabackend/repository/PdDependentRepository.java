@@ -25,6 +25,6 @@ public interface PdDependentRepository extends JpaRepository<PdDependent, PdDepe
     @Query("SELECT COALESCE(MAX(pd.xrow), 0) FROM PdDependent pd WHERE pd.zid = :zid AND pd.xstaff = :xstaff")
     int findMaxXrowByZidAndXstaff(@Param("zid") int zid, @Param("xstaff") String xstaff);
 
-
+    List<PdDependent> findByZidAndXstaff(@Param("zid") int zid, @Param("xstaff") String xstaff);
 
 }

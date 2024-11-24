@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import {
     TextField,
     MenuItem,
@@ -300,7 +301,7 @@ const Pdmsthrd = () => {
                 // onShow={handleShow}
                 />
             </div>
-            <div className='col-span-11 '>
+            <div className='col-span-11 shadow-lg'>
                 <Button
                     onClick={handleOpen}
                     variant='outlined'
@@ -333,12 +334,13 @@ const Pdmsthrd = () => {
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        width: "1200px", // Fixed width
+                        width: "1300px", // Fixed width
                         height: "500px", // Fixed height
                         bgcolor: "background.paper",
                         border: "2px solid #000",
                         boxShadow: 24,
                         p: 4,
+                        zIndex: 10,
                     }}>
                         <PdDependent xstaff={formData.xstaff} xname={formData.xname} />
                     </Box>
@@ -355,6 +357,7 @@ const Pdmsthrd = () => {
                                 mx: 'auto',
                                 gap: 2,
                                 mt: 1,
+                              
                                 borderRadius: 2,
                                 bgcolor: 'white',
                             }}

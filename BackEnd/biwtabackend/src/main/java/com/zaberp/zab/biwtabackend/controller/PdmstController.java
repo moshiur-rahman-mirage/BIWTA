@@ -39,7 +39,7 @@ public class PdmstController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Validation failed: A Employee with the same position id already exists.");
         }
-
+        System.out.println(pdmst.toString());
         Pdmst savePdmst = service.save(pdmst);
         return ResponseEntity.ok(savePdmst);
     }

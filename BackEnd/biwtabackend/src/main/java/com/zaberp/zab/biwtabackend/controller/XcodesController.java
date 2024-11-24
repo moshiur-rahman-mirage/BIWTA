@@ -38,10 +38,10 @@ public class XcodesController {
             @RequestParam String xcode,
             @RequestBody Xcodes updatedXcodes) {
 
-        if (updatedXcodes.getXlong() == null || updatedXcodes.getXlong().isBlank()) {
-            return ResponseEntity.badRequest()
-                    .body("Validation failed: Name field is required.");
-        }
+//        if (updatedXcodes.getXlong() == null || updatedXcodes.getXlong().isBlank()) {
+//            return ResponseEntity.badRequest()
+//                    .body("Validation failed: Name field is required.");
+//        }
 
         XcodesId id = new XcodesId(zid, xtype, xcode);
         return service.findById(id)

@@ -3,7 +3,7 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mu
 import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
-const XcodesDropDown = ({ variant = "outlined", label, type, onSelect, defaultValue = '' }) => {
+const XcodesDropDown = ({ variant = "outlined",value, label, type, onSelect, defaultValue = '' }) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
     const [loading, setLoading] = useState(false); // Show loading indicator
@@ -55,7 +55,7 @@ const XcodesDropDown = ({ variant = "outlined", label, type, onSelect, defaultVa
                     </MenuItem>
                     {options.map((option, index) => (
                         <MenuItem key={index} value={option.value || option.xcode}>
-                            {option.xlong}
+                            {option.xcode}
                         </MenuItem>
                     ))}
                 </Select>

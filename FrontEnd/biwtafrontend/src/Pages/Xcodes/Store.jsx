@@ -13,6 +13,7 @@ import axios from 'axios';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import { useAuth } from '../../Provider/AuthProvider';
 import axiosInstance from '../../Middleware/AxiosInstance';
+import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 
 
 
@@ -60,7 +61,12 @@ const Store = () => {
         }
     };
 
-
+    const handleDropdownSelect = (fieldName, value) => {
+        setFormData((prevState) => ({
+            ...prevState,
+            [fieldName]: value,
+        }));
+    };
 
     const fetchSearchResults = async (query) => {
         if (!query) {
@@ -86,23 +92,44 @@ const Store = () => {
 
 
 
-    const handleResultClick = (result) => {
+    // const handleResultClick = (result) => {
 
-        const updatedZactive = result.zactive == 1 ? true : false;
-        setChecked(updatedZactive)
-        console.log(checked)
+    //     const updatedZactive = result.zactive == 1 ? true : false;
+    //     setChecked(updatedZactive)
+    //     console.log(checked)
+    //     setFormData({
+    //         xcode: result.xcode,
+    //         xlong: result.xlong,
+    //         xemail: result.xemail,
+    //         xtype: result.xtype,
+    //         xphone: result.xphone,
+    //         xmadd: result.xmadd,
+    //         xtypeobj: result.xtypeobj,
+    //         zactive: checked
+    //     });
+    //     setListOpen(false);
+    // };
+
+    const handleResultClick = (result) => {
+        const updatedZactive = result.zactive === 1 ? true : false;
+        setChecked(updatedZactive);
+    
         setFormData({
+            ...formData,
             xcode: result.xcode,
             xlong: result.xlong,
             xemail: result.xemail,
-            xtype:result.xtype,
+            xtype: result.xtype,
             xphone: result.xphone,
             xmadd: result.xmadd,
-            xtypeobj: result.xtypeobj,
-            zactive: checked
+            xtypeobj: result.xtypeobj, // Make sure this is set correctly
+            zactive: updatedZactive,
         });
+    
+        // Trigger the dropdown to show the correct value
         setListOpen(false);
     };
+    
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -141,17 +168,17 @@ const Store = () => {
 
     const handleAdd = async () => {
         const endpoint = 'http://localhost:8080/api/xcodes';
-        const data = { 
-            ...formData, 
-            zid: zid, 
-            xtype: 'Store', 
-            zactive: checked 
+        const data = {
+            ...formData,
+            zid: zid,
+            xtype: 'Store',
+            zactive: checked
         };
-    
+
         await handleApiRequest({
             endpoint,
             data,
-            method:'POST',
+            method: 'POST',
             onSuccess: (response) => {
                 setErrors({});
                 // setFormData({
@@ -166,22 +193,22 @@ const Store = () => {
             },
         });
     };
-    
+
 
 
     const handleUpdate = async () => {
         const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
-        const data = { 
-            ...formData, 
-            zid: zid, 
-            xtype: 'Store', 
-            zactive: checked 
+        const data = {
+            ...formData,
+            zid: zid,
+            xtype: 'Store',
+            zactive: checked
         };
-    
+
         await handleApiRequest({
             endpoint,
             data,
-            method:'PUT',
+            method: 'PUT',
             onSuccess: (response) => {
                 setErrors({});
             },
@@ -192,7 +219,7 @@ const Store = () => {
         const endpoint = `/api/xcodes?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
         await handleApiRequest({
             endpoint,
-            method:'DELETE',
+            method: 'DELETE',
             onSuccess: (response) => {
                 setErrors({});
                 setFormData({
@@ -216,7 +243,7 @@ const Store = () => {
             xmadd: '',
             xphone: '',
             zactive: '',
-            xemail:'',
+            xemail: '',
             xtypeobj: '',
             xtype: 'Store',
         });
@@ -238,7 +265,7 @@ const Store = () => {
                         onUpdate={handleUpdate}
                         onDelete={handleDelete}
                         onClear={handleClear}
-                        // onShow={handleShow}
+                    // onShow={handleShow}
                     />
                 </div>
 
@@ -260,7 +287,7 @@ const Store = () => {
                                         // boxShadow: 3,
                                         display: 'grid',
                                         gap: 2,
-                                        mt:1,
+                                        mt: 1,
                                         gridTemplateColumns: 'repeat(3, 1fr)',
                                         borderRadius: 2,
 
@@ -312,8 +339,8 @@ const Store = () => {
                                                         key={index}
                                                         button={true}
                                                         onClick={() => handleResultClick(result)}
-                                                        style={{ display: 'flex'}}
-                                                        // sx={{border:1 }}
+                                                        style={{ display: 'flex' }}
+                                                    // sx={{border:1 }}
                                                     >
                                                         {/* Columns in List */}
                                                         <div style={{ flex: 1, textAlign: 'left' }}>{result.xcode}</div>
@@ -328,7 +355,7 @@ const Store = () => {
 
 
                                     <TextField
-                                    ref={inputRef}
+                                        ref={inputRef}
                                         id="xcode"
                                         name="xcode"
                                         label="Store Code"
@@ -367,7 +394,7 @@ const Store = () => {
                                         sx={{ gridColumn: 'span 2' }}
                                     />
 
-                                    <FormControl fullWidth sx={{ gridColumn: 'span 1' }}>
+                                    {/* <FormControl fullWidth sx={{ gridColumn: 'span 1' }}>
                                         <InputLabel id="demo-simple-select-label">Store Type</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
@@ -384,7 +411,20 @@ const Store = () => {
                                             <MenuItem value={'Virtual'}>Virtual</MenuItem>
 
                                         </Select>
-                                    </FormControl>
+                                    </FormControl> */}
+
+                                    <XcodesDropDown
+                                        id='xtypeobj'
+                                        name='xtypeobj'
+                                        variant='outlined'
+                                        label="Store Type"
+                                        size="small"
+                                        type="Store Type"
+                                        // apiUrl={apiBaseUrl}
+                                        onSelect={(value) => handleDropdownSelect("xtypeobj", value)}
+                                        value={formData.xtypeobj} // Ensure this binds correctly
+
+                                    />
 
                                     <TextField
                                         id="xemail"

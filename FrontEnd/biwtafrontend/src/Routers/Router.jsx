@@ -12,6 +12,13 @@ import Login from "../Pages/Login/Login";
 import Store from "../Pages/Xcodes/Store";
 import Salutation from "../Pages/Xcodes/Salutation";
 import PrivateRoutes from "../PrivateRoutes";
+import JobLocation from "../Pages/Xcodes/JobLocation";
+import BloodGroup from "../Pages/Xcodes/BloodGroup";
+import MaritalStatus from "../Pages/Xcodes/MaritalStatus";
+import EmpType from "../Pages/Xcodes/EmpType";
+import JobTitle from "../Pages/Xcodes/JobTitle";
+import Religion from "../Pages/Xcodes/Religion";
+import StoreType from "../Pages/Xcodes/StoreType";
 
 
 // Protected Route wrapper
@@ -58,6 +65,34 @@ const Router = createBrowserRouter([
             {
                 path: "/main/administrations/codes/itemgroup",
                 element: <PrivateRoutes element={<ItemGroup />} />,
+            },
+            {
+                path: "/main/administrations/codes/joblocation",
+                element: <PrivateRoutes element={<JobLocation />} />,
+            },
+            {
+                path: "/main/administrations/codes/bloodgroup",
+                element: <PrivateRoutes element={<BloodGroup />} />,
+            },
+            {
+                path: "/main/administrations/codes/maritalstatus",
+                element: <PrivateRoutes element={<MaritalStatus />} />,
+            },
+            {
+                path: "/main/administrations/codes/emptype",
+                element: <PrivateRoutes element={<EmpType />} />,
+            },
+            {
+                path: "/main/administrations/codes/jobtitle",
+                element: <PrivateRoutes element={<JobTitle />} />,
+            },
+            {
+                path: "/main/administrations/codes/religion",
+                element: <PrivateRoutes element={<Religion />} />,
+            },
+            {
+                path: "/main/administrations/codes/storetype",
+                element: <PrivateRoutes element={<StoreType />} />,
             },
         ],
     },

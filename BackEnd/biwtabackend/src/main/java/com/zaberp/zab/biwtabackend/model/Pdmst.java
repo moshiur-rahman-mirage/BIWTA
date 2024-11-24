@@ -1,7 +1,9 @@
 package com.zaberp.zab.biwtabackend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zaberp.zab.biwtabackend.id.PdmstId;
 import com.zaberp.zab.biwtabackend.id.XcodesId;
+import com.zaberp.zab.biwtabackend.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,7 +14,7 @@ import java.util.Date;
 @Data
 @Table(name = "pdmst")
 @IdClass(PdmstId.class)
-public class Pdmst {
+public class Pdmst extends BaseEntity {
 
     @Id
     @Column(name = "zid")
@@ -50,7 +52,8 @@ public class Pdmst {
     private String xpadd;
 
     @Column(name = "xbirthdate")
-    private Date xbithdate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date xbirthdate;
 
     @Column(name = "xsex")
     private String xsex;
@@ -412,15 +415,15 @@ public class Pdmst {
     @Column(name = "xprofdegree")
     private String xprofdegree;
 
-    @PrePersist
-    protected void onCreate() {
-        this.ztime = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.zutime = LocalDateTime.now();
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        this.ztime = LocalDateTime.now();
+//    }
+//
+//    @PreUpdate
+//    protected void onUpdate() {
+//        this.zutime = LocalDateTime.now();
+//    }
 
 }
 

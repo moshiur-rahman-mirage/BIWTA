@@ -14,6 +14,8 @@ import {
     FormLabel,
     Modal,
     Typography,
+    List,
+    ListItem,
 } from '@mui/material';
 import HelmetTitle from '../../utility/HelmetTitle';
 import SideButtons from '../../Shared/SideButtons';
@@ -23,18 +25,32 @@ import { useAuth } from '../../Provider/AuthProvider';
 import PdDependent from '../DependentInfo/PdDependent';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import LoadingPage from '../Loading/Loading';
+import axiosInstance from '../../Middleware/AxiosInstance';
+import DynamicDropdown from '../../ReusableComponents/DynamicDropdown';
+import { handleSearch } from '../../ReusableComponents/handleSearch';
+import { addFunction } from '../../ReusableComponents/addFunction';
 
 
 const Pdmsthrd = () => {
     const [dropdownValues, setDropdownValues] = useState({
         xdesignation: "",
-        xdepartment: "",
-        xsalutation:'',
-        xbloodgroup:'',
-        
+        xdeptname: "",
+        xsalute: '',
+        xbloodgroup: '',
+
     });
-    const { zid,zemail } = useAuth();
+
+    const fieldConfig = [
+        { header: 'ID', field: 'xstaff' },
+        { header: 'Name', field: 'xname' },
+        { header: 'Department', field: 'xdeptname' },
+        { header: 'Designation', field: 'xdesignation' },
+        { header: 'Mobile', field: 'xmobile' },
+    ];
+
+    const { zid, zemail } = useAuth();
     const [searchResults, setSearchResults] = useState([]);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [isTyping, setIsTyping] = useState(false); // To handle typing state
     const [selectedCode, setSelectedCode] = useState(''); // To store selected code
     const [checked, setChecked] = useState(false);
@@ -42,32 +58,37 @@ const Pdmsthrd = () => {
     const [isListOpen, setListOpen] = useState(false)
     const listRef = useRef(null);
     const formRef = useRef(null);
-    const inputRef=useRef(null);
+    const inputRef = useRef(null);
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState('Male');
+
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const triggerRef = useRef(null);
     const apiBaseUrl = "http://localhost:8080/api/pdmst";
     const variant = 'standard'
-    console.log(zid)
     const [loading, setLoading] = useState(true);
-
     const [open, setOpen] = useState(false);
-    // const handleOpen = () => setOpen(true);
-    // const handleClose = () => setOpen(false);
- // For search results
+
 
 
 
 
     const [formData, setFormData] = useState({
         zid: zid,
+        zauserid: '',
         xstaff: '',
         xname: '',
+        xfstname: '',
         xbirthdate: '',
+        xsalute: '',
         xlastname: '',
-        xdepartment: '',
+        xdeptname: '',
         xdesignation: '',
+        xposition: '',
         xmname: '',
         xsex: 'Male',
+        xnid: '',
+        xreligion: '',
         xmobile: '',
         xemail: '',
         xjobtitle: '',
@@ -79,139 +100,113 @@ const Pdmsthrd = () => {
     });
 
 
-
+    const apiEndpoint = `/api/pdmst/searchtext?zid=100000&searchText={query}`;
 
     useEffect(() => {
         if (zid && zemail) {
-          setLoading(false);
+            setLoading(false);
         }
-      }, [zid,zemail]);
-    
-      if (loading && !zid && !zemail) {
-        return <LoadingPage />; 
-      }
+    }, [zid, zemail]);
+
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
+        setFormData((prev) => {
+            const updatedData = { ...prev, [name]: value };
+
+            // Concatenate salutation, first name, and last name for Full Name
+            updatedData.xname = `${dropdownValues.xsalute || ''} ${updatedData.xfstname || ''} ${updatedData.xmname || ''} ${updatedData.xlastname || ''}`.trim();
+            return updatedData;
+        });
+        setIsTyping(true);
+    };
+
+
+
+
+
+    const handleResultClick = (result) => {
+        console.log("Selected result: ", result);
+        handleDropdownSelect("xdeptname", result.xdeptname);
+        console.log(result.xdeptname)
+        setFormData((prevState) => ({
+            ...prevState,
+            ...result,
+            zid: zid,
         }));
-        
-
-            setIsTyping(true);
-            if (name === 'xstaff') {
-            fetchSearchResults(value);
-        }
+        // console.log("FormData after update: ", formData);
+        setDropdownOpen(false);
     };
 
-
-
-    const fetchSearchResults = async (query) => {
-        if (!query) {
-            setSearchResults([]);
-            setListOpen(false);
-            return;
-        }
-        try {
-            const response = await axiosInstance.get(`api/pdmst?zid=${zid}&searchText=${query}`)
-            setSearchResults(response.data);
-            setListOpen(true);
-            if (inputRef.current) {
-                const rect = inputRef.current.getBoundingClientRect();
-                setDropdownPosition({
-                    top: rect.bottom + window.scrollY,  // Position below the input field
-                    left: rect.left + window.scrollX,   // Align it with the input field
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching search results:', error);
-        }
-    };
+    useEffect(() => { console.log("FormData after update: ", formData); }, [formData]);
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
         document.body.style.overflow = "hidden";
         setOpen(true);
-      };
-    
-      const handleClose = () => {
+    };
+
+    const handleClose = () => {
         document.body.style.paddingRight = "";
         document.body.style.overflow = "";
         setOpen(false);
-      };
-
-
-      const handleGenderChange = (event) => {
-        setGender(event.target.value);
-        console.log(event.target.value)
-        const formData = new FormData();
-        formData.append('xsex',gender)
     };
+
+    const handleGenderChange = (event) => {
+        const value = event.target.value;
+        setFormData((prev) => ({
+            ...prev,
+            xsex: value,
+        }));
+    };
+
 
 
     const handleAdd = async () => {
-        const endpoint = 'http://localhost:8080/api/pdmst';
-        const data = { 
-            ...formData, 
+        const endpoint = 'api/pdmst';
+
+        const data = {
+            ...formData,
+            ...dropdownValues,
+            zauserid: zemail,
+            xposition: formData.xstaff,
             zid: zid,
         };
+        addFunction(data, endpoint)
+    }
 
-        try {
-            await handleApiRequest({
-                endpoint,
-                data,
-                method: 'POST',
-                onSuccess: (response) => {
-                    setErrors({});
-                    // Reset form after successful submission
-                    setFormData({
-                        zid: zid,
-                        xstaff: '',
-                        xname: '',
-                        xmname: '',
-                        xlastname: '',
-                        xdepartment: '',
-                        xdesignation: '',
-                        xsalutation: '',
-                        xsex: 'Male', // default value
-                        xbirthdate: '',
-                        xmobile: '',
-                        xemail: '',
-                        xjobtitle: '',
-                        xlocation: '',
-                        xregino: '',
-                        xprofdegree: ''
-                    });
-                    console.log("Employee Added Successfully", response);
-                },
-                onError: (error) => {
-                    console.error("Error adding employee:", error);
-                }
-            });
-        } catch (error) {
-            console.error("Unexpected error:", error);
-        }
-    };
+    // const handleDropdownSelect = (key, value) => {
+    //     setDropdownValues((prev) => {
+    //         const updatedDropdown = { ...prev, [key]: value };
+    //         // Update Full Name in formData
+    //         setFormData((prevForm) => ({
+    //             ...prevForm,
+    //             xname: `${updatedDropdown.xsalute || ''} ${prevForm.xfstname || ''} ${prevForm.xmname || ''} ${prevForm.xlastname || ''}`.trim(),
+    //         }));
+    //         return updatedDropdown;
+    //     });
+    // };
 
-    const handleDropdownSelect = (key, value) => {
-        console.log(value)
-        setDropdownValues((prev) => ({
-            ...prev,
-            [key]: value,
-         
+
+    const handleDropdownSelect = (fieldName, value) => {
+        setFormData((prevState) => ({
+            ...prevState,
+            [fieldName]: value,
         }));
-        
     };
-    console.log(dropdownValues)
-    console.log(formData)
+
+
+    if (loading && !zid && !zemail) {
+        return <LoadingPage />;
+    }
 
     return (
         <div className='grid grid-cols-12'>
             <HelmetTitle title="Employee Information" />
             <div className="">
                 <SideButtons
-                onAdd={handleAdd}
+                    onAdd={handleAdd}
                 // onUpdate={handleUpdate}
                 // onDelete={handleDelete}
                 // onClear={handleClear}
@@ -247,16 +242,16 @@ const Pdmsthrd = () => {
                     disableAutoFocus
                 >
                     <Box sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          width: "1200px", // Fixed width
-                          height: "500px", // Fixed height
-                          bgcolor: "background.paper",
-                          border: "2px solid #000",
-                          boxShadow: 24,
-                          p: 4,
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "1200px", // Fixed width
+                        height: "500px", // Fixed height
+                        bgcolor: "background.paper",
+                        border: "2px solid #000",
+                        boxShadow: 24,
+                        p: 4,
                     }}>
                         <PdDependent />
                     </Box>
@@ -266,22 +261,14 @@ const Pdmsthrd = () => {
                 <div className=' shadow-lg  rounded'>
                     <div className="w-full px-2  py-2  mx-auto  ">
                         <Caption title={"Employee Entry"} />
-
-
                         <Box
                             component="form"
                             sx={{
                                 '& > :not(style)': { my: 1 },
-                                // maxWidth: 500,
                                 mx: 'auto',
-                                // p: 3,
-                                // boxShadow: 3,
-                                // display: 'grid',
                                 gap: 2,
                                 mt: 1,
-                                // gridTemplateColumns: 'repeat(3, 1fr)',
                                 borderRadius: 2,
-
                                 bgcolor: 'white',
                             }}
                             noValidate
@@ -293,22 +280,109 @@ const Pdmsthrd = () => {
                                 display="grid"
                                 gridTemplateColumns="repeat(4, 1fr)"
                                 gap={2}
-                                mb={2} // margin-bottom
+                                mb={2}
                             >
+
+                                {/* <DynamicDropdown
+                                    isOpen={isDropdownOpen}
+                                    onClose={() => setDropdownOpen(false)}
+                                    
+                                    triggerRef={triggerRef}
+                                    data={searchResults}
+                                    headers={fieldConfig.map((config) => config.header)}
+                                    onSelect={handleResultClick}
+                                    dropdownWidth={600}
+                                    dropdownHeight={400}
+                                /> */}
+
+                                {isListOpen && searchResults.length > 0 && (
+                                    <div
+                                        ref={formRef}
+                                        style={{
+                                            position: 'absolute',
+                                            top: dropdownPosition.top, // Use the dynamic top position
+                                            left: dropdownPosition.left,
+                                            // top: '220px',
+                                            maxHeight: '400px',
+                                            width: '600px',
+                                            overflowY: 'auto',
+                                            border: '1px solid black',
+                                            borderRadius: '4px',
+                                            backgroundColor: '#fff',
+                                            zIndex: 100,
+                                            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                padding: '10px',
+                                                fontWeight: 'bold',
+                                                backgroundColor: '#f0f0f0',
+                                                borderBottom: '1px solid gray',
+                                            }}
+                                        >
+                                            <div style={{ flex: 1, textAlign: 'left' }}>Code</div>
+                                            <div style={{ flex: 2, textAlign: 'left' }}>Name</div>
+                                            <div style={{ flex: 1, textAlign: 'left' }}>Type</div>
+                                        </div>
+
+                                        <List>
+                                            {searchResults.map((result, index) => (
+                                                <ListItem
+                                                    key={index}
+                                                    button='true'
+                                                    onClick={() => handleResultClick(result)}
+                                                    style={{ display: 'flex' }}
+                                                >
+                                                    <div style={{ flex: 1, textAlign: 'left' }}>{result.xcode}</div>
+                                                    <div style={{ flex: 2, textAlign: 'left' }}>{result.xlong}</div>
+                                                    <div style={{ flex: 1, textAlign: 'left' }}>{result.xtype}</div>
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </div>
+                                )}
                                 <TextField
-                                    ref={inputRef}
+                                    ref={triggerRef}
                                     id='xstaff'
                                     name='xstaff'
                                     label="Employee ID"
                                     size="small"
-                                     value={formData.xstaff}
+                                    value={formData.xstaff}
                                     variant={variant}
                                     fullWidth
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        handleChange(e); // Handle form field value updates
+                                        handleSearch(
+                                            e.target.value,
+                                            apiEndpoint,
+                                            fieldConfig,
+                                            setSearchResults,
+                                            setDropdownOpen,
+                                            inputRef,
+                                            setDropdownPosition
+                                        )
+                                    }}
                                     required
                                     sx={{ gridColumn: 'span 1' }}
                                 />
-                                <div className="col-span-3"></div>
+                                <TextField
+
+                                    id='xname'
+                                    name='xname'
+                                    label="Full Name"
+                                    size="small"
+                                    value={formData.xname}
+                                    variant={variant}
+                                    fullWidth
+                                    // disabled
+                                    required
+                                    sx={{ gridColumn: 'span 3' }}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensures the label stays above the input field
+                                    }}
+                                />
                             </Box>
 
 
@@ -321,26 +395,26 @@ const Pdmsthrd = () => {
                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
 
                                     <XcodesDropDown
-                                        id='xsalutation'
-                                        name='xsalutation'
+                                        id='xsalute'
+                                        name='xsalute'
                                         variant={variant}
                                         label="Salutation"
                                         size="small"
                                         type="salutation"
-                                        apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                        onSelect={(value) => handleDropdownSelect("xsalutation", value)} 
-                                        value={dropdownValues.xsalutation} 
-                                        
+                                        apiUrl={apiBaseUrl}
+                                        onSelect={(value) => handleDropdownSelect("xsalute", value)}
+                                        value={dropdownValues.xsalute}
+
                                     />
 
                                 </Stack>
                                 <TextField
                                     label="First Name"
-                                    name='xname'
+                                    name='xfstname'
                                     variant={variant}
                                     size="small"
                                     onChange={handleChange}
-                                    value={formData.xname}
+                                    value={formData.xfstname}
                                     fullWidth
                                     required
                                 />
@@ -366,12 +440,7 @@ const Pdmsthrd = () => {
                                 />
                             </Box>
 
-                            {/* <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(4, 1fr)"
-                                gap={2}
-                                mb={2} 
-                            > */}
+
                             <Stack
                                 direction={{ xs: 'column', sm: 'row' }}
                                 // spacing={2} 
@@ -399,6 +468,7 @@ const Pdmsthrd = () => {
                                 <TextField
                                     label="Date of Birth"
                                     type="date"
+                                    name='xbirthdate'
                                     size='small'
                                     onChange={handleChange}
                                     InputLabelProps={{ shrink: true }}
@@ -406,14 +476,22 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     fullWidth
                                 />
-                                <TextField size='small' onChange={handleChange} variant={variant} label="National ID" fullWidth required />
+                                <TextField size='small'
+                                    name='xnid'
+                                    onChange={handleChange}
+                                    variant={variant}
+                                    label="National ID"
+                                    fullWidth required
+                                />
+
                                 <XcodesDropDown
                                     variant={variant}
                                     label="Designation"
                                     size="small"
+                                    name="xdesignation"
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    onSelect={(value) => handleDropdownSelect("xdesignation", value)} 
+                                    onSelect={(value) => handleDropdownSelect("xdesignation", value)}
                                     defaultValue=""
                                 />
                             </Stack>
@@ -429,11 +507,13 @@ const Pdmsthrd = () => {
                             >
                                 <XcodesDropDown
                                     variant={variant}
+                                    name='xdeptname'
                                     label="Department"
                                     size="small"
                                     type="Department"
+
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    onSelect={(value) => handleDropdownSelect("xdepartment", value)} 
+                                    onSelect={(value) => handleDropdownSelect("xdeptname", value)}
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -444,7 +524,7 @@ const Pdmsthrd = () => {
                                     size="small"
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
-                                    onSelect={(value) => handleDropdownSelect("xreligion", value)} 
+                                    onSelect={(value) => handleDropdownSelect("xreligion", value)}
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -482,15 +562,17 @@ const Pdmsthrd = () => {
                             >
                                 <TextField label="Personal Mobile No."
                                     size='small'
+                                    name='xmobile'
                                     onChange={handleChange}
                                     value={formData.xmobile}
                                     variant={variant} fullWidth required />
                                 <TextField label="Email"
                                     size='small'
+                                    name='xemail'
                                     onChange={handleChange}
                                     value={formData.xemail}
                                     variant={variant} fullWidth required />
-                               
+
                                 <XcodesDropDown
                                     variant={variant}
                                     label="Job Title"
@@ -540,6 +622,7 @@ const Pdmsthrd = () => {
 
                                 <TextField
                                     label="BMDC Registration No"
+                                    name='xregino'
                                     onChange={handleChange}
                                     value={formData.xregino}
                                     size='small'

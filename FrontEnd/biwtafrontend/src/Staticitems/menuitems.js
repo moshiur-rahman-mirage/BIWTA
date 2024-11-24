@@ -66,6 +66,34 @@ export const menuitems = [
             title:'Customer Group',
             to:'administrations/codes/cusgroup',
           },
+          {
+            title:'Job Location',
+            to:'administrations/codes/joblocation',
+          },
+          {
+            title:'Marital Status',
+            to:'administrations/codes/maritalstatus',
+          },
+          {
+            title:'Religion',
+            to:'administrations/codes/religion',
+          },
+          {
+            title:'Job Title',
+            to:'administrations/codes/jobtitle',
+          },
+          {
+            title:'Employee Type',
+            to:'administrations/codes/emptype',
+          },
+          {
+            title:'Blood Group',
+            to:'administrations/codes/bloodgroup',
+          },
+          {
+            title:'Store Type',
+            to:'administrations/codes/storetype',
+          },
           
         ]
       }

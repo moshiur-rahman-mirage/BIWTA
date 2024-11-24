@@ -14,7 +14,7 @@ export const handleApiRequest = async ({
     onValidationError 
 }) => {
     try {
-        // Prepare the request configuration
+        console.log("Data received by handleApiRequest:", data);
         const config = {
             method: method.toUpperCase(), // Ensure the method is uppercase
             url: endpoint,
@@ -22,6 +22,8 @@ export const handleApiRequest = async ({
             params, // Only for GET, DELETE
             data, // Only for POST, PUT, PATCH
         };
+
+        console.log("Axios config before sending:", endpoint);
 
         // Make the API request using axiosInstance
         const response = await axiosInstance(config);

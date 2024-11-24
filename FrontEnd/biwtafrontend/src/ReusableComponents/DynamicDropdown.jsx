@@ -12,6 +12,7 @@ const DynamicDropdown = ({
 }) => {
     const dropdownRef = useRef(null);
     const [position, setPosition] = useState({ top: 0, left: 0 });
+    const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered item index
 
     useEffect(() => {
         if (isOpen && triggerRef?.current) {
@@ -83,21 +84,23 @@ const DynamicDropdown = ({
                             padding: '10px',
                             cursor: 'pointer',
                             backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9',
+                            transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+                            ...(hoveredIndex === index
+                                ? { backgroundColor: '#e0e0e0' } // Highlight on hover
+                                : {}),
                         }}
                         onClick={() => {
                             console.log("Dropdown item selected:::::: ", item);
-                            onSelect(item)
+                            onSelect(item);
                         }}
+                        onMouseEnter={() => setHoveredIndex(index)} // Set hover state
+                        onMouseLeave={() => setHoveredIndex(null)} // Remove hover state
                     >
-                        {Object.values(item).map((value, idx) => {
-                            console.log(value)
-                           return (
-                                <div key={idx} style={{ flex: 1, textAlign: 'left' }}>
-
-                                    {value}
-                                </div>
-                            )
-                        })}
+                        {Object.values(item).map((value, idx) => (
+                            <div key={idx} style={{ flex: 1, textAlign: 'left' }}>
+                                {value}
+                            </div>
+                        ))}
                     </div>
                 ))}
             </div>

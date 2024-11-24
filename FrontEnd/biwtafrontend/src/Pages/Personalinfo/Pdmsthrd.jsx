@@ -44,11 +44,11 @@ const Pdmsthrd = () => {
         { header: 'Name', field: 'xname' },
         { header: 'Department', field: 'xdeptname' },
         { header: 'Designation', field: 'xdesignation' },
-        { header: 'Mobile', field: 'xmobile' },
-        { header: 'Employee Type', field: 'xemptype' },
-        { header: 'Location', field: 'xlocation' },
-        { header: 'Marital Status', field: 'xmstat' },
-        { header: 'NID', field: 'xnid' },
+        // { header: 'Mobile', field: 'xmobile' },
+        // { header: 'Employee Type', field: 'xemptype' },
+        // { header: 'Location', field: 'xlocation' },
+        // { header: 'Marital Status', field: 'xmstat' },
+        // { header: 'NID', field: 'xnid' },
     ];
 
     const { zid, zemail } = useAuth();
@@ -126,13 +126,8 @@ const Pdmsthrd = () => {
     };
 
 
-
-
-
     const handleResultClick = (result) => {
-        console.log("Selected result: ", result);
-        handleDropdownSelect("xdeptname", result.xdeptname);
-        console.log(result.xdeptname)
+        
         setFormData((prevState) => ({
             ...prevState,
             ...result,
@@ -142,7 +137,7 @@ const Pdmsthrd = () => {
         setDropdownOpen(false);
     };
 
-    useEffect(() => { console.log("FormData after update: ", formData); }, [formData]);
+    // useEffect(() => { console.log("FormData after update: ", formData); }, [formData]);
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -179,6 +174,95 @@ const Pdmsthrd = () => {
         addFunction(data, endpoint)
     }
 
+    const handleUpdate = async () => {
+        const endpoint = `api/pdmst?zid=${zid}&xstaff=${formData.xstaff}`;
+        const data = {
+            ...formData,
+            zid: zid
+        };
+
+        await handleApiRequest({
+            endpoint,
+            data,
+            method: 'PUT',
+            onSuccess: (response) => {
+                setErrors({});
+            },
+        });
+    };
+
+
+    const handleDelete = async () => {
+        const endpoint = `api/pdmst?zid=${zid}&xstaff=${formData.xstaff}`;
+        await handleApiRequest({
+            endpoint,
+            method: 'DELETE',
+            onSuccess: (response) => {
+                setErrors({});
+                setFormData({
+                    xstaff: '',
+                    xfstname: '',
+                    xlastname: '',
+                    xname: '',
+                    xnid: '',
+                    xmobile:'',
+                    zauserid: '',
+                    xbirthdate: '',
+                    xsalute: '',
+                    xdeptname: '',
+                    xdesignation: '',
+                    xemptype:'',
+                    xposition: '',
+                    xmname: '',
+                    xsex: 'Male',
+                    xreligion: '',
+                    xbloodgroup:'',
+                    xemail: '',
+                    xjobtitle: '',
+                    xmstat:'',
+                    xlocation: '',
+                    xregino: '',
+                    xprofdegree: ''
+                    
+                });
+                setChecked(false);
+            },
+        });
+    };
+
+
+    const handleClear = () => {
+        setFormData({
+            xstaff: '',
+            xfstname: '',
+            xlastname: '',
+            xname: '',
+            xnid: '',
+            xmobile:'',
+            zauserid: '',
+            xbirthdate: '',
+            xsalute: '',
+            xdeptname: '',
+            xdesignation: '',
+            xemptype:'',
+            xposition: '',
+            xmname: '',
+            xsex: 'Male',
+            xreligion: '',
+            xbloodgroup:'',
+            xemail: '',
+            xjobtitle: '',
+            xmstat:'',
+            xlocation: '',
+            xregino: '',
+            xprofdegree: ''
+            
+        });
+        alert('Form cleared.');
+    };
+
+
+
     // const handleDropdownSelect = (key, value) => {
     //     setDropdownValues((prev) => {
     //         const updatedDropdown = { ...prev, [key]: value };
@@ -210,9 +294,9 @@ const Pdmsthrd = () => {
             <div className="">
                 <SideButtons
                     onAdd={handleAdd}
-                // onUpdate={handleUpdate}
-                // onDelete={handleDelete}
-                // onClear={handleClear}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                onClear={handleClear}
                 // onShow={handleShow}
                 />
             </div>
@@ -602,6 +686,7 @@ const Pdmsthrd = () => {
                                     id="xprofdegree"
                                     name="xprofdegree"
                                     onChange={handleChange}
+                                    value={formData.xprofdegree}
                                     variant={variant}
                                     fullWidth
                                     multiline

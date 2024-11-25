@@ -5,10 +5,13 @@ import com.zaberp.zab.biwtabackend.id.PdmstId;
 import com.zaberp.zab.biwtabackend.model.Pdmst;
 import com.zaberp.zab.biwtabackend.service.PdmstService;
 import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,15 +41,17 @@ public class PdmstController {
 //                    .body("Validation failed: A Employee with the same position id already exists.");
 //        }
 
-        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-",6);
-
-        String numericPart = generatedKey.substring(4);
-        String newId = "1" + numericPart;
-        pdmst.setXstaff(newId);
-
+        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-",5);
+        System.out.println(generatedKey);
+//        String numericPart = generatedKey.substring(4);
+//        String newId = "1" + numericPart;
+        pdmst.setXstaff(generatedKey);
+        pdmst.setZtime(LocalDateTime.now());
+        pdmst.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
         Pdmst savePdmst = service.save(pdmst);
         return ResponseEntity.ok(savePdmst);
     }
+
 
     @PutMapping
     public ResponseEntity<?> updatePdmst(
@@ -60,14 +65,16 @@ public class PdmstController {
         }
 
         PdmstId id = new PdmstId(zid, xstaff);
+
         return service.findById(id)
                 .map(existingPdmst -> {
-                    updatedPdmst.setZid(zid);
-                    updatedPdmst.setXstaff(xstaff);
-
-
-                    // Update the entity
-                    return ResponseEntity.ok(service.save(updatedPdmst));
+                    // Copy properties from updatedPdmst to existingPdmst
+                    BeanUtils.copyProperties(updatedPdmst, existingPdmst,
+                            "zid","xstaff","zauserid","ztime"); // Exclude fields that should not be updated
+                    existingPdmst.setZuuserid(SecurityContextHolder.getContext().getAuthentication().getName());
+                    existingPdmst.setZutime(LocalDateTime.now());
+                    // Save the updated entity (triggers @PreUpdate)
+                    return ResponseEntity.ok(service.save(existingPdmst));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

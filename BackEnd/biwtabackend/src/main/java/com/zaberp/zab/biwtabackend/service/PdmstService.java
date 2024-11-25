@@ -7,6 +7,7 @@ import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.repository.PdmstRepository;
 import com.zaberp.zab.biwtabackend.repository.XcodesRepository;
 import com.zaberp.zab.biwtabackend.id.XcodesId;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PdmstService {
 
     private final PdmstRepository repository;

@@ -361,7 +361,7 @@ const Pdmsthrd = () => {
                 {/* Modal */}
 
                 <div className=' shadow-lg  rounded'>
-                    <div className="w-full px-2  py-2  mx-auto  ">
+                    <div className="w-full px-2  py-2 pt-0   mx-auto  ">
                         <Caption title={"Employee Entry"} />
                         <Box
                             component="form"

@@ -75,7 +75,9 @@ const XcodesDropDown = ({
                     }}
                 >
                     <MenuItem value="">
-                        <span style={{ fontSize }}></span>
+                        <span style={{ fontSize }}>
+                            
+                        </span>
                     </MenuItem>
                     {options.map((option, index) => (
                         <MenuItem

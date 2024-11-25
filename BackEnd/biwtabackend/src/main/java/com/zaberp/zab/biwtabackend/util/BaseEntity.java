@@ -27,6 +27,7 @@ public abstract class BaseEntity implements Serializable {
         // Set zauserid on insert
         this.zauserid = getCurrentUserId();
         this.ztime = LocalDateTime.now();
+        System.out.println("onCreate invoked: zauserid = " + zauserid + ", ztime = " + ztime);
     }
 
     @PreUpdate
@@ -34,6 +35,7 @@ public abstract class BaseEntity implements Serializable {
         // Set zuuserid on update
         this.zuuserid = getCurrentUserId();
         this.zutime = LocalDateTime.now();
+        System.out.println("onUpdat3e invoked: zuuserid = " + zuuserid + ", zutime = " + zutime);
     }
 
     // Replace this method to fetch the logged-in user's ID

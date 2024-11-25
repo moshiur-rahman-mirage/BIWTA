@@ -3,6 +3,8 @@ package com.zaberp.zab.biwtabackend.controller;
 import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.id.XusersId;
 import com.zaberp.zab.biwtabackend.service.XusersService;
+import com.zaberp.zab.biwtabackend.util.ApplicationContextData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.Map;
 public class XusersController {
 
     private final XusersService service;
+
 
     public XusersController(XusersService service) {
         this.service = service;
@@ -105,8 +108,10 @@ public class XusersController {
         if (isValid) {
             Xusers user = service.findByZemail(zemail);
             int zid = user.getZid();
+            System.out.println(zid);
             String xwh = user.getXwh();
             String xrole = user.getXrole();
+
             // Create a response map to include zid, xwh, and a success message
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Login successful!");

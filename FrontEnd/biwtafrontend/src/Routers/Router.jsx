@@ -1,17 +1,17 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Main from "../Layout/Main";
 import Home from "../Pages/Home";
 import { useAuth } from "../Provider/AuthProvider";
 import ErrorPage from "../ErrorPage";
+import Login from "../Pages/Login/Login";
+import PrivateRoutes from "../PrivateRoutes";
+
+// Admin Codes Pages
 import Department from "../Pages/Xcodes/Department";
 import Designation from "../Pages/Xcodes/Designation";
 import Section from "../Pages/Xcodes/Section";
-import ItemGroup from "../Pages/ItemGroup/ItemGroup";
-import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
-import Login from "../Pages/Login/Login";
 import Store from "../Pages/Xcodes/Store";
 import Salutation from "../Pages/Xcodes/Salutation";
-import PrivateRoutes from "../PrivateRoutes";
 import JobLocation from "../Pages/Xcodes/JobLocation";
 import BloodGroup from "../Pages/Xcodes/BloodGroup";
 import MaritalStatus from "../Pages/Xcodes/MaritalStatus";
@@ -22,92 +22,69 @@ import StoreType from "../Pages/Xcodes/StoreType";
 import Gender from "../Pages/Xcodes/Gender";
 import Relation from "../Pages/Xcodes/Relation";
 
-
-// Protected Route wrapper
-
+// Other Pages
+import ItemGroup from "../Pages/ItemGroup/ItemGroup";
+import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
+import Supplier from "../Pages/Suppliers/supplier";
+import PaymentType from "../Pages/Xcodes/PaymentType";
 
 // Define the routes
 const Router = createBrowserRouter([
+    // Default Route (Login)
     {
         path: "/",
-        element: <Login />, // Login is the default route
+        element: <Login />,
     },
+
+    // Main Layout with protected routes
     {
         path: "/main",
         element: <PrivateRoutes element={<Main />} />,
         children: [
             {
-                path: "/main/home",
-                element: <PrivateRoutes element={<Home />} />,
+                path: "home",
+                element: <Home />,
             },
             {
-                path: "/main/personalinfo",
-                element: <PrivateRoutes element={<Pdmsthrd />} />,
+                path: "personalinfo",
+                element: <Pdmsthrd />,
+            },
+
+            // Administration Codes Group
+            {
+                path: "administrations/codes",
+                children: [
+                    { path: "store", element: <Store /> },
+                    { path: "department", element: <Department /> },
+                    { path: "salutation", element: <Salutation /> },
+                    { path: "designation", element: <Designation /> },
+                    { path: "section", element: <Section /> },
+                    { path: "itemgroup", element: <ItemGroup /> },
+                    { path: "joblocation", element: <JobLocation /> },
+                    { path: "bloodgroup", element: <BloodGroup /> },
+                    { path: "maritalstatus", element: <MaritalStatus /> },
+                    { path: "emptype", element: <EmpType /> },
+                    { path: "jobtitle", element: <JobTitle /> },
+                    { path: "religion", element: <Religion /> },
+                    { path: "storetype", element: <StoreType /> },
+                    { path: "gender", element: <Gender /> },
+                    { path: "relation", element: <Relation /> },
+                    { path: "paymenttype", element: <PaymentType /> },
+                ],
             },
             {
-                path: "/main/administrations/codes/store",
-                element: <PrivateRoutes element={<Store />} />,
-            },
-            {
-                path: "/main/administrations/codes/department",
-                element: <PrivateRoutes element={<Department />} />,
-            },
-            {
-                path: "/main/administrations/codes/salutation",
-                element: <PrivateRoutes element={<Salutation />} />,
-            },
-            {
-                path: "/main/administrations/codes/designation",
-                element: <PrivateRoutes element={<Designation />} />,
-            },
-            {
-                path: "/main/administrations/codes/section",
-                element: <PrivateRoutes element={<Section />} />,
-            },
-            {
-                path: "/main/administrations/codes/itemgroup",
-                element: <PrivateRoutes element={<ItemGroup />} />,
-            },
-            {
-                path: "/main/administrations/codes/joblocation",
-                element: <PrivateRoutes element={<JobLocation />} />,
-            },
-            {
-                path: "/main/administrations/codes/bloodgroup",
-                element: <PrivateRoutes element={<BloodGroup />} />,
-            },
-            {
-                path: "/main/administrations/codes/maritalstatus",
-                element: <PrivateRoutes element={<MaritalStatus />} />,
-            },
-            {
-                path: "/main/administrations/codes/emptype",
-                element: <PrivateRoutes element={<EmpType />} />,
-            },
-            {
-                path: "/main/administrations/codes/jobtitle",
-                element: <PrivateRoutes element={<JobTitle />} />,
-            },
-            {
-                path: "/main/administrations/codes/religion",
-                element: <PrivateRoutes element={<Religion />} />,
-            },
-            {
-                path: "/main/administrations/codes/storetype",
-                element: <PrivateRoutes element={<StoreType />} />,
-            },
-            {
-                path: "/main/administrations/codes/gender",
-                element: <PrivateRoutes element={<Gender />} />,
-            },
-            {
-                path: "/main/administrations/codes/relation",
-                element: <PrivateRoutes element={<Relation />} />,
+                path: "administrations/master",
+                children: [
+                    { path: "supplier", element: <Supplier /> },
+                   
+                ],
             },
         ],
     },
+
+    // Catch-all for unmatched routes
     {
-        path: "*", // Catch-all for unmatched routes
+        path: "*",
         element: <ErrorPage />,
     },
 ]);

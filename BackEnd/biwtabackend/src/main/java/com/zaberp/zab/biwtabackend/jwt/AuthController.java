@@ -2,6 +2,7 @@ package com.zaberp.zab.biwtabackend.jwt;
 
 import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.service.XusersService;
+import com.zaberp.zab.biwtabackend.util.ApplicationContextData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class AuthController {
 
     @Autowired
     private final XusersService service;
+
 
     public AuthController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, XusersService service) {
         this.authenticationManager = authenticationManager;

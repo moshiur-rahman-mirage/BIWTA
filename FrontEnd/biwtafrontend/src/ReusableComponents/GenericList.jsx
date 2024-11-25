@@ -12,7 +12,7 @@ const GenericList = ({
     additionalParams = {},
     captionFont,
     bodyFont,
-    refreshx
+    xclass
 }) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,10 +22,15 @@ const GenericList = ({
     const handleMouseLeave = () => setHoveredIndex(null);
     // console.log(captionFont)
     const fetchData = async () => {
+        console.log("fetchData is called")
         try {
             console.log(apiUrl);
             setLoading(true);
+            console.log(apiUrl)
             const response = await axiosInstance.get(apiUrl, { params: additionalParams });
+            
+            console.log("Response from api is "+response)
+            console.log(response.data)
             setItems(response.data);
         } catch (error) {
             console.error('Error fetching list items:', error);
@@ -34,19 +39,6 @@ const GenericList = ({
         }
     };
 
-    console.log(onRefresh)
-    // useEffect(() => {
-    //     fetchData();
-    // }, [apiBaseUrl, zid, xtype, xlong, xcode]);
-
-    //     useEffect(() => {
-    //     console.log('apiUrl:', apiUrl);
-    //     console.log('additionalParams:', additionalParams);
-    //     console.log('onRefresh:', onRefresh);
-    //     fetchData();
-    // }, []);
-
-    // Allow onRefresh to trigger fetchData manually, but prevent re-triggering on each render
     useEffect(() => {
         if (onRefresh) {
             onRefresh(() => fetchData());
@@ -59,7 +51,7 @@ const GenericList = ({
     }, []);
 
     return (
-        <div style={{ overflowY: 'auto', borderRadius: '4px' }}>
+        <div className={`${xclass} shadow-lg rounded`} style={{ overflowY: 'auto', borderRadius: '4px' }}>
             {/* Caption */}
             <Caption title={caption} />
             {/* {caption && (
@@ -114,6 +106,7 @@ const GenericList = ({
                                     >
                                         <Typography
                                             sx={{ fontSize: bodyFont }}
+                                            
                                             variant="subtitle1"
                                             align={col.align || 'left'}
                                         >

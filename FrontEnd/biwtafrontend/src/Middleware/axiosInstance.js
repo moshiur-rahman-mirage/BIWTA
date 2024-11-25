@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log("ax ins")
+    // console.log("ax ins")
     const token = sessionStorage.getItem('token'); // Or use cookies, session storage, etc.
     // console.log(token)
     if (token) {

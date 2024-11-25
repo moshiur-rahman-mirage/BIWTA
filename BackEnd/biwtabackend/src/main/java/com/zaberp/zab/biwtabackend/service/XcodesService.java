@@ -47,6 +47,7 @@ public class XcodesService {
     }
 
     private Specification<Xcodes> xtypeEquals(String xtype) {
+        System.out.println("inside xtypeEquals "+xtype);
         return (root, query, builder) ->
                 xtype == null || xtype.isEmpty() ? builder.conjunction() : builder.equal(root.get("xtype"), xtype);
     }

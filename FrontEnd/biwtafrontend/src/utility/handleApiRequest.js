@@ -44,8 +44,10 @@ export const handleApiRequest = async ({
             const errorMessages = error.response.data;
 
             if (typeof errorMessages === 'object') {
+                console.log(errorMessages)
                 let formattedErrors = '';
                 for (const field in errorMessages) {
+                    
                     formattedErrors += `${field}: ${errorMessages[field].join(', ')}<br>`;
                 }
                 if (onValidationError) onValidationError(formattedErrors);

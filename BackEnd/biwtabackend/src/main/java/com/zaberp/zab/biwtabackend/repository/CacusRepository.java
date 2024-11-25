@@ -14,4 +14,6 @@ import java.util.List;
 public interface CacusRepository extends JpaRepository<Cacus, CacusId> {
     @Query("SELECT c FROM Cacus c WHERE c.zid = :zid AND c.xtype = :xtype")
     List<Cacus> findByZidAndXtype(@Param("zid") Integer zid, @Param("xtype") String xtype);
+
+
 }

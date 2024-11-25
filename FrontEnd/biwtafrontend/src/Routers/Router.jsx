@@ -27,6 +27,7 @@ import ItemGroup from "../Pages/ItemGroup/ItemGroup";
 import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
 import Supplier from "../Pages/Suppliers/supplier";
 import PaymentType from "../Pages/Xcodes/PaymentType";
+import Item from "../Pages/Item/Item";
 
 // Define the routes
 const Router = createBrowserRouter([
@@ -76,6 +77,7 @@ const Router = createBrowserRouter([
                 path: "administrations/master",
                 children: [
                     { path: "supplier", element: <Supplier /> },
+                    { path: "item", element: <Item /> },
                    
                 ],
             },

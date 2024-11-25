@@ -65,6 +65,7 @@ const Pdmsthrd = () => {
     const inputRef = useRef(null);
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState('Male');
+    const [xstaff, setXstaff] = useState("");
 
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const triggerRef = useRef(null);
@@ -128,11 +129,11 @@ const Pdmsthrd = () => {
 
 
     const handleResultClick = (result) => {
-        
+
         setFormData((prevState) => ({
             ...prevState,
             ...result,
-            zid:zid,
+            zid: zid,
         }));
         // console.log("FormData after update: ", formData);
         setDropdownOpen(false);
@@ -172,7 +173,19 @@ const Pdmsthrd = () => {
             xposition: formData.xstaff,
             zid: zid,
         };
-        addFunction(data, endpoint)
+
+        addFunction(data, endpoint, 'POST', (responseData) => {
+            if (responseData && responseData.xstaff) {
+                setXstaff(responseData.xstaff); // Update staffId state
+                setFormData((prev) => ({
+                    ...prev,
+                    xstaff: responseData.xstaff, 
+                }));
+                // alert(`Employee added successfully with Staff ID: ${responseData.xstaff}`);
+            } else {
+                alert('Employee added successfully, but no staff ID was returned.');
+            }
+        });
     }
 
     const handleUpdate = async () => {
@@ -206,25 +219,25 @@ const Pdmsthrd = () => {
                     xlastname: '',
                     xname: '',
                     xnid: '',
-                    xmobile:'',
+                    xmobile: '',
                     zauserid: '',
                     xbirthdate: '',
                     xsalute: '',
                     xdeptname: '',
                     xdesignation: '',
-                    xemptype:'',
+                    xemptype: '',
                     xposition: '',
                     xmname: '',
                     xsex: 'Male',
                     xreligion: '',
-                    xbloodgroup:'',
+                    xbloodgroup: '',
                     xemail: '',
                     xjobtitle: '',
-                    xmstat:'',
+                    xmstat: '',
                     xlocation: '',
                     xregino: '',
                     xprofdegree: ''
-                    
+
                 });
                 setChecked(false);
             },
@@ -239,25 +252,25 @@ const Pdmsthrd = () => {
             xlastname: '',
             xname: '',
             xnid: '',
-            xmobile:'',
+            xmobile: '',
             zauserid: '',
             xbirthdate: '',
             xsalute: '',
             xdeptname: '',
             xdesignation: '',
-            xemptype:'',
+            xemptype: '',
             xposition: '',
             xmname: '',
             xsex: 'Male',
             xreligion: '',
-            xbloodgroup:'',
+            xbloodgroup: '',
             xemail: '',
             xjobtitle: '',
-            xmstat:'',
+            xmstat: '',
             xlocation: '',
             xregino: '',
             xprofdegree: ''
-            
+
         });
         alert('Form cleared.');
     };
@@ -283,8 +296,8 @@ const Pdmsthrd = () => {
             [fieldName]: value,
         }));
     };
-   
-   
+
+
     if (loading && !zid && !zemail) {
         return <LoadingPage />;
     }
@@ -295,9 +308,9 @@ const Pdmsthrd = () => {
             <div className="">
                 <SideButtons
                     onAdd={handleAdd}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                onClear={handleClear}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                    onClear={handleClear}
                 // onShow={handleShow}
                 />
             </div>
@@ -357,7 +370,7 @@ const Pdmsthrd = () => {
                                 mx: 'auto',
                                 gap: 2,
                                 mt: 1,
-                              
+
                                 borderRadius: 2,
                                 bgcolor: 'white',
                             }}
@@ -376,7 +389,7 @@ const Pdmsthrd = () => {
                                 <DynamicDropdown
                                     isOpen={isDropdownOpen}
                                     onClose={() => setDropdownOpen(false)}
-                                    
+
                                     triggerRef={triggerRef}
                                     data={searchResults}
                                     headers={fieldConfig.map((config) => config.header)}
@@ -444,8 +457,8 @@ const Pdmsthrd = () => {
                                         type="salutation"
                                         apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xsalute", value)}
-                                        value={formData.xsalute} 
-                                    
+                                        value={formData.xsalute}
+
 
                                     />
 
@@ -536,7 +549,7 @@ const Pdmsthrd = () => {
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdesignation", value)}
-                                    value={formData.xdesignation} 
+                                    value={formData.xdesignation}
                                     defaultValue=""
                                 />
                             </Stack>
@@ -556,10 +569,10 @@ const Pdmsthrd = () => {
                                     label="Department"
                                     size="small"
                                     type="Department"
-                                   
+
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdeptname", value)}
-                                    value={formData.xdeptname} 
+                                    value={formData.xdeptname}
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -571,7 +584,7 @@ const Pdmsthrd = () => {
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xreligion", value)}
-                                    value={formData.xreligion} 
+                                    value={formData.xreligion}
                                     defaultValue=""
                                 />
                                 <XcodesDropDown
@@ -583,7 +596,7 @@ const Pdmsthrd = () => {
                                     type="Blood Group"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xbloodgroup", value)}
-                                    value={formData.xbloodgroup} 
+                                    value={formData.xbloodgroup}
                                     defaultValue=""
                                 />
                                 <XcodesDropDown

@@ -3,11 +3,8 @@ package com.zaberp.zab.biwtabackend.controller;
 
 import com.zaberp.zab.biwtabackend.id.PdmstId;
 import com.zaberp.zab.biwtabackend.model.Pdmst;
-import com.zaberp.zab.biwtabackend.model.Xcodes;
-import com.zaberp.zab.biwtabackend.id.XcodesId;
-import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.service.PdmstService;
-import com.zaberp.zab.biwtabackend.service.XcodesService;
+import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,27 +16,34 @@ import java.util.List;
 public class PdmstController {
 
     private final PdmstService service;
-
-    public PdmstController(PdmstService service) {
+    private final PrimaryKeyService primaryKeyService;
+    public PdmstController(PdmstService service, PrimaryKeyService primaryKeyService) {
         this.service = service;
+        this.primaryKeyService = primaryKeyService;
     }
 
     @PostMapping
     public ResponseEntity<?> createPdmst(@RequestBody Pdmst pdmst) {
-        if (service.existsByZidAndXstaffAndXposition(pdmst.getZid(), pdmst.getXstaff(),pdmst.getXposition())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: A Employee with the same staff id and position already exists.");
-        }
+//        if (service.existsByZidAndXstaffAndXposition(pdmst.getZid(), pdmst.getXstaff(),pdmst.getXposition())) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body("Validation failed: A Employee with the same staff id and position already exists.");
+//        }
 
         if (service.existsByZidAndXmobile(pdmst.getZid(), pdmst.getXmobile())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Validation failed: A Employee with the same mobile number already exists.");
         }
-        if (service.existsByZidAndXposition(pdmst.getZid(), pdmst.getXposition())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: A Employee with the same position id already exists.");
-        }
-        System.out.println(pdmst.toString());
+//        if (service.existsByZidAndXposition(pdmst.getZid(), pdmst.getXposition())) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body("Validation failed: A Employee with the same position id already exists.");
+//        }
+
+        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-",6);
+
+        String numericPart = generatedKey.substring(4);
+        String newId = "1" + numericPart;
+        pdmst.setXstaff(newId);
+
         Pdmst savePdmst = service.save(pdmst);
         return ResponseEntity.ok(savePdmst);
     }

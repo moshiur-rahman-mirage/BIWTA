@@ -1,7 +1,7 @@
 import { handleApiRequest } from "../utility/handleApiRequest";
 
 export const addFunction=async(
-    data,endpoint,method
+    data,endpoint,method,onSuccess
 ) =>{
     console.log("inside add function",endpoint)
     try {
@@ -10,6 +10,9 @@ export const addFunction=async(
             endpoint,
             data,
             method: method,
+            onSuccess: (response) => {
+                if (onSuccess) onSuccess(response.data); // Pass the response data to the callback
+            },
         });
     } catch (error) {
         console.error("Unexpected error:", error);

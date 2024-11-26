@@ -17,6 +17,7 @@ import LoadingPage from '../Loading/Loading';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import GenericList from '../../ReusableComponents/GenericList';
 import { dark } from '@mui/material/styles/createPalette';
+import SearchableList from '../../ReusableComponents/SearchableList';
 
 const Item = () => {
     // Authentication Context
@@ -513,14 +514,14 @@ const Item = () => {
                 // padding: 2,
             }}>
 
-                <GenericList
+                <SearchableList
                     apiUrl={apiBaseUrl}
                     caption="Item List"
                     columns={[
-                        { field: 'xitem', title: 'Item Code', width: '45%', },
-                        { field: 'xdesc', title: 'Name', width: '25%' },
-                        { field: 'xunit', title: 'Unit', width: '15%', align: 'center' },
-                        { field: 'xroute', title: 'Route', width: '15%', align: 'center' },
+                        { field: 'xitem', title: 'Item Code', width: '35%', },
+                        { field: 'xdesc', title: 'Name', width: '45%' },
+                        // { field: 'xunit', title: 'Unit', width: '15%', align: 'center' },
+                        { field: 'xroute', title: 'Route', width: '20%', align: 'center' },
                     ]}
                     //  additionalParams={{ zid: zid,xrelation:xrelation }}
                     onItemSelect={handleItemSelect}
@@ -530,9 +531,10 @@ const Item = () => {
                             setRefreshTrigger(false); // Reset trigger after refreshing
                         }
                     }}
-                    captionFont="3.9rem"
-                    bodyFont=".9rem"
+                    captionFont=".9rem"
+                    bodyFont=".8rem"
                     xclass="py-4 pl-2"
+                    mt={0}
                     // pageSize={10}
                 />
             </Box>

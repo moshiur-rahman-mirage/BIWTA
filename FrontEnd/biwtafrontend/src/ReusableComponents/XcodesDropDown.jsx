@@ -11,7 +11,7 @@ const XcodesDropDown = ({
     onSelect,
     defaultValue = '',
     fontSize = '0.875rem', // Default font size for options
-    captionSize = '0.75rem', // Default font size for the label
+    captionSize = '0.875rem', // Default font size for the label
 }) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
@@ -51,13 +51,14 @@ const XcodesDropDown = ({
     };
 
     return (
-        <FormControl fullWidth size="small" variant={variant}>
+        <FormControl fullWidth variant={variant} size="small">
             <InputLabel
                 sx={{
                     fontSize: captionSize,
                 }}
             >
                 {label}
+               
             </InputLabel>
             {loading ? (
                 <CircularProgress size={24} sx={{ margin: 'auto' }} />
@@ -66,7 +67,7 @@ const XcodesDropDown = ({
                     value={selectedValue || ''} // Use selectedValue for the dropdown value
                     onChange={handleChange}
                     label={label}
-                    displayEmpty
+                    // displayEmpty
                     sx={{
                         '& .MuiMenuItem-root': {
                             fontSize, // Apply fontSize to menu items

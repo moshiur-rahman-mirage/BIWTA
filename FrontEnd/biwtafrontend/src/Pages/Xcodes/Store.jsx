@@ -28,12 +28,12 @@ const Store = () => {
     const formRef = useRef(null);
     const [errors, setErrors] = useState({});
     const { zid } = useAuth();
-    const [xtype, setXtype] = useState('Store');
+    const [xtype, setXtype] = useState('Branch');
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const inputRef = useRef(null);
     const [formData, setFormData] = useState({
         zid: zid,
-        xtype: 'Store',
+        xtype: 'Branch',
         xcode: '',
         xlong: '',
         xemail: '',
@@ -171,7 +171,7 @@ const Store = () => {
         const data = {
             ...formData,
             zid: zid,
-            xtype: 'Store',
+            xtype: 'Branch',
             zactive: checked
         };
 
@@ -197,11 +197,11 @@ const Store = () => {
 
 
     const handleUpdate = async () => {
-        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Store&xcode=${formData.xcode}`;
+        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Branch&xcode=${formData.xcode}`;
         const data = {
             ...formData,
             zid: zid,
-            xtype: 'Store',
+            xtype: 'Branch',
             zactive: checked
         };
 
@@ -228,7 +228,7 @@ const Store = () => {
                     xmadd: '',
                     xphone: '',
                     xtypeobj: '',
-                    xtype: 'Store',
+                    xtype: 'Branch',
                 });
                 setChecked(false);
             },
@@ -245,7 +245,7 @@ const Store = () => {
             zactive: '',
             xemail: '',
             xtypeobj: '',
-            xtype: 'Store',
+            xtype: 'Branch',
         });
         setChecked(false);
         alert('Form cleared.');
@@ -358,7 +358,8 @@ const Store = () => {
                                         ref={inputRef}
                                         id="xcode"
                                         name="xcode"
-                                        label="Store Code"
+                                        size="small"
+                                        label="Branch Code"
                                         value={formData.xcode}
                                         onChange={handleChange}
                                         variant="outlined"
@@ -369,7 +370,8 @@ const Store = () => {
                                     <TextField
                                         id="xlong"
                                         name="xlong"
-                                        label="Store Name"
+                                        label="Branch Name"
+                                        size="small"
                                         value={formData.xlong}
                                         onChange={handleChange}
                                         variant="outlined"
@@ -379,6 +381,7 @@ const Store = () => {
                                         id="xphone"
                                         name="xphone"
                                         label="Phone"
+                                        size="small"
                                         value={formData.xphone}
                                         onChange={handleChange}
                                         variant="outlined"
@@ -388,6 +391,7 @@ const Store = () => {
                                         id="xmadd"
                                         name="xmadd"
                                         label="Address"
+                                        size="small"
                                         value={formData.xmadd}
                                         onChange={handleChange}
                                         variant="outlined"
@@ -395,13 +399,13 @@ const Store = () => {
                                     />
 
                                     {/* <FormControl fullWidth sx={{ gridColumn: 'span 1' }}>
-                                        <InputLabel id="demo-simple-select-label">Store Type</InputLabel>
+                                        <InputLabel id="demo-simple-select-label">Branch Type</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             name="xtypeobj"
                                             value={formData.xtypeobj}
-                                            label="Store Type"
+                                            label="Branch Type"
                                             onChange={handleTypeChange}
                                             // sx={{ gridColumn: 'span 1' }}
                                             sx={{ width: '100%' }}
@@ -418,7 +422,7 @@ const Store = () => {
                                         name='xtypeobj'
                                         variant='outlined'
                                         label="Store Type"
-                                        size="small"
+                                        // size="small"
                                         type="Store Type"
                                         // apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xtypeobj", value)}
@@ -430,6 +434,7 @@ const Store = () => {
                                         id="xemail"
                                         name="xemail"
                                         label="Email"
+                                        size="small"
                                         value={formData.xemail}
                                         onChange={handleChange}
                                         variant="outlined"

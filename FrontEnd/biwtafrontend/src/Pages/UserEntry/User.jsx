@@ -4,6 +4,7 @@ import {
     Box,
 
     Checkbox,
+    FormControlLabel,
 } from '@mui/material';
 import HelmetTitle from '../../utility/HelmetTitle';
 import SideButtons from '../../Shared/SideButtons';
@@ -55,7 +56,7 @@ const User = () => {
     // Configuration
     const variant = 'standard';
     const apiBaseUrl = `http://localhost:8080/api/xusers/search?zid=${zid}&searchtext={query}`;
-    const apiSearchUrl=apiBaseUrl
+    const apiSearchUrl = apiBaseUrl
     const apiStaffUrl = `/api/pdmst/searchtext?zid=${zid}&searchText={query}`;
     const fieldConfig = [
         { header: 'Login ID', field: 'zemail' },
@@ -357,7 +358,7 @@ const User = () => {
                                     sx={{ gridColumn: 'span 1' }}
                                 />
                                 {/* Mailing Address */}
-                                <TextField
+                                {/* <TextField
                                     id="xwh"
                                     name="xwh"
                                     label="Store"
@@ -367,8 +368,22 @@ const User = () => {
                                     fullWidth
                                     onChange={handleChange}
                                     sx={{ gridColumn: 'span 1' }}
-                                />
+                                /> */}
                                 {/* Email */}
+
+                                <XcodesDropDown
+                                    id="xmstat"
+                                    name="xmstat"
+                                    variant={variant}
+                                    label="Store"
+                                    size="small"
+                                    type="Branch"
+                                    apiUrl={apiBaseUrl} // Replace with your API endpoint
+                                    onSelect={(value) => handleDropdownSelect("Store", value)}
+                                    value={formData.xwh}
+                                    defaultValue=""
+                                />
+
                                 <TextField
                                     id="xposition"
                                     ref={staffRef}
@@ -404,12 +419,17 @@ const User = () => {
                                     dropdownHeight={400}
                                 />
 
-                                <Checkbox
-                                    checked={formData.zactive || false}
-                                    onChange={handleCheckboxChange}
-                                    name="Activate?"
-                                    disableRipple
-                                    color="primary"
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={formData.zactive || false}
+                                            onChange={handleCheckboxChange}
+                                            name="Activate?"
+                                            disableRipple
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Active?" // Add the label here
                                 />
 
                             </Box>

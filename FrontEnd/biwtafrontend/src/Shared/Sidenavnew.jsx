@@ -6,7 +6,7 @@ export default function Sidenavnew() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedMenus, setExpandedMenus] = useState({});
-  const [selectedItem, setSelectedItem] = useState(""); // State for selected menu item
+  const [selectedItem, setSelectedItem] = useState(""); 
   const sidebarWidth = 360;
 
   const toggleSubmenu = (title) => {
@@ -16,9 +16,8 @@ export default function Sidenavnew() {
     }));
   };
 
-  const handleMenuClick = (title, path) => {
+  const handleMenuClick = (title) => {
     setSelectedItem(title); // Set the selected item
-    if (!path) setIsOpen(false); // Close sidebar if no path (i.e., submenu toggle)
   };
 
   const filterMenu = (items, searchTerm) => {
@@ -44,23 +43,26 @@ export default function Sidenavnew() {
           className={`menu-item flex justify-between items-center px-4 py-3 rounded-lg transition-all cursor-pointer ${
             selectedItem === item.title ? "bg-[#5e3b82] text-white" : "hover:bg-[#7c64f8] hover:text-white"
           }`}
-         
         >
-          <Link
-            to={item.submenu?.length > 0 ? "#" : item.to}
-            className="flex-1 text-sm font-medium"
-            onClick={(e) => {
-              if (item.submenu?.length > 0) {
-                e.preventDefault();
+          {item.submenu?.length > 0 ? (
+            <div
+              className="flex-1 text-sm font-medium"
+              onClick={() => {
                 toggleSubmenu(item.title);
-              }else{
-                handleMenuClick(item.title, item.to)
-              }
-              
-            }}
-          >
-            {item.title}
-          </Link>
+                handleMenuClick(item.title);
+              }}
+            >
+              {item.title}
+            </div>
+          ) : (
+            <Link
+              to={item.to}
+              className="flex-1 text-sm font-medium"
+              onClick={() => handleMenuClick(item.title)}
+            >
+              {item.title}
+            </Link>
+          )}
           {item.submenu?.length > 0 && (
             <span
               onClick={() => toggleSubmenu(item.title)}
@@ -85,7 +87,7 @@ export default function Sidenavnew() {
 
   return (
     <div>
-      {/* Sidebar */}
+    
       <div
         className={`fixed z-30 top-0 left-0 h-full bg-[#867df0] text-white shadow-lg transition-transform duration-1000 ease-in-out`}
         style={{
@@ -94,7 +96,7 @@ export default function Sidenavnew() {
           transform: isOpen ? "translateX(0)" : `translateX(-${sidebarWidth}px)`,
         }}
       >
-        {/* Search Input */}
+        
         <div className="px-4 pt-4">
           <input
             type="text"
@@ -105,12 +107,12 @@ export default function Sidenavnew() {
           />
         </div>
 
-        {/* Menu Items - Scrollable Area */}
+        
         <div
-          className="mt-4 overflow-y-auto h-[calc(100vh-64px)]" // Make scrollable and adapt to screen height
+          className="mt-4 overflow-y-auto h-[calc(100vh-64px)]"
           style={{
-            scrollbarWidth: "thin", // Thin scrollbar for modern browsers
-            scrollbarColor: "#5e3b82 transparent", // Custom scrollbar color
+            scrollbarWidth: "thin",
+            scrollbarColor: "#5e3b82 transparent",
           }}
         >
           {filteredItems.length > 0 ? (
@@ -121,7 +123,7 @@ export default function Sidenavnew() {
         </div>
       </div>
 
-      {/* Sidebar Toggle Button */}
+      
       <button
         className="fixed top-1 left-4 z-50 p-2 text-white bg-transparent rounded-full transition-all duration-1000 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}

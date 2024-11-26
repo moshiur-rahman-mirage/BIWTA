@@ -59,17 +59,7 @@ public class CaitemController {
 
     @PostMapping
     public ResponseEntity<Caitem> createItem(@RequestBody Caitem caitem) {
-        // Set metadata
-        caitem.setZtime(LocalDateTime.now());
-        caitem.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
-
-        // Generate and set the primary key
-        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(caitem.getZid(), "Item Code", "IC--", 6);
-        caitem.setXitem(generatedKey.substring(4)); // Replace 'xitem' with the actual field name for the key
-
-        // Save to database
         Caitem createdItem = caitemService.createItem(caitem);
-
         return ResponseEntity.ok(createdItem);
     }
 

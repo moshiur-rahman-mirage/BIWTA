@@ -28,7 +28,7 @@ public class PdmstService {
     }
 
     public Pdmst createPdmst(Pdmst pdmst) {
-        if (repository.existsByZidAndXmobile(pdmst.getZid(), pdmst.getXmobile())) {
+        if (existsByZidAndXmobile(pdmst.getZid(), pdmst.getXmobile())) {
             throw new IllegalArgumentException("Validation failed: A Employee with the same mobile number already exists.");
         }
         String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-", 5);
@@ -47,7 +47,7 @@ public class PdmstService {
 
         PdmstId id = new PdmstId(zid, xstaff);
         Pdmst existingPdmst = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Pdmst not found for the given ID."));
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found for the given ID."));
         BeanUtils.copyProperties(updatedPdmst, existingPdmst,
                 "zid", "xstaff", "zauserid", "ztime");
         existingPdmst.setZuuserid(SecurityContextHolder.getContext().getAuthentication().getName());

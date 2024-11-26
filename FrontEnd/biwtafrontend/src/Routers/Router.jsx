@@ -1,96 +1,130 @@
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../Layout/Main";
-import Home from "../Pages/Home";
-import { useAuth } from "../Provider/AuthProvider";
-import ErrorPage from "../ErrorPage";
 import Login from "../Pages/Login/Login";
+import ErrorPage from "../ErrorPage";
 import PrivateRoutes from "../PrivateRoutes";
 
-// Admin Codes Pages
+// Pages for Administration - Master Setup
+import Item from "../Pages/Item/Item";
+import Supplier from "../Pages/Suppliers/supplier";
+import User from "../Pages/UserEntry/User";
+
+// Pages for Administration - Codes & Parameters
+import Store from "../Pages/Xcodes/Store";
+import StoreType from "../Pages/Xcodes/StoreType";
 import Department from "../Pages/Xcodes/Department";
 import Designation from "../Pages/Xcodes/Designation";
 import Section from "../Pages/Xcodes/Section";
-import Store from "../Pages/Xcodes/Store";
 import Salutation from "../Pages/Xcodes/Salutation";
-import JobLocation from "../Pages/Xcodes/JobLocation";
-import BloodGroup from "../Pages/Xcodes/BloodGroup";
 import MaritalStatus from "../Pages/Xcodes/MaritalStatus";
-import EmpType from "../Pages/Xcodes/EmpType";
-import JobTitle from "../Pages/Xcodes/JobTitle";
 import Religion from "../Pages/Xcodes/Religion";
-import StoreType from "../Pages/Xcodes/StoreType";
+import BloodGroup from "../Pages/Xcodes/BloodGroup";
 import Gender from "../Pages/Xcodes/Gender";
 import Relation from "../Pages/Xcodes/Relation";
-
-// Other Pages
+import JobLocation from "../Pages/Xcodes/JobLocation";
+import JobTitle from "../Pages/Xcodes/JobTitle";
+import EmpType from "../Pages/Xcodes/EmpType";
 import ItemGroup from "../Pages/ItemGroup/ItemGroup";
-import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
-import Supplier from "../Pages/Suppliers/supplier";
 import PaymentType from "../Pages/Xcodes/PaymentType";
-import Item from "../Pages/Item/Item";
-import User from "../Pages/UserEntry/User";
 
-// Define the routes
+// Pages for Employee Info
+import Pdmsthrd from "../Pages/Personalinfo/Pdmsthrd";
+import Pogrndirect from "../Pages/Inventory/grn/Pogrndirect";
+import Batchstock from "../Pages/Inventory/grn/batchstock";
+import Currentstock from "../Pages/Inventory/grn/currentstock";
+import Imtorheader from "../Pages/Inventory/Transfer/Imtorheader";
+
+import Imtormoreqheader from "../Pages/Inventory/Transfer/Imtormoreqheader";
+import Imtransfersr from "../Pages/Inventory/Transfer/Imtransfersr";
+import Mmpharmacy from "../Pages/Pharmacy/Mmpharmacy";
+import Eprescription from "../Pages/Prescription/Eprescription";
+
+
+
+
+
+
 const Router = createBrowserRouter([
-    // Default Route (Login)
-    {
-        path: "/",
-        element: <Login />,
-    },
-
-    // Main Layout with protected routes
-    {
-        path: "/main",
-        element: <PrivateRoutes element={<Main />} />,
+  // Default Route (Login)
+  {
+    path: "/",
+    element: <Login />,
+  },
+  {
+    path: "/main",
+    element: <PrivateRoutes element={<Main />} />,
+    children: [
+      {
+        path: "administrations",
         children: [
-            {
-                path: "home",
-                element: <Home />,
-            },
-            {
-                path: "personalinfo",
-                element: <Pdmsthrd />,
-            },
-
-            // Administration Codes Group
-            {
-                path: "administrations/codes",
-                children: [
-                    { path: "store", element: <Store /> },
-                    { path: "department", element: <Department /> },
-                    { path: "salutation", element: <Salutation /> },
-                    { path: "designation", element: <Designation /> },
-                    { path: "section", element: <Section /> },
-                    { path: "itemgroup", element: <ItemGroup /> },
-                    { path: "joblocation", element: <JobLocation /> },
-                    { path: "bloodgroup", element: <BloodGroup /> },
-                    { path: "maritalstatus", element: <MaritalStatus /> },
-                    { path: "emptype", element: <EmpType /> },
-                    { path: "jobtitle", element: <JobTitle /> },
-                    { path: "religion", element: <Religion /> },
-                    { path: "storetype", element: <StoreType /> },
-                    { path: "gender", element: <Gender /> },
-                    { path: "relation", element: <Relation /> },
-                    { path: "paymenttype", element: <PaymentType /> },
-                ],
-            },
-            {
-                path: "administrations/master",
-                children: [
-                    { path: "supplier", element: <Supplier /> },
-                    { path: "item", element: <Item /> },
-                    { path: "user", element: <User /> },
-                   
-                ],
-            },
+          {
+            path: "master",
+            children: [
+              { path: "item", element: <Item /> },
+              { path: "supplier", element: <Supplier /> },
+              { path: "user", element: <User /> },
+            ],
+          },
+          {
+            path: "codes",
+            children: [
+              { path: "store", element: <Store /> },
+              { path: "storetype", element: <StoreType /> },
+              { path: "department", element: <Department /> },
+              { path: "designation", element: <Designation /> },
+              { path: "section", element: <Section /> },
+              { path: "salutation", element: <Salutation /> },
+              { path: "maritalstatus", element: <MaritalStatus /> },
+              { path: "religion", element: <Religion /> },
+              { path: "bloodgroup", element: <BloodGroup /> },
+              { path: "gender", element: <Gender /> },
+              { path: "relation", element: <Relation /> },
+              { path: "joblocation", element: <JobLocation /> },
+              { path: "jobtitle", element: <JobTitle /> },
+              { path: "emptype", element: <EmpType /> },
+              { path: "itemgroup", element: <ItemGroup /> },
+              { path: "paymenttype", element: <PaymentType /> },
+            ],
+          },
         ],
-    },
-
-    // Catch-all for unmatched routes
-    {
-        path: "*",
-        element: <ErrorPage />,
-    },
+      },
+      {
+        path: "pharmacy",
+        children: [
+            { path: "mmpharmacy", element: <Mmpharmacy /> }
+        ],
+      },
+      {
+        path: "eprescription",
+        children: [
+            { path: "prescription", element: <Eprescription /> }
+        ],
+      },
+      {
+        path: "hr",
+        children: [
+            { path: "personalinfo", element: <Pdmsthrd /> }
+        ],
+      },
+      {
+        path: "inventory",
+        children: [
+            { path: "grn/pogrndirect", element: <Pogrndirect/> },
+            { path: "grn/currentstock", element: <Currentstock/> },
+            { path: "grn/batchstock", element: <Batchstock/> },
+            { path: "transfer/imtorheader", element: <Imtorheader/> },
+            { path: "transfer/imtormoreqheader", element: <Imtormoreqheader/> },
+            { path: "transfer/imtransfersr", element: <Imtransfersr/> }
+        ],
+      },
+     
+    ],
+  },
+  // Catch-all for unmatched routes
+  {
+    path: "*",
+    element: <ErrorPage />,
+  },
 ]);
 
 export default Router;

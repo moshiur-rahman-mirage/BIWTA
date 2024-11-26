@@ -49,6 +49,7 @@ const SearchableList = ({
     }, []);
 
     const handleSearch = (event) => {
+        setFolded(false);
         const value = event.target.value.toLowerCase();
         setSearchTerm(value);
         setFilteredItems(
@@ -71,13 +72,13 @@ const SearchableList = ({
             </Box>
             <Box display="flex" alignItems="left" justifyContent="space-between" gap={2}>
                 <TextField
-                    sx={{ height: '40px', paddingTop: '2px' }}
+                    sx={{ height: '40px', marginTop: '2px' }}
                     size="small"
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={handleSearch}
                 />
-                <Button onClick={toggleFold} variant="outlined" size="small" sx={{ height: '40px', paddingTop: '2px' }}>
+                <Button onClick={toggleFold} variant="outlined" size="small" sx={{ height: '40px', marginTop: '2px' }}>
                     {folded ? `Expand (${filteredItems.length})` : 'Collapse'}
                 </Button>
             </Box>

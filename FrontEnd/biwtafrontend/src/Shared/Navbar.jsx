@@ -15,6 +15,10 @@ const Navbar = () => {
     }
 };
 
+const handleHomeClick = () => {
+  navigate('/main'); // Navigate to the home screen ("/" is the route for the home page)
+};
+
   return (
     <div className="bg-zab-navbar  text-white p-4 h-14">
     <div className=" ml-10 flex justify-between items-center h-full">
@@ -27,7 +31,7 @@ const Navbar = () => {
           <FaUnlockAlt />
         </div>
         <div className="btn-nav">
-          <FaHome />
+          <FaHome onClick={handleHomeClick} />
         </div>
       </div>
   

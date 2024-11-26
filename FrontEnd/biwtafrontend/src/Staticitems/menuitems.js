@@ -9,7 +9,7 @@ export const menuitems = [
         submenu: [
           { title: 'Item', to: 'administrations/master/item' },
           { title: 'Supplier', to: 'administrations/master/supplier' },
-          { title: 'Customer', to: 'administrations/master/customer' },
+          // { title: 'Customer', to: 'administrations/master/customer' },
           { title: 'User', to: 'administrations/master/user' },
         ],
       },
@@ -50,6 +50,5 @@ export const menuitems = [
   },
   { title: 'Personal Info', to: 'personalinfo' },
   { title: 'Prescription', to: 'prescription' },
-  { title: 'Product', to: 'product' },
   { title: 'Dashboard', to: 'dashboard' },
 ];

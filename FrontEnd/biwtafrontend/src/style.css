@@ -5,6 +5,10 @@
 
 
 .swal2-container { z-index: 9000 !important; /* Adjust as needed */ }
+.custom-checkbox:hover {
+  box-shadow: none; /* Removes the elliptical shadow */
+  background-color: transparent; /* Ensure no background color on hover */
+}
 
 @layer components {
     .btn-nav {

@@ -29,24 +29,24 @@ public class XusersController {
 
         if (service.existsByZidAndZemailAndXposition(xusers.getZid(), xusers.getZemail(), xusers.getXposition())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: A user with the same zid, zemail, and xposition already exists.");
+                    .body("Validation failed: A user with the same Position already exists.");
         }
 
         if (service.existsByZidAndZemail(xusers.getZid(), xusers.getZemail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: A user with the same zid and zemail already exists.");
+                    .body("Validation failed: A user with the same Login Id already exists.");
         }
         // Validate xusername
         if (xusers.getXposition() == null || xusers.getXposition().isBlank()) {
-            return ResponseEntity.badRequest().body("Validation failed: 'xusername' cannot be blank.");
+            return ResponseEntity.badRequest().body("Validation failed: User ID cannot be blank.");
         }
 
         // Validate xpassword
         if (xusers.getXpassword() == null || xusers.getXpassword().isBlank()) {
-            return ResponseEntity.badRequest().body("Validation failed: 'xpassword' cannot be blank.");
+            return ResponseEntity.badRequest().body("Validation failed: Password cannot be blank.");
         }
         if (xusers.getXpassword().length() < 8) {
-            return ResponseEntity.badRequest().body("Validation failed: 'xpassword' must be at least 8 characters long.");
+            return ResponseEntity.badRequest().body("Validation failed: Password must be at least 8 characters long.");
         }
 
         // Save the entity if validation passes
@@ -54,10 +54,10 @@ public class XusersController {
         return ResponseEntity.ok(savedUser);
     }
 
-    @PutMapping
+    @PutMapping("/{zid}/{zemail}")
     public ResponseEntity<?> updateXcodes(
-            @RequestParam Integer zid,
-            @RequestParam String zemail,
+            @PathVariable int zid,
+            @PathVariable String zemail,
             @RequestBody Xusers updatedXusers) {
 
         if (updatedXusers.getXposition() == null || updatedXusers.getXposition().isBlank()) {
@@ -77,10 +77,10 @@ public class XusersController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping("/{zid}/{zemail}")
     public ResponseEntity<Void> deleteXcodes(
-            @RequestParam int zid,
-            @RequestParam String zemail) {
+            @PathVariable int zid,
+            @PathVariable String zemail) {
         XusersId id = new XusersId(zid, zemail);
 
         if (service.findById(id).isPresent()) {
@@ -93,9 +93,9 @@ public class XusersController {
 
     @GetMapping("/search")
     public List<Xusers> searchXusers(
-            @RequestParam Integer zid,
-            @RequestParam(required = false) String zemail) {
-        return service.findXusers(zid, zemail);
+            @RequestParam int zid,
+            @RequestParam(required = false) String searchtext) {
+        return service.searchByText(zid,searchtext);
     }
 
 

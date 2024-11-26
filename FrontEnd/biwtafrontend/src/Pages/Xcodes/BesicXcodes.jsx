@@ -63,6 +63,19 @@ const BesicXcodes = ({ title, xtype }) => {
         };
     }, [formData]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (formRef.current && !formRef.current.contains(event.target)) {
+                setListOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
 
 
     if (loading && !zid && !zemail) {
@@ -129,18 +142,7 @@ const BesicXcodes = ({ title, xtype }) => {
         setListOpen(false);
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (formRef.current && !formRef.current.contains(event.target)) {
-                setListOpen(false);
-            }
-        };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
 
     const handleCheckboxChange = (event) => {

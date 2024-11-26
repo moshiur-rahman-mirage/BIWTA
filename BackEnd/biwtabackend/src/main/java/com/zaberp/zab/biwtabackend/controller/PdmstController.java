@@ -5,6 +5,7 @@ import com.zaberp.zab.biwtabackend.id.PdmstId;
 import com.zaberp.zab.biwtabackend.model.Pdmst;
 import com.zaberp.zab.biwtabackend.service.PdmstService;
 import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,28 +28,7 @@ public class PdmstController {
 
     @PostMapping
     public ResponseEntity<?> createPdmst(@RequestBody Pdmst pdmst) {
-//        if (service.existsByZidAndXstaffAndXposition(pdmst.getZid(), pdmst.getXstaff(),pdmst.getXposition())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body("Validation failed: A Employee with the same staff id and position already exists.");
-//        }
-
-        if (service.existsByZidAndXmobile(pdmst.getZid(), pdmst.getXmobile())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: A Employee with the same mobile number already exists.");
-        }
-//        if (service.existsByZidAndXposition(pdmst.getZid(), pdmst.getXposition())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body("Validation failed: A Employee with the same position id already exists.");
-//        }
-
-        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-",5);
-        System.out.println(generatedKey);
-//        String numericPart = generatedKey.substring(4);
-//        String newId = "1" + numericPart;
-        pdmst.setXstaff(generatedKey);
-        pdmst.setZtime(LocalDateTime.now());
-        pdmst.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
-        Pdmst savePdmst = service.save(pdmst);
+        Pdmst savePdmst = service.createPdmst(pdmst);
         return ResponseEntity.ok(savePdmst);
     }
 
@@ -59,25 +39,16 @@ public class PdmstController {
             @RequestParam String xstaff,
             @RequestBody Pdmst updatedPdmst) {
 
-        if (updatedPdmst.getXname() == null || updatedPdmst.getXname().isBlank()) {
-            return ResponseEntity.badRequest()
-                    .body("Validation failed: Name field is required.");
+        try {
+            Pdmst updatedEntity = service.updatePdmst(zid, xstaff, updatedPdmst);
+            return ResponseEntity.ok(updatedEntity);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-
-        PdmstId id = new PdmstId(zid, xstaff);
-
-        return service.findById(id)
-                .map(existingPdmst -> {
-                    // Copy properties from updatedPdmst to existingPdmst
-                    BeanUtils.copyProperties(updatedPdmst, existingPdmst,
-                            "zid","xstaff","zauserid","ztime"); // Exclude fields that should not be updated
-                    existingPdmst.setZuuserid(SecurityContextHolder.getContext().getAuthentication().getName());
-                    existingPdmst.setZutime(LocalDateTime.now());
-                    // Save the updated entity (triggers @PreUpdate)
-                    return ResponseEntity.ok(service.save(existingPdmst));
-                })
-                .orElse(ResponseEntity.notFound().build());
     }
+
 
 
     @DeleteMapping

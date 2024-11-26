@@ -2,16 +2,15 @@ package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.PdmstId;
 import com.zaberp.zab.biwtabackend.model.Pdmst;
-import com.zaberp.zab.biwtabackend.model.Xcodes;
-import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.repository.PdmstRepository;
-import com.zaberp.zab.biwtabackend.repository.XcodesRepository;
-import com.zaberp.zab.biwtabackend.id.XcodesId;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +20,39 @@ public class PdmstService {
 
     private final PdmstRepository repository;
 
-    public PdmstService(PdmstRepository repository) {
+    private final PrimaryKeyService primaryKeyService;
+
+    public PdmstService(PdmstRepository repository, PrimaryKeyService primaryKeyService) {
         this.repository = repository;
+        this.primaryKeyService = primaryKeyService;
     }
 
-    public Pdmst save(Pdmst pdmst) {
+    public Pdmst createPdmst(Pdmst pdmst) {
+        if (repository.existsByZidAndXmobile(pdmst.getZid(), pdmst.getXmobile())) {
+            throw new IllegalArgumentException("Validation failed: A Employee with the same mobile number already exists.");
+        }
+        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-", 5);
+        pdmst.setXstaff(generatedKey);
+        pdmst.setXposition(generatedKey);
+        pdmst.setZtime(LocalDateTime.now());
+        pdmst.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
+
         return repository.save(pdmst);
+    }
+
+    public Pdmst updatePdmst(Integer zid, String xstaff, Pdmst updatedPdmst) {
+        if (updatedPdmst.getXname() == null || updatedPdmst.getXname().isBlank()) {
+            throw new IllegalArgumentException("Validation failed: Name field is required.");
+        }
+
+        PdmstId id = new PdmstId(zid, xstaff);
+        Pdmst existingPdmst = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pdmst not found for the given ID."));
+        BeanUtils.copyProperties(updatedPdmst, existingPdmst,
+                "zid", "xstaff", "zauserid", "ztime");
+        existingPdmst.setZuuserid(SecurityContextHolder.getContext().getAuthentication().getName());
+        existingPdmst.setZutime(LocalDateTime.now());
+        return repository.save(existingPdmst);
     }
 
     public boolean existsByZidAndXstaffAndXposition(Integer zid, String xstaff ,String xposition) {

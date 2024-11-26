@@ -2,6 +2,7 @@ package com.zaberp.zab.biwtabackend.service;
 
 
 import com.zaberp.zab.biwtabackend.id.XusersId;
+import com.zaberp.zab.biwtabackend.model.Pdmst;
 import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.repository.XusersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,10 @@ public class XusersService {
 
     public Xusers findByZemail(String zemail){
         return repository.findByZemail(zemail);
+    }
+
+    public List<Xusers> searchByText(int zid, String searchText) {
+        return repository.findBySearchTextAndZid(zid, searchText);
     }
 
 

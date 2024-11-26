@@ -8,6 +8,7 @@ import com.zaberp.zab.biwtabackend.service.CaitemService;
 import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -85,6 +86,17 @@ public class CaitemController {
         CaitemId id = new CaitemId(zid, xitem);
         caitemService.deleteItem(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/items/{zid}")
+    public Page<Caitem> getItems(
+            @PathVariable int zid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "ztime") String sortBy,
+            @RequestParam(defaultValue = "true") boolean ascending) {
+        return caitemService.getItemsWithPaginationAndSorting(page, size, sortBy, ascending);
     }
 
 

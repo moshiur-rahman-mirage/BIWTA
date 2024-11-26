@@ -1,21 +1,21 @@
 package com.zaberp.zab.biwtabackend.model;
 
-import com.zaberp.zab.biwtabackend.id.CacusId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Data
 @Table(name = "pogrnheader")
 @IdClass(PogrnHeaderId.class)
-public class PogrnHeader {
+public class Pogrnheader {
 
-    private Date ztime;
-    private Date zutime;
+    private LocalDateTime ztime;
+    private LocalDateTime zutime;
     private String zauserid;
     private String zuuserid;
     @Id
@@ -49,7 +49,7 @@ public class PogrnHeader {
     private BigDecimal xaitf;
     private BigDecimal xvatrate;
     private BigDecimal xdiscamt;
-    private String xvouch;
+    private String xvoucher;
     private BigDecimal xadjustment;
     private Date xdategl;
     private BigDecimal xtotamt;
@@ -121,7 +121,7 @@ public class PogrnHeader {
     private String xstatuspa;
     private Date xcldate;
     private String xstatusaccrual;
-    private String xvouchaccrual;
+    private String xvoucheraccrual;
     private String xassetcode;
     private String xaitrule;
     private Integer xyear;
@@ -144,5 +144,8 @@ public class PogrnHeader {
     private Date xdaterebate;
     private String xpodate;
 
+    public Pogrnheader() {
+
+    }
 }
 

@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     TextField,
     Box,
-
-    Checkbox,
 } from '@mui/material';
 import { useAuth } from '../../../Provider/AuthProvider';
 
@@ -16,8 +14,6 @@ import { handleApiRequest } from '../../../utility/handleApiRequest';
 import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
-import XcodesDropDown from '../../../ReusableComponents/XcodesDropDown';
-import GenericList from '../../../ReusableComponents/GenericList';
 import { dark } from '@mui/material/styles/createPalette';
 import SearchableList from '../../../ReusableComponents/SearchableList';
 
@@ -26,24 +22,15 @@ const Pogrndirect = () => {
     const { zid, zemail } = useAuth();
     // State Management
     const [formData, setFormData] = useState({
-        zid: 100000,
-        zauserid: '',
-        xitem: '',
-        xdesc: '',
-        xunit: '',
-        xunitpur: '',
-        xcfpur: '',
-        xgitem: '',
-        xcatitem: '',
-        xrate: '',
-        xprodnature: '',
-        xgenericname: '',
-        xgenericdesc: '',
-        xdrugtype: '',
-        xstrength: '',
-        xroute: '',
-        xbatmg: '',
-        xreordqty: ''
+        zid: zid,
+        xgrnnum: '',
+        xstatusgrn: '',
+        xdate: '',
+        xcus: '',
+        xwh: '',
+        xref: '',
+        xstatus: '',
+        xnote: ''
 
 
     });
@@ -63,14 +50,14 @@ const Pogrndirect = () => {
     // References
     const triggerRef = useRef(null);
 
-    // Configuration
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/products/${zid}`;
+    const apiBaseUrl = `http://localhost:8080/api/pogrnheader/${zid}`;
+    console.log(apiBaseUrl)
     const fieldConfig = [
-        { header: 'ID', field: 'xitem' },
-        { header: 'Name', field: 'xdesc' },
-        { header: 'Generic Name', field: 'xgenericname' },
-        { header: 'Unit', field: 'xunit' },
+        { header: 'GRN Number', field: 'xgrnnum' },
+        { header: 'Date', field: 'xdate' },
+        { header: 'Supplier', field: 'xcus' },
+        { header: 'Challan', field: 'xref' },
     ];
 
 
@@ -138,7 +125,7 @@ const Pogrndirect = () => {
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xitem) {
                 console.log("POSt called")
-               console.log(response)
+                console.log(response)
                 setFormData((prev) => ({ ...prev, xitem: response.xitem }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
@@ -160,23 +147,14 @@ const Pogrndirect = () => {
     const handleClear = () => {
         setFormData({
             zid: zid,
-            zauserid: '',
-            xitem: '',
-            xdesc: '',
-            xunit: '',
-            xunitpur: '',
-            xcfpur: '',
-            xgitem: '',
-            xcatitem: '',
-            xrate: '',
-            xprodnature: '',
-            xgenericname: '',
-            xgenericdesc: '',
-            xdrugtype: '',
-            xstrength: '',
-            xroute: '',
-            xbatmg: '',
-            xreordqty: ''
+            xgrnnum: '',
+            xstatusgrn: '',
+            xdate: '',
+            xcus: '',
+            xwh: '',
+            xref: '',
+            xstatus: '',
+            xnote: ''
 
         });
         alert('Form cleared.');
@@ -184,30 +162,21 @@ const Pogrndirect = () => {
 
     const handleDelete = async () => {
         console.log(formData)
-        const endpoint = `api/products/${zid}/${formData.xitem}`;
+        const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
             onSuccess: (response) => {
                 setFormData({
                     zid: zid,
-                    zauserid: '',
-                    xitem: '',
-                    xdesc: '',
-                    xunit: '',
-                    xunitpur: '',
-                    xcfpur: '',
-                    xgitem: '',
-                    xcatitem: '',
-                    xrate: '',
-                    xprodnature: '',
-                    xgenericname: '',
-                    xgenericdesc: '',
-                    xdrugtype: '',
-                    xstrength: '',
-                    xroute: '',
-                    xbatmg: '',
-                    xreordqty: ''
+                    xgrnnum: '',
+                    xstatusgrn: '',
+                    xdate: '',
+                    xcus: '',
+                    xwh: '',
+                    xref: '',
+                    xstatus: '',
+                    xnote: ''
 
                 });
                 setUpdateCount(prevCount => prevCount + 1);
@@ -219,7 +188,7 @@ const Pogrndirect = () => {
 
     const handleUpdate = async () => {
         setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/products/${zid}/${formData.xitem}`;
+        const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
         const data = {
             ...formData,
             zid: zid
@@ -244,7 +213,7 @@ const Pogrndirect = () => {
     return (
         <div className="grid grid-cols-12">
             {/* Helmet Title for Page */}
-            <HelmetTitle title="Product Entry" />
+            <HelmetTitle title="Product Receive Entry" />
 
             {/* Sidebar with Action Buttons */}
             <div className="col-span-1">
@@ -259,14 +228,14 @@ const Pogrndirect = () => {
             {/* Main Form Section */}
             {/* <div className="col-span-6"> */}
             <Box sx={{
-                gridColumn: 'span 6',
+                gridColumn: 'span 5',
                 // border: '1px solid #ccc', // Light gray border
                 borderRadius: '8px', // Optional: Rounded corners
                 // padding: 2,
             }}>
                 <div className="shadow-lg rounded">
-                    <div className="w-full px-4 py-4 mx-auto">
-                        <Caption title="Product Entry" />
+                    <div className="w-full px-4 py-4 pt-0 mx-auto">
+                        <Caption title="Product Receive Entry" />
                         <Box
                             component="form"
                             sx={{
@@ -281,7 +250,7 @@ const Pogrndirect = () => {
                             {/* Row 1 */}
                             <Box
                                 display="grid"
-                                gridTemplateColumns="repeat(3, 1fr)"
+                                gridTemplateColumns="repeat(2, 1fr)"
                                 gap={2}
                                 mb={2}
                             >
@@ -299,11 +268,11 @@ const Pogrndirect = () => {
                                 {/* Supplier ID Field */}
                                 <TextField
                                     ref={triggerRef}
-                                    id="xitem"
-                                    name="xitem"
-                                    label="Item Code"
+                                    id="xgrnnum"
+                                    name="xgrnnum"
+                                    label="GRN Number"
                                     size="small"
-                                    value={formData.xitem}
+                                    value={formData.xgrnnum}
                                     variant={variant}
                                     fullWidth
                                     onChange={(e) => {
@@ -322,32 +291,34 @@ const Pogrndirect = () => {
                                 />
                                 {/* Company Field */}
                                 <TextField
-                                    id="xdesc"
-                                    name="xdesc"
-                                    label="Name"
+                                    id="xdate"
+                                    name="xdate"
+                                    label="Date"
+                                    // type="date"
                                     size="small"
-                                    value={formData.xdesc}
+                                    value={formData.xdate}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
-                                    sx={{ gridColumn: 'span 2' }}
+                                    sx={{ gridColumn: 'span 1' }}
                                 />
+
                             </Box>
 
                             {/* Row 2 */}
                             <Box
                                 display="grid"
-                                gridTemplateColumns="repeat(3, 1fr)"
+                                gridTemplateColumns="repeat(2, 1fr)"
                                 gap={2}
                                 mb={2}
                             >
                                 {/* Mailing Address */}
                                 <TextField
-                                    id="xgenericname"
-                                    name="xgenericname"
-                                    label="Generic Name"
+                                    id="xcus"
+                                    name="xcus"
+                                    label="Supplier"
                                     size="small"
-                                    value={formData.xgenericname}
+                                    value={formData.xcus}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
@@ -355,15 +326,15 @@ const Pogrndirect = () => {
                                 />
                                 {/* Email */}
                                 <TextField
-                                    id="xgenericdesc"
-                                    name="xgenericdesc"
-                                    label="Generic Description"
+                                    id="xcusdesc"
+                                    name="xcusdesc"
+                                    label="Supplier Name"
                                     size="small"
-                                    value={formData.xgenericdesc}
+                                    value={formData.xcusdesc}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
-                                    sx={{ gridColumn: 'span 2' }}
+                                    sx={{ gridColumn: 'span 1' }}
                                 />
                                 {/* Phone */}
 
@@ -372,43 +343,34 @@ const Pogrndirect = () => {
                             {/* Row 3 */}
                             <Box
                                 display="grid"
-                                gridTemplateColumns="repeat(3, 1fr)"
+                                gridTemplateColumns="repeat(2, 1fr)"
                                 gap={2}
                                 mb={2}
                             >
 
                                 <TextField
-                                    id="xdrugtype"
-                                    name="xdrugtype"
-                                    label="Drug Type"
+                                    id="xwh"
+                                    name="xwh"
+                                    label="Store Code"
                                     size="small"
-                                    value={formData.xdrugtype}
+                                    value={formData.xwh}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
                                 />
                                 {/* Mobile */}
                                 <TextField
-                                    id="xroute"
-                                    name="xroute"
-                                    label="Route"
+                                    id="xwhdesc"
+                                    name="xwhdesc"
+                                    label="Store Name"
                                     size="small"
-                                    value={formData.xroute}
+                                    value={formData.xwhdesc}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
                                 />
 
-                                <TextField
-                                    id="xstrength"
-                                    name="xstrength"
-                                    label="Strength"
-                                    size="small"
-                                    value={formData.xstrength}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={handleChange}
-                                />
+
                                 {/* Fax */}
 
 
@@ -421,22 +383,33 @@ const Pogrndirect = () => {
                             >
 
                                 <TextField
-                                    label="Group"
-                                    name='xgitem'
+                                    id="xstatus"
+                                    name="xstatus"
+                                    label="Approval Status"
+                                    size="small"
+                                    value={formData.xstatus}
+                                    variant={variant}
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+
+                                <TextField
+                                    label="GRN Status"
+                                    name='xstatusdoc'
                                     variant={variant}
                                     size="small"
                                     onChange={handleChange}
-                                    value={formData.xgitem}
+                                    value={formData.xstatusdoc}
                                     fullWidth
-                                    required
+                                    
                                 />
                                 <TextField
 
-                                    id='xcatitem'
-                                    name='xcatitem'
-                                    label="Category"
+                                    id='xref'
+                                    name='xref'
+                                    label="Challan No"
                                     size="small"
-                                    value={formData.xcatitem}
+                                    value={formData.xref}
                                     variant={variant}
                                     onChange={handleChange}
                                     fullWidth
@@ -446,16 +419,7 @@ const Pogrndirect = () => {
 
                                 />
 
-                                <TextField
-                                    label="Conversion Factor"
-                                    name='xcfpur'
-                                    variant={variant}
-                                    size="small"
-                                    onChange={handleChange}
-                                    value={formData.xcfpur}
-                                    fullWidth
-                                    required
-                                />
+                               
 
                             </Box>
 
@@ -466,50 +430,27 @@ const Pogrndirect = () => {
                                 mb={2} // margin-bottom
                             >
                                 <TextField
-                                    label="Unit"
-                                    name='xunit'
+                                    label="Note"
+                                    name='xnote'
                                     variant={variant}
                                     size="small"
                                     onChange={handleChange}
-                                    value={formData.xunit}
+                                    value={formData.xnote}
                                     fullWidth
                                     required
+                                    multiline
+                                    sx={{ gridColumn: 'span 3' }}
                                 />
-                                <TextField
-                                    label="Purchase Unit"
-                                    name='xunitpur'
-                                    variant={variant}
-                                    size="small"
-                                    onChange={handleChange}
-                                    value={formData.xunitpur}
-                                    fullWidth
-
-                                />
-
-                                {/* <Checkbox
-                                    // checked={checked}
-                                    //onChange={handleCheckboxChange}
-                                    name="Activate?"
-                                    color="primary"  // You can use 'primary', 'secondary', 'default' or 'error'
-                                /> */}
+                               
 
                             </Box>
-
-
-
-
-
-
-
-
-
 
                         </Box>
                     </div>
                 </div>
             </Box >
             <Box sx={{
-                gridColumn: 'span 5',
+                gridColumn: 'span 6',
 
                 // border: '1px solid #ccc', // Light gray border
                 borderRadius: '8px', // Optional: Rounded corners
@@ -518,14 +459,13 @@ const Pogrndirect = () => {
 
                 <SearchableList
                     apiUrl={apiBaseUrl}
-                    caption="Item List"
+                    caption="Receive Entry Detail List"
                     columns={[
-                        { field: 'xitem', title: 'Item Code', width: '35%', },
+                        { field: 'xgrnnum', title: 'GRN Number', width: '35%', },
                         { field: 'xdesc', title: 'Name', width: '45%' },
                         // { field: 'xunit', title: 'Unit', width: '15%', align: 'center' },
                         { field: 'xroute', title: 'Route', width: '20%', align: 'center' },
                     ]}
-                    //  additionalParams={{ zid: zid,xrelation:xrelation }}
                     onItemSelect={handleItemSelect}
                     onRefresh={(refresh) => {
                         if (refreshTrigger) {
@@ -537,7 +477,7 @@ const Pogrndirect = () => {
                     bodyFont=".8rem"
                     xclass="py-4 pl-2"
                     mt={0}
-                    // pageSize={10}
+                // pageSize={10}
                 />
             </Box>
         </div >

@@ -7,6 +7,14 @@ public class PogrnHeaderId implements Serializable {
     private int zid;
     private String xgrnnum;
 
+    public PogrnHeaderId() {
+    }
+
+    public PogrnHeaderId(int zid, String xgrnnum) {
+        this.zid = zid;
+        this.xgrnnum = xgrnnum;
+    }
+
     public int getZid() {
         return zid;
     }

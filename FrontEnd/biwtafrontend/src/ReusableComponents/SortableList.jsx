@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Divider, TextField, Button, Grid } from '@mui/material';
-import axiosInstance from '../Middleware/AxiosInstance';
 import Caption from '../utility/Caption';
 
-const SearchableList = ({
+const SortableList = ({
     apiUrl,
     caption,
     columns,
     onItemSelect,
     onRefresh,
+    pageSize,
+    sortField,
+    sortOrder,
+    onSortChange,
     additionalParams = {},
     captionFont,
     bodyFont,
     xclass,
-    mt
+    mt,
 }) => {
     const [items, setItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
@@ -21,6 +24,8 @@ const SearchableList = ({
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [folded, setFolded] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [page, setPage] = useState(0); // Current page
+    const [totalPages, setTotalPages] = useState(0); // Total pages
 
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
@@ -28,10 +33,16 @@ const SearchableList = ({
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(apiUrl, { params: additionalParams });
+            const params = {
+                page,
+                size: pageSize,
+                sort: sortField ? `${sortField},${sortOrder}` : undefined,
+                ...additionalParams,
+            };
+            const response = await apiUrl(params); // Parent provides API function
             setItems(response.data.content);
-            console.log(response)
             setFilteredItems(response.data.content); // Initialize filtered items
+            setTotalPages(response.data.totalPages || 1);
         } catch (error) {
             console.error('Error fetching list items:', error);
         } finally {
@@ -47,7 +58,7 @@ const SearchableList = ({
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [page, pageSize, sortField, sortOrder]);
 
     const handleSearch = (event) => {
         setFolded(false);
@@ -65,6 +76,12 @@ const SearchableList = ({
     };
 
     const toggleFold = () => setFolded((prev) => !prev);
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
+        }
+    };
 
     return (
         <div className={`${xclass} shadow-lg pt-0 rounded`} style={{ overflowY: 'auto', borderRadius: '4px' }}>
@@ -92,9 +109,11 @@ const SearchableList = ({
                             <Grid item xs={12 / columns.length} key={idx}>
                                 <Typography
                                     variant="subtitle1"
-                                    style={{ fontWeight: 'bold', fontSize: captionFont || '1rem' }}
+                                    style={{ fontWeight: 'bold', fontSize: captionFont || '1rem', cursor: 'pointer' }}
+                                    onClick={() => onSortChange(col.field)}
                                 >
-                                    {col.title}
+                                    {col.title}{' '}
+                                    {sortField === col.field ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
                                 </Typography>
                             </Grid>
                         ))}
@@ -125,7 +144,7 @@ const SearchableList = ({
                                                 <Typography
                                                     style={{
                                                         fontSize: bodyFont || '0.875rem',
-                                                        textAlign:  'left',
+                                                        textAlign: 'left',
                                                     }}
                                                 >
                                                     {item[col.field] || 'N/A'}
@@ -138,10 +157,32 @@ const SearchableList = ({
                             ))}
                         </Box>
                     )}
+                    {/* Pagination Controls */}
+                    <Box display="flex" justifyContent="center" mt={2}>
+                        <Button
+                            variant="contained"
+                            disabled={page === 0}
+                            onClick={() => handlePageChange(page - 1)}
+                            size="small"
+                        >
+                            Previous
+                        </Button>
+                        <Typography variant="body1" style={{ margin: '0 8px' }}>
+                            Page {page + 1} of {totalPages}
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            disabled={page === totalPages - 1}
+                            onClick={() => handlePageChange(page + 1)}
+                            size="small"
+                        >
+                            Next
+                        </Button>
+                    </Box>
                 </>
             )}
         </div>
     );
 };
 
-export default SearchableList;
+export default SortableList;

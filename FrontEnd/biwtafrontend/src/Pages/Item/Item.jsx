@@ -18,6 +18,7 @@ import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import GenericList from '../../ReusableComponents/GenericList';
 import { dark } from '@mui/material/styles/createPalette';
 import SearchableList from '../../ReusableComponents/SearchableList';
+import SortableList from '../../ReusableComponents/SortableList';
 
 const Item = () => {
     // Authentication Context
@@ -64,6 +65,7 @@ const Item = () => {
     // Configuration
     const variant = 'standard';
     const apiBaseUrl = `http://localhost:8080/api/products/${zid}`;
+    const apiBaseUrlsearch = `http://localhost:8080/api/products/items/${zid}?page=1&size=5&sortBy=xitem&ascending=false`;
     const fieldConfig = [
         { header: 'ID', field: 'xitem' },
         { header: 'Name', field: 'xdesc' },
@@ -263,7 +265,7 @@ const Item = () => {
                 // padding: 2,
             }}>
                 <div className="shadow-lg rounded">
-                    <div className="w-full px-4 py-4 mx-auto">
+                    <div className="w-full px-4 pt-0 py-4 mx-auto">
                         <Caption title="Product Entry" />
                         <Box
                             component="form"
@@ -515,7 +517,7 @@ const Item = () => {
             }}>
 
                 <SearchableList
-                    apiUrl={apiBaseUrl}
+                    apiUrl={apiBaseUrlsearch}
                     caption="Item List"
                     columns={[
                         { field: 'xitem', title: 'Item Code', width: '35%', },

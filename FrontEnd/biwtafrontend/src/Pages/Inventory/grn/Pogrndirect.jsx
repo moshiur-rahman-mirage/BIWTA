@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     TextField,
     Box,
+    Typography,
+    Button,
 } from '@mui/material';
 import { useAuth } from '../../../Provider/AuthProvider';
 
@@ -30,7 +32,7 @@ const Pogrndirect = () => {
         xcus: '',
         xwh: '',
         xref: '',
-        xstatus: '',
+        xstatus: 'Open',
         xnote: '',
 
 
@@ -38,6 +40,10 @@ const Pogrndirect = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+    const [supDropdownOpen, setSupDropdownOpen] = useState(false);
+    const [grnDropdownOpen, setGrnDropdownOpen] = useState(false);
+
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("Inactive");
@@ -46,13 +52,17 @@ const Pogrndirect = () => {
     const [updateCount, setUpdateCount] = useState(0);
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
+
+
+
+
     // Handle dropdown value change
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
     };
     // References
     const triggerRef = useRef(null);
-
+    const supplierRef = useRef(null);
     const variant = 'standard';
     const apiBaseUrl = `http://localhost:8080/api/pogrnheader`;
     console.log(apiBaseUrl)
@@ -61,6 +71,13 @@ const Pogrndirect = () => {
         { header: 'Date', field: 'xdate' },
         { header: 'Supplier', field: 'xorg' },
         { header: 'Challan', field: 'xref' },
+    ];
+
+
+    const supConfig = [
+        { header: 'Supplier ID', field: 'xcus' },
+        { header: 'Name', field: 'xorg' },
+        { header: 'Address', field: 'xmadd' },
     ];
 
     const handleSortChange = (field) => {
@@ -92,16 +109,19 @@ const Pogrndirect = () => {
             ...result,
             zid,
         }));
-        setDropdownOpen(false);
+        setSupDropdownOpen(false);
+        setGrnDropdownOpen(false);
+
     };
 
     const handleDropdownSelect = (fieldName, value) => {
+        console.log(value)
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
+            // xlong:xlong
         }));
     };
-
 
 
     useEffect(() => {
@@ -117,8 +137,6 @@ const Pogrndirect = () => {
     useEffect(() => {
         setRefreshTrigger(true);
     }, [updateCount]);
-
-
 
 
     const handleAdd = async () => {
@@ -140,10 +158,6 @@ const Pogrndirect = () => {
             }
         });
     };
-
-
-
-
 
 
     const handleItemSelect = useCallback((item) => {
@@ -222,162 +236,241 @@ const Pogrndirect = () => {
     }
 
     return (
-        <div className="grid grid-cols-12">
-            {/* Helmet Title for Page */}
-            <HelmetTitle title="Product Receive Entry" />
 
-            {/* Sidebar with Action Buttons */}
-            <div className="col-span-1">
-                <SideButtons
-                    onAdd={handleAdd}
-                    onClear={handleClear}
-                    onUpdate={handleUpdate}
-                    onDelete={handleDelete}
-                />
+        <div>
+
+            <div className='grid grid-cols-12 gap-1 mb-2'>
+                <div className='col-span-1'>
+                </div>
+                <Button
+                    onClick={''}
+                    variant='outlined'
+                    sx={{
+                        marginLeft: 1,
+                        paddingX: 1, // equivalent to Tailwind's px-2
+                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
+                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
+                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        '&:hover': {
+                            backgroundColor: '#F59E0B', // Yellow-600
+                        },
+                    }}
+                    size="medium"
+
+                >
+                    Detail
+                </Button>
+                <Button
+                    onClick={''}
+                    variant='outlined'
+                    sx={{
+                        marginLeft: 1,
+                        paddingX: 2, // equivalent to Tailwind's px-2
+                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
+                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
+                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        '&:hover': {
+                            backgroundColor: '#F59E0B', // Yellow-600
+                        },
+                    }}
+                    size="medium"
+
+                >
+                    Confirm
+                </Button>
             </div>
 
-            {/* Main Form Section */}
-            {/* <div className="col-span-6"> */}
-            <Box sx={{
-                gridColumn: 'span 5',
-                // border: '1px solid #ccc', // Light gray border
-                borderRadius: '8px', // Optional: Rounded corners
-                // padding: 2,
-            }}>
-                <div className="shadow-lg rounded">
-                    <div className="w-full px-4 py-4 pt-0 mx-auto">
-                        <Caption title="Product Receive Entry" />
-                        <Box
-                            component="form"
-                            sx={{
-                                '& > :not(style)': { my: 1 },
-                                mx: 'auto',
-                                gap: 2,
-                                borderRadius: 2,
-                                bgcolor: 'white',
-                            }}
-                            autoComplete="off"
-                        >
-                            {/* Row 1 */}
+
+            <div className="grid grid-cols-12">
+
+
+
+
+                {/* Helmet Title for Page */}
+                <HelmetTitle title="Product Receive Entry" />
+
+                {/* Sidebar with Action Buttons */}
+                <div className="col-span-1">
+                    <SideButtons
+                        onAdd={handleAdd}
+                        onClear={handleClear}
+                        onUpdate={handleUpdate}
+                        onDelete={handleDelete}
+                    />
+                </div>
+
+                {/* Main Form Section */}
+                {/* <div className="col-span-6"> */}
+                <Box sx={{
+                    gridColumn: 'span 5',
+                    // border: '1px solid #ccc', // Light gray border
+                    borderRadius: '8px', // Optional: Rounded corners
+                    // padding: 2,
+                }}>
+
+
+
+                    <div className="shadow-lg rounded">
+                        <div className="w-full px-2 py-2 pt-0 mx-auto ">
+                            <Caption title="Product Receive Entry" />
                             <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(2, 1fr)"
-                                gap={2}
-                                mb={2}
+                                component="form"
+                                sx={{
+                                    '& > :not(style)': { my: 1 },
+                                    mx: 'auto',
+                                    gap: 2,
+                                    borderRadius: 2,
+                                    bgcolor: 'white',
+                                }}
+                                autoComplete="off"
                             >
-                                {/* Dropdown for Search Results */}
-                                <DynamicDropdown
-                                    isOpen={isDropdownOpen}
-                                    onClose={() => setDropdownOpen(false)}
-                                    triggerRef={triggerRef}
-                                    data={searchResults}
-                                    headers={fieldConfig.map((config) => config.header)}
-                                    onSelect={handleResultClick}
-                                    dropdownWidth={800}
-                                    dropdownHeight={400}
-                                />
-                                {/* Supplier ID Field */}
-                                <TextField
-                                    ref={triggerRef}
-                                    id="xgrnnum"
-                                    name="xgrnnum"
-                                    label="GRN Number"
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    size="small"
-                                    value={formData.xgrnnum || ''}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={(e) => {
-                                        handleChange(e);
-                                        const query = e.target.value;
-                                        const apiSearchUrl = `http://localhost:8080/api/pogrnheader/search?zid=${zid}&text=${query}`;
-                                        handleSearch(
-                                            e.target.value,
-                                            apiSearchUrl,
-                                            fieldConfig,
-                                            setSearchResults,
-                                            setDropdownOpen,
-                                            triggerRef,
-                                            setDropdownPosition,
-                                            { zid }
-                                        );
-                                    }}
-                                    sx={{ gridColumn: 'span 1' }}
-                                />
-                                {/* Company Field */}
-                                <TextField
-                                    id="xdate"
-                                    name="xdate"
-                                    label="Date"
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    type="date"
-                                    size="small"
-                                    value={formData.xdate}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={handleChange}
-                                    sx={{ gridColumn: 'span 1' }}
-                                />
+                                {/* Row 1 */}
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2}
+                                >
+                                    {/* Dropdown for Search Results */}
+                                    <DynamicDropdown
+                                        isOpen={grnDropdownOpen}
+                                        onClose={() => setGrnDropdownOpen(false)}
+                                        triggerRef={triggerRef}
+                                        data={searchResults}
+                                        headers={fieldConfig.map((config) => config.header)}
+                                        onSelect={handleResultClick}
+                                        dropdownWidth={800}
+                                        dropdownHeight={400}
+                                    />
+                                    {/* Supplier ID Field */}
+                                    <TextField
+                                        ref={triggerRef}
+                                        id="xgrnnum"
+                                        name="xgrnnum"
+                                        label="GRN Number"
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        size="small"
+                                        value={formData.xgrnnum || ''}
+                                        variant={variant}
+                                        fullWidth
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            const query = e.target.value;
+                                            const apiSearchUrl = `http://localhost:8080/api/pogrnheader/search?zid=${zid}&text=${query}`;
+                                            handleSearch(
+                                                e.target.value,
+                                                apiSearchUrl,
+                                                fieldConfig,
+                                                setSearchResults,
+                                                setGrnDropdownOpen,
+                                                triggerRef,
+                                                setDropdownPosition,
+                                                { zid }
+                                            );
+                                        }}
+                                        sx={{ gridColumn: 'span 1' }}
+                                    />
+                                    {/* Company Field */}
+                                    <TextField
+                                        id="xdate"
+                                        name="xdate"
+                                        label="Date"
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        type="date"
+                                        size="small"
+                                        value={formData.xdate}
+                                        variant={variant}
+                                        fullWidth
+                                        onChange={handleChange}
+                                        sx={{ gridColumn: 'span 1' }}
+                                    />
 
-                            </Box>
+                                </Box>
 
-                            {/* Row 2 */}
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(2, 1fr)"
-                                gap={2}
-                                mb={2}
-                            >
-                                {/* Mailing Address */}
-                                <TextField
-                                    id="xcus"
-                                    name="xcus"
-                                    label="Supplier"
-                                    size="small"
-                                    value={formData.xcus}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={handleChange}
-                                    sx={{ gridColumn: 'span 1' }}
-                                />
-                                {/* Email */}
-                                <TextField
-                                    id="xorg"
-                                    name="xorg"
-                                    label="Supplier Name"
-                                    size="small"
-                                    value={formData.xorg}
-                                    variant={variant}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    inputProps={{
-                                        readOnly: true,
-                                    }}
-                                    fullWidth
-                                    onChange={handleChange}
-                                    sx={{ gridColumn: 'span 1' }}
-                                />
-                                {/* Phone */}
+                                {/* Row 2 */}
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2}
+                                >
 
-                            </Box>
 
-                            {/* Row 3 */}
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(2, 1fr)"
-                                gap={2}
-                                mb={2}
-                            >
+                                    <DynamicDropdown
+                                        isOpen={supDropdownOpen}
+                                        onClose={() => setSupDropdownOpen(false)}
+                                        triggerRef={supplierRef}
+                                        data={searchResults}
+                                        headers={supConfig.map((config) => config.header)}
+                                        onSelect={handleResultClick}
+                                        dropdownWidth={600}
+                                        dropdownHeight={400}
+                                    />
+                                    {/* Mailing Address */}
+                                    <TextField
+                                        ref={supplierRef}
+                                        id="xcus"
+                                        name="xcus"
+                                        label="Supplier"
+                                        size="small"
+                                        value={formData.xcus}
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        variant={variant}
+                                        fullWidth
+                                        sx={{ gridColumn: 'span 1' }}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            const query = e.target.value;
+                                            const apiSupUrl = `http://localhost:8080/api/cacus/search?zid=${zid}&text=${query}`;
+                                            handleSearch(
+                                                e.target.value,
+                                                apiSupUrl,
+                                                supConfig,
+                                                setSearchResults,
+                                                setSupDropdownOpen,
+                                                supplierRef,
+                                                setDropdownPosition,
+                                                { zid }
+                                            );
+                                        }}
+                                    />
+                                    {/* Email */}
+                                    <TextField
+                                        id="xorg"
+                                        name="xorg"
+                                        label="Supplier Name"
+                                        size="small"
+                                        value={formData.xorg}
+                                        variant={variant}
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        inputProps={{
+                                            readOnly: true,
+                                        }}
+                                        fullWidth
+                                        onChange={handleChange}
+                                        sx={{ gridColumn: 'span 1' }}
+                                    />
+                                    {/* Phone */}
 
-                                {/* <TextField
+                                </Box>
+
+                                {/* Row 3 */}
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2}
+                                >
+
+                                    {/* <TextField
                                     id="xwh"
                                     name="xwh"
                                     label="Store Code"
@@ -391,166 +484,156 @@ const Pogrndirect = () => {
                                     onChange={handleChange}
                                 /> */}
 
-                                <XcodesDropDown
-                                    variant={variant}
-                                    label="Store"
-                                    size="small"
-                                    name="xwh"
-                                    type="Branch"
-                                    onSelect={(value) => handleDropdownSelect("xwh", value)}
-                                    value={formData.xwh}
-                                    defaultValue=""
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                />
+                                    <XcodesDropDown
+                                        variant={variant}
+                                        label="Store"
+                                        size="small"
+                                        name="xwh"
+                                        type="Branch"
+                                        onSelect={(value) => handleDropdownSelect("xwh", value)}
+                                        value={formData.xwh}
+                                        defaultValue=""
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                    />
 
 
-                                {/* Mobile */}
-                                <TextField
-                                    id="xlong"
-                                    name="xlong"
-                                    label="Store Name"
-                                    size="small"
-                                    value={formData.xlong}
-                                    variant={variant}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    inputProps={{
-                                        readOnly: true,
-                                    }}
-                                    fullWidth
-                                    onChange={handleChange}
-                                />
+                                    {/* Mobile */}
+                                    <TextField
+                                        id="xlong"
+                                        name="xlong"
+                                        label="Store Name"
+                                        size="small"
+                                        value={formData.xlong}
+                                        variant={variant}
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        inputProps={{
+                                            readOnly: true,
+                                        }}
+                                        fullWidth
+                                        onChange={handleChange}
+                                    />
 
 
-                                {/* Fax */}
+                                    {/* Fax */}
 
 
-                            </Box>
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(3, 1fr)"
-                                gap={2}
-                                mb={2} // margin-bottom
-                            >
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
 
-                                <TextField
-                                    id="xstatus"
-                                    name="xstatus"
-                                    label="Approval Status"
-                                    size="small"
-                                    value={formData.xstatus}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={handleChange}
-                                />
 
-                                <TextField
-                                    label="GRN Status"
-                                    name='xstatusdoc'
-                                    variant={variant}
-                                    size="small"
-                                    onChange={handleChange}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    value={formData.xstatusdoc}
-                                    fullWidth
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            Status:
+                                        </Typography>
+                                        <Typography
+                                            variant="subtitle1"
+                                            sx={{
+                                                marginLeft: 1,
+                                                color: status === 'Confirmed' ? 'green' : 'red', // Conditional styling
+                                            }}
+                                        >
+                                            {formData.xstatus}
+                                        </Typography>
+                                    </Box>
 
-                                />
-                                <TextField
+                                    <TextField
+                                        id='xref'
+                                        name='xref'
+                                        label="Challan No"
+                                        size="small"
+                                        value={formData.xref}
+                                        variant={variant}
+                                        onChange={handleChange}
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        fullWidth
+                                        // disabled
+                                        required
+                                        sx={{ gridColumn: 'span 2' }}
 
-                                    id='xref'
-                                    name='xref'
-                                    label="Challan No"
-                                    size="small"
-                                    value={formData.xref}
-                                    variant={variant}
-                                    onChange={handleChange}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    fullWidth
-                                    // disabled
-                                    required
-                                    sx={{ gridColumn: 'span 1' }}
-
-                                />
+                                    />
 
 
 
-                            </Box>
+                                </Box>
 
-                            <Box
-                                display="grid"
-                                gridTemplateColumns="repeat(3, 1fr)"
-                                gap={2}
-                                mb={2} // margin-bottom
-                            >
-                                <TextField
-                                    label="Note"
-                                    name='xnote'
-                                    variant={variant}
-                                    size="small"
-                                    onChange={handleChange}
-                                    value={formData.xnote}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    fullWidth
-                                    required
-                                    multiline
-                                    sx={{ gridColumn: 'span 3' }}
-                                />
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+                                    <TextField
+                                        label="Note"
+                                        name='xnote'
+                                        variant={variant}
+                                        size="small"
+                                        onChange={handleChange}
+                                        value={formData.xnote}
+                                        InputLabelProps={{
+                                            shrink: true, // Ensure the label shrinks above the input
+                                        }}
+                                        fullWidth
+                                        required
+                                        multiline
+                                        sx={{ gridColumn: 'span 3' }}
+                                    />
 
+
+                                </Box>
 
                             </Box>
-
-                        </Box>
+                        </div>
                     </div>
-                </div>
-            </Box >
-            <Box sx={{
-                gridColumn: 'span 6',
+                </Box >
+                <Box sx={{
+                    gridColumn: 'span 6',
 
-                // border: '1px solid #ccc', // Light gray border
-                borderRadius: '8px', // Optional: Rounded corners
-                // padding: 2,
-            }}>
+                    // border: '1px solid #ccc', // Light gray border
+                    borderRadius: '8px', // Optional: Rounded corners
+                    // padding: 2,
+                }}>
 
-                <SortableList
-                    apiUrl={apiBaseUrl}
-                    caption="Item List"
-                    columns={[
-                        { field: 'xgrnnum', title: 'Item Code', width: '25%', },
-                        { field: 'xcus', title: 'Name', width: '25%' },
-                        { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
-                        { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },
-                    ]}
-                    onItemSelect={handleItemSelect}
-                    onRefresh={(refresh) => {
-                        if (refreshTrigger) {
-                            refresh();
-                            setRefreshTrigger(false);
-                        }
-                    }}
-                    pageSize={10}
-                    onSortChange={handleSortChange}
-                    sortField="xgrnnum"
-                    additionalParams={{ zid: zid, xstatus: 'Confirmed' }}
-                    captionFont=".9rem"
-                    xclass="py-4 pl-2"
-                    bodyFont=".8rem"
-                    mt={0}
-                    page={1}
-                />
-            </Box>
-        </div >
+                    <SortableList
+                        apiUrl={apiBaseUrl}
+
+                        caption="Receive Entry List"
+                        columns={[
+                            { field: 'xgrnnum', title: 'Item Code', width: '25%', },
+                            { field: 'xcus', title: 'Name', width: '25%' },
+                            { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
+                            { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },
+                        ]}
+                        onItemSelect={handleItemSelect}
+                        onRefresh={(refresh) => {
+                            if (refreshTrigger) {
+                                refresh();
+                                setRefreshTrigger(false);
+                            }
+                        }}
+                        pageSize={10}
+                        onSortChange={handleSortChange}
+                        sortField="xgrnnum"
+                        additionalParams={{ zid: zid, xstatus: 'Open' }}
+                        captionFont=".9rem"
+                        xclass="py-4 pl-2"
+                        bodyFont=".8rem"
+                        mt={0}
+                        page={1}
+                    />
+                </Box>
+            </div >
+        </div>
     );
 };
 

@@ -1,6 +1,7 @@
 package com.zaberp.zab.biwtabackend.model;
 
 import com.zaberp.zab.biwtabackend.id.CaitemId;
+import com.zaberp.zab.biwtabackend.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Table(name = "caitem")
 @IdClass(CaitemId.class) // Link to the composite key class
-public class Caitem {
+public class Caitem extends BaseEntity {
 
     @Column(name = "ztime")
     private LocalDateTime ztime;
@@ -93,10 +94,6 @@ public class Caitem {
     @Column(name = "xbatmg")
     private String xbatmg;
     @Column(name = "xreordqty")
-    private double xreordqty;
+    private Double xreordqty;
 
-
-
-    // Getters and Setters
-    // Add any additional methods like equals, hashCode, and toString if needed.
 }

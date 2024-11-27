@@ -4,6 +4,7 @@ import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.PdDependent;
+import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.service.CaitemService;
 import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
 import jakarta.transaction.Transactional;
@@ -36,15 +37,6 @@ public class CaitemController {
     }
 
 
-    @GetMapping("/{zid}")
-    public ResponseEntity<List<Caitem>> getCaitemByZid(
-            @PathVariable int zid) {
-        List<Caitem> caitemList = caitemService.findByZid(zid);
-        if (caitemList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(caitemList);
-    }
 
 
 
@@ -94,9 +86,19 @@ public class CaitemController {
             @PathVariable int zid,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "ztime") String sortBy,
+            @RequestParam(defaultValue = "xitem") String sortBy,
             @RequestParam(defaultValue = "true") boolean ascending) {
-        return caitemService.getItemsWithPaginationAndSorting(page, size, sortBy, ascending);
+        return caitemService.getItemsWithPaginationAndSorting(zid,page, size, sortBy, ascending);
+    }
+
+
+    @GetMapping("/search")
+    public List<Caitem> search(
+            @RequestParam("zid") String zid,
+            @RequestParam("text") String searchText
+    ) {
+        return caitemService.searchByText(zid, searchText);
+
     }
 
 

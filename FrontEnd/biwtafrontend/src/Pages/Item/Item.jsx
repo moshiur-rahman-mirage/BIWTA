@@ -55,6 +55,8 @@ const Item = () => {
     const [refreshCallback, setRefreshCallback] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [updateCount, setUpdateCount] = useState(0);
+    const [sortField, setSortField] = useState('name'); // Default sorting field
+    const [sortOrder, setSortOrder] = useState('asc');
     // Handle dropdown value change
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
@@ -64,14 +66,16 @@ const Item = () => {
 
     // Configuration
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/products/${zid}`;
-    const apiBaseUrlsearch = `http://localhost:8080/api/products/items/${zid}?page=1&size=5&sortBy=xitem&ascending=false`;
+    const apiBaseUrl = `http://localhost:8080/api/products/items/${zid}`;
+    
     const fieldConfig = [
         { header: 'ID', field: 'xitem' },
         { header: 'Name', field: 'xdesc' },
         { header: 'Generic Name', field: 'xgenericname' },
         { header: 'Unit', field: 'xunit' },
     ];
+
+
 
 
 
@@ -99,6 +103,12 @@ const Item = () => {
             zid,
         }));
         setDropdownOpen(false);
+    };
+
+    const handleSortChange = (field) => {
+        // Toggle sorting order if the same field is clicked
+        setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
+        setSortField(field);
     };
 
     const handleDropdownSelect = (fieldName, value) => {
@@ -308,14 +318,17 @@ const Item = () => {
                                     fullWidth
                                     onChange={(e) => {
                                         handleChange(e);
+                                        const query = e.target.value;
+                                        const apiSearchUrl = `http://localhost:8080/api/products/search?zid=${zid}&text=${query}`;
                                         handleSearch(
                                             e.target.value,
-                                            apiBaseUrl,
+                                            apiSearchUrl,
                                             fieldConfig,
                                             setSearchResults,
                                             setDropdownOpen,
                                             triggerRef,
-                                            setDropdownPosition
+                                            setDropdownPosition,
+                                            query
                                         );
                                     }}
                                     sx={{ gridColumn: 'span 1' }}
@@ -516,28 +529,31 @@ const Item = () => {
                 // padding: 2,
             }}>
 
-                <SearchableList
-                    apiUrl={apiBaseUrlsearch}
+                <SortableList
+                    apiUrl={apiBaseUrl}
                     caption="Item List"
                     columns={[
                         { field: 'xitem', title: 'Item Code', width: '35%', },
                         { field: 'xdesc', title: 'Name', width: '45%' },
-                        // { field: 'xunit', title: 'Unit', width: '15%', align: 'center' },
                         { field: 'xroute', title: 'Route', width: '20%', align: 'center' },
                     ]}
-                    //  additionalParams={{ zid: zid,xrelation:xrelation }}
                     onItemSelect={handleItemSelect}
                     onRefresh={(refresh) => {
                         if (refreshTrigger) {
                             refresh();
-                            setRefreshTrigger(false); // Reset trigger after refreshing
+                            setRefreshTrigger(false);
                         }
                     }}
+                    pageSize={10}
+                    onSortChange={handleSortChange}
+                    sortField="xitem"
                     captionFont=".9rem"
                     bodyFont=".8rem"
                     xclass="py-4 pl-2"
                     mt={0}
-                    // pageSize={10}
+                    page={1}
+                  
+                    
                 />
             </Box>
         </div >

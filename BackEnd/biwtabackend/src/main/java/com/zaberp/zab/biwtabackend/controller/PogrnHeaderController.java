@@ -1,11 +1,13 @@
 package com.zaberp.zab.biwtabackend.controller;
 
+import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
 import com.zaberp.zab.biwtabackend.service.PogrnHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,15 +28,15 @@ public class PogrnHeaderController {
     }
 
 
-
-    @GetMapping("/{zid}")
-    public ResponseEntity<List<Pogrnheader>> getGrnByZid(
-            @PathVariable int zid) {
-        List<Pogrnheader> grnList = service.getByZid(zid);
-        if (grnList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(grnList);
+    @GetMapping()
+    public Page<PogrnheaderXcusdto> getItems(
+            @RequestParam int zid,
+            @RequestParam(defaultValue = "Open") String xstatus,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "xgrnnum") String sortBy,
+            @RequestParam(defaultValue = "true") boolean ascending) {
+        return service.findPogrnWithSupplier(zid,xstatus,page, size, sortBy, ascending);
     }
 
     @PostMapping

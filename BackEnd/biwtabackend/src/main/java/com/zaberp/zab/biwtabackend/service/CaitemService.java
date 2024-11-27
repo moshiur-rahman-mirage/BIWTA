@@ -3,6 +3,7 @@ package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.model.Caitem;
+import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.repository.CaitemRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,7 @@ public class CaitemService {
         return caitemRepository.findAll();
     }
 
-    public List<Caitem> findByZid(int zid) {
-        return caitemRepository.findByZid(zid);
-    }
+
 
     public Optional<Caitem> getItemById(CaitemId id) {
         return caitemRepository.findById(id);
@@ -66,9 +65,13 @@ public class CaitemService {
         }
     }
 
-    public Page<Caitem> getItemsWithPaginationAndSorting(int page, int size, String sortBy, boolean ascending) {
+    public Page<Caitem> getItemsWithPaginationAndSorting(int zid, int page, int size, String sortBy, boolean ascending) {
         Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return caitemRepository.findAll(pageable);
+        return caitemRepository.findByZid(zid,pageable);
+    }
+
+    public List<Caitem> searchByText(String zid, String searchText) {
+        return caitemRepository.findBySearchTextAndZid(zid,searchText);
     }
 }

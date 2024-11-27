@@ -20,7 +20,7 @@ export const handleSearch = async (
     inputRef,
     setDropdownPosition
 ) => {
-    if (!query) {
+    if (!query.trim()) {
         setSearchResults([]);
         setListOpen(false);
         return;

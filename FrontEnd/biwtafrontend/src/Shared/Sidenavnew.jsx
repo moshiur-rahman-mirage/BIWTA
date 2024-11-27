@@ -58,7 +58,7 @@ export default function Sidenavnew() {
             <Link
               to={item.to}
               className="flex-1 text-sm font-medium"
-              onClick={() => handleMenuClick(item.title)}
+              onClick={() => { handleMenuClick(item.title); setIsOpen(!isOpen); }}
             >
               {item.title}
             </Link>

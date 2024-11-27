@@ -14,8 +14,8 @@ import { handleApiRequest } from '../../../utility/handleApiRequest';
 import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
-import { dark } from '@mui/material/styles/createPalette';
-import SearchableList from '../../../ReusableComponents/SearchableList';
+import SortableList from '../../../ReusableComponents/SortableList';
+
 
 const Pogrndirect = () => {
     // Authentication Context
@@ -30,7 +30,7 @@ const Pogrndirect = () => {
         xwh: '',
         xref: '',
         xstatus: '',
-        xnote: ''
+        xnote: '',
 
 
     });
@@ -43,6 +43,8 @@ const Pogrndirect = () => {
     const [refreshCallback, setRefreshCallback] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [updateCount, setUpdateCount] = useState(0);
+    const [sortField, setSortField] = useState('name'); // Default sorting field
+    const [sortOrder, setSortOrder] = useState('asc');
     // Handle dropdown value change
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
@@ -51,7 +53,7 @@ const Pogrndirect = () => {
     const triggerRef = useRef(null);
 
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/pogrnheader/${zid}`;
+    const apiBaseUrl = `http://localhost:8080/api/pogrnheader`;
     console.log(apiBaseUrl)
     const fieldConfig = [
         { header: 'GRN Number', field: 'xgrnnum' },
@@ -60,7 +62,11 @@ const Pogrndirect = () => {
         { header: 'Challan', field: 'xref' },
     ];
 
-
+    const handleSortChange = (field) => {
+        // Toggle sorting order if the same field is clicked
+        setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
+        setSortField(field);
+    };
 
 
     useEffect(() => {
@@ -116,7 +122,7 @@ const Pogrndirect = () => {
 
     const handleAdd = async () => {
 
-        const endpoint = 'api/products';
+        const endpoint = 'api/pogrnheader';
         const data = {
             ...formData,
             zauserid: zemail,
@@ -154,7 +160,9 @@ const Pogrndirect = () => {
             xwh: '',
             xref: '',
             xstatus: '',
-            xnote: ''
+            xnote: '',
+            xlong:'',
+            xorg:''
 
         });
         alert('Form cleared.');
@@ -176,7 +184,9 @@ const Pogrndirect = () => {
                     xwh: '',
                     xref: '',
                     xstatus: '',
-                    xnote: ''
+                    xnote: '',
+                    xlong:'',
+                    xorg:''
 
                 });
                 setUpdateCount(prevCount => prevCount + 1);
@@ -271,6 +281,9 @@ const Pogrndirect = () => {
                                     id="xgrnnum"
                                     name="xgrnnum"
                                     label="GRN Number"
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     size="small"
                                     value={formData.xgrnnum}
                                     variant={variant}
@@ -284,7 +297,8 @@ const Pogrndirect = () => {
                                             setSearchResults,
                                             setDropdownOpen,
                                             triggerRef,
-                                            setDropdownPosition
+                                            setDropdownPosition,
+                                            { zid }
                                         );
                                     }}
                                     sx={{ gridColumn: 'span 1' }}
@@ -294,7 +308,10 @@ const Pogrndirect = () => {
                                     id="xdate"
                                     name="xdate"
                                     label="Date"
-                                    // type="date"
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
+                                     type="date"
                                     size="small"
                                     value={formData.xdate}
                                     variant={variant}
@@ -319,6 +336,9 @@ const Pogrndirect = () => {
                                     label="Supplier"
                                     size="small"
                                     value={formData.xcus}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
@@ -326,12 +346,18 @@ const Pogrndirect = () => {
                                 />
                                 {/* Email */}
                                 <TextField
-                                    id="xcusdesc"
-                                    name="xcusdesc"
+                                    id="xorg"
+                                    name="xorg"
                                     label="Supplier Name"
                                     size="small"
-                                    value={formData.xcusdesc}
+                                    value={formData.xorg}
                                     variant={variant}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
+                                    inputProps={{
+                                        readOnly: true,
+                                    }}
                                     fullWidth
                                     onChange={handleChange}
                                     sx={{ gridColumn: 'span 1' }}
@@ -354,18 +380,27 @@ const Pogrndirect = () => {
                                     label="Store Code"
                                     size="small"
                                     value={formData.xwh}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
                                 />
                                 {/* Mobile */}
                                 <TextField
-                                    id="xwhdesc"
-                                    name="xwhdesc"
+                                    id="xlong"
+                                    name="xlong"
                                     label="Store Name"
                                     size="small"
-                                    value={formData.xwhdesc}
+                                    value={formData.xlong}
                                     variant={variant}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
+                                    inputProps={{
+                                        readOnly: true,
+                                    }}
                                     fullWidth
                                     onChange={handleChange}
                                 />
@@ -388,6 +423,9 @@ const Pogrndirect = () => {
                                     label="Approval Status"
                                     size="small"
                                     value={formData.xstatus}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
@@ -399,9 +437,12 @@ const Pogrndirect = () => {
                                     variant={variant}
                                     size="small"
                                     onChange={handleChange}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     value={formData.xstatusdoc}
                                     fullWidth
-                                    
+
                                 />
                                 <TextField
 
@@ -412,6 +453,9 @@ const Pogrndirect = () => {
                                     value={formData.xref}
                                     variant={variant}
                                     onChange={handleChange}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     fullWidth
                                     // disabled
                                     required
@@ -419,7 +463,7 @@ const Pogrndirect = () => {
 
                                 />
 
-                               
+
 
                             </Box>
 
@@ -436,12 +480,15 @@ const Pogrndirect = () => {
                                     size="small"
                                     onChange={handleChange}
                                     value={formData.xnote}
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                      }}
                                     fullWidth
                                     required
                                     multiline
                                     sx={{ gridColumn: 'span 3' }}
                                 />
-                               
+
 
                             </Box>
 
@@ -457,27 +504,31 @@ const Pogrndirect = () => {
                 // padding: 2,
             }}>
 
-                <SearchableList
+                <SortableList
                     apiUrl={apiBaseUrl}
-                    caption="Receive Entry Detail List"
+                    caption="Item List"
                     columns={[
-                        { field: 'xgrnnum', title: 'GRN Number', width: '35%', },
-                        { field: 'xdesc', title: 'Name', width: '45%' },
-                        // { field: 'xunit', title: 'Unit', width: '15%', align: 'center' },
-                        { field: 'xroute', title: 'Route', width: '20%', align: 'center' },
+                        { field: 'xgrnnum', title: 'Item Code', width: '25%', },
+                        { field: 'xcus', title: 'Name', width: '25%' },
+                        { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
+                        { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },
                     ]}
                     onItemSelect={handleItemSelect}
                     onRefresh={(refresh) => {
                         if (refreshTrigger) {
                             refresh();
-                            setRefreshTrigger(false); // Reset trigger after refreshing
+                            setRefreshTrigger(false);
                         }
                     }}
+                    pageSize={10}
+                    onSortChange={handleSortChange}
+                    sortField="xgrnnum"
+                    additionalParams={{zid:zid, xstatus: 'Confirmed' }}
                     captionFont=".9rem"
-                    bodyFont=".8rem"
                     xclass="py-4 pl-2"
+                    bodyFont=".8rem"
                     mt={0}
-                // pageSize={10}
+                    page={1}
                 />
             </Box>
         </div >

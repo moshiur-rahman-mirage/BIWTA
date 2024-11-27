@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -59,5 +60,34 @@ public abstract class BaseEntity implements Serializable {
 
     public void setZuuserid(String zuuserid) {
         this.zuuserid = zuuserid;
+    }
+
+    public void initializeDefaults() {
+        // Get all fields of the class
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true); // Allow access to private fields
+            try {
+                Object value = field.get(this); // Get current value of the field
+                if (value == null) {
+                    // Check the field type and assign default values
+                    if (field.getType() == Integer.class) {
+                        field.set(this, 0);
+                    } else if (field.getType() == Double.class) {
+                        field.set(this, 0.0);
+                    } else if (field.getType() == Long.class) {
+                        field.set(this, 0L);
+                    } else if (field.getType() == Float.class) {
+                        field.set(this, 0f);
+                    } else if (field.getType() == String.class) {
+                        field.set(this, "");
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                System.err.println("Error initializing field: " + field.getName());
+                e.printStackTrace();
+            }
+        }
     }
 }

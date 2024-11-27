@@ -1,6 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Divider, TextField, Button, Grid } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+    Box,
+    Typography,
+    Divider,
+    TextField,
+    Button,
+    Grid,
+    Pagination,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+} from '@mui/material';
 import Caption from '../utility/Caption';
+import axiosInstance from '../Middleware/AxiosInstance';
 
 const SortableList = ({
     apiUrl,
@@ -8,10 +21,9 @@ const SortableList = ({
     columns,
     onItemSelect,
     onRefresh,
-    pageSize,
-    sortField,
-    sortOrder,
+    pageSize: defaultPageSize = 10,
     onSortChange,
+    sortField,
     additionalParams = {},
     captionFont,
     bodyFont,
@@ -24,24 +36,45 @@ const SortableList = ({
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [folded, setFolded] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [page, setPage] = useState(0); // Current page
+    const [page, setPage] = useState(1); // Current page (Material-UI pagination is 1-based)
+    const [pageSize, setPageSize] = useState(defaultPageSize); // Items per page
     const [totalPages, setTotalPages] = useState(0); // Total pages
-
+    const [xsortField, setSortField] = useState(sortField); // Current field to sort by
+    const [sortOrder, setSortOrder] = useState('asc'); // Current sort order
+    
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
+
+
+    const handleSortChange = (field) => {
+        if (xsortField === field) {
+            // Toggle sort order if the same column is clicked
+            setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+        } else {
+            // Set new column to sort by and default to ascending order
+            setSortField(field);
+            setSortOrder('asc');
+        }
+        setPage(1); // Reset to the first page when sorting changes
+    };
+    
+
+    const constructApiUrl = useMemo(() => {
+        return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'asc'}`;
+    }, [apiUrl, page, pageSize, xsortField, sortOrder]);
+
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const params = {
-                page,
-                size: pageSize,
-                sort: sortField ? `${sortField},${sortOrder}` : undefined,
-                ...additionalParams,
-            };
-            const response = await apiUrl(params); // Parent provides API function
-            setItems(response.data.content);
-            setFilteredItems(response.data.content); // Initialize filtered items
+            const apiUrlWithParams = constructApiUrl;
+
+
+
+            const response = await axiosInstance.get(apiUrlWithParams, { params: additionalParams });
+        //   console.log(response)
+            setItems(response.data.content || []); // Update items based on API response
+            setFilteredItems(response.data.content || []);
             setTotalPages(response.data.totalPages || 1);
         } catch (error) {
             console.error('Error fetching list items:', error);
@@ -49,6 +82,7 @@ const SortableList = ({
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         if (onRefresh) {
@@ -58,7 +92,7 @@ const SortableList = ({
 
     useEffect(() => {
         fetchData();
-    }, [page, pageSize, sortField, sortOrder]);
+    }, [page, pageSize, xsortField, sortOrder]);
 
     const handleSearch = (event) => {
         setFolded(false);
@@ -67,9 +101,9 @@ const SortableList = ({
         setFilteredItems(
             items.filter((item) =>
                 columns.some((col) =>
-                    String(item[col.field] || '')
-                        .toLowerCase()
-                        .includes(value)
+                    String(item[col.field] || '').toLowerCase().includes(value)
+
+
                 )
             )
         );
@@ -77,16 +111,21 @@ const SortableList = ({
 
     const toggleFold = () => setFolded((prev) => !prev);
 
-    const handlePageChange = (newPage) => {
-        if (newPage >= 0 && newPage < totalPages) {
-            setPage(newPage);
-        }
+    const handlePageChange = (event, newPage) => {
+        setPage(newPage);
+    };
+
+
+    const handlePageSizeChange = (event) => {
+        setPageSize(event.target.value);
+        setPage(1);
+        setFolded(false);
     };
 
     return (
-        <div className={`${xclass} shadow-lg pt-0 rounded`} style={{ overflowY: 'auto', borderRadius: '4px' }}>
+        <div className={`${xclass} shadow-lg pt-0 rounded`} style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', borderRadius: '4px' }}>
             <Box display="flex" alignItems="left" justifyContent="space-between" mt={mt}>
-                <Caption title={caption} />
+                <Caption title={caption}  />
             </Box>
             <Box display="flex" alignItems="left" justifyContent="space-between" gap={2}>
                 <TextField
@@ -96,15 +135,45 @@ const SortableList = ({
                     value={searchTerm}
                     onChange={handleSearch}
                 />
-                <Button onClick={toggleFold} variant="outlined" size="small" sx={{ height: '40px', marginTop: '2px' }}>
-                    {folded ? `Expand (${filteredItems.length})` : 'Collapse'}
-                </Button>
+                <Box display="flex" alignItems="left" justifyContent="space-between" gap={2}>
+
+
+                    <FormControl size="small" sx={{
+                        minWidth: 102, // Increase width by 2px (100 -> 102)
+                        height: '40px',
+                        marginTop: '2px',
+                        position: 'relative',
+                    }}>
+                        <InputLabel sx={{
+                            position: 'absolute',
+                            top: '50%', // Vertically center
+                            transform: 'translateY(-50%)',
+                            left:'35px',
+
+                            fontSize: '0.85rem', // Adjust font size if necessary
+                            paddingLeft: '4px', // Optional: Add padding for aesthetics
+                        }}>
+                            Show
+                        </InputLabel>
+
+                        <Select value={pageSize} onChange={handlePageSizeChange}>
+                            {[ 10, 15, 20].map((size) => (
+                                <MenuItem key={size} value={size}>
+                                    {size}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <Button onClick={toggleFold} variant="outlined" size="small" sx={{ height: '40px', marginTop: '2px' }}>
+                        {folded ? `Expand (${filteredItems.length})` : 'Collapse'}
+                    </Button>
+                </Box>
             </Box>
 
             {!folded && (
                 <>
                     {/* Table Header */}
-                    <Grid container spacing={2} mt={2} mb={1}>
+                    <Grid container spacing={2} mt={0} mb={1}>
                         {columns.map((col, idx) => (
                             <Grid item xs={12 / columns.length} key={idx}>
                                 <Typography
@@ -113,7 +182,7 @@ const SortableList = ({
                                     onClick={() => onSortChange(col.field)}
                                 >
                                     {col.title}{' '}
-                                    {sortField === col.field ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+                                    {xsortField === col.field ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
                                 </Typography>
                             </Grid>
                         ))}
@@ -136,6 +205,7 @@ const SortableList = ({
                                         backgroundColor: hoveredIndex === index ? '#f0f0f0' : 'transparent',
                                         cursor: 'pointer',
                                         padding: '8px 0',
+                                       
                                     }}
                                 >
                                     <Grid container spacing={2}>
@@ -146,6 +216,7 @@ const SortableList = ({
                                                         fontSize: bodyFont || '0.875rem',
                                                         textAlign: 'left',
                                                     }}
+                                                    onClick={() => handleSortChange(col.field)} 
                                                 >
                                                     {item[col.field] || 'N/A'}
                                                 </Typography>
@@ -157,27 +228,17 @@ const SortableList = ({
                             ))}
                         </Box>
                     )}
+
+
                     {/* Pagination Controls */}
-                    <Box display="flex" justifyContent="center" mt={2}>
-                        <Button
-                            variant="contained"
-                            disabled={page === 0}
-                            onClick={() => handlePageChange(page - 1)}
+                    <Box mt={2} display="flex" justifyContent="space-between" alignItems="center">
+                        <Pagination
+                            count={totalPages}
+                            page={page}
+                            onChange={handlePageChange}
+                            // color="#8979EE"
                             size="small"
-                        >
-                            Previous
-                        </Button>
-                        <Typography variant="body1" style={{ margin: '0 8px' }}>
-                            Page {page + 1} of {totalPages}
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            disabled={page === totalPages - 1}
-                            onClick={() => handlePageChange(page + 1)}
-                            size="small"
-                        >
-                            Next
-                        </Button>
+                        />
                     </Box>
                 </>
             )}

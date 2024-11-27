@@ -1,5 +1,6 @@
 package com.zaberp.zab.biwtabackend.service;
 
+import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Caitem;
@@ -9,6 +10,10 @@ import com.zaberp.zab.biwtabackend.repository.PogrnHeaderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +38,6 @@ import java.util.Optional;
             return repository.findByZidAndXgrnnum(zid, xgrnnum);
         }
 
-        public List<Pogrnheader> getByZid(int zid) {
-            return repository.findByZid(zid);
-        }
 
         public Pogrnheader createGrn(Pogrnheader pogrnheader) {
             String generatedKey=primaryKeyService.getGeneratedPrimaryKey(pogrnheader.getZid(),"GRN Number","GRN-",6);
@@ -61,6 +63,12 @@ import java.util.Optional;
             } catch (DataIntegrityViolationException ex) {
                 throw new DataIntegrityViolationException("Cannot delete item due to foreign key constraints: " + ex.getMessage(), ex);
             }
+        }
+
+        public Page<PogrnheaderXcusdto> findPogrnWithSupplier(int zid, String xstatus, int page, int size, String sortBy, boolean ascending) {
+            Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+            Pageable pageable = PageRequest.of(page, size, sort);
+            return repository.findPogrnWithSupplier(zid,xstatus,pageable);
         }
     }
 

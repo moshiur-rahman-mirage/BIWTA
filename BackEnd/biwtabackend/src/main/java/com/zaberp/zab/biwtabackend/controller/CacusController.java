@@ -3,6 +3,7 @@ package com.zaberp.zab.biwtabackend.controller;
 
 import com.zaberp.zab.biwtabackend.id.CacusId;
 import com.zaberp.zab.biwtabackend.model.Cacus;
+import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.service.CacusService;
 import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
 import com.zaberp.zab.biwtabackend.util.ApplicationContextData;
@@ -96,5 +97,14 @@ public class CacusController {
         id.setXcus(xcus);
         cacusService.deleteCacus(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public List<Cacus> search(
+            @RequestParam("zid") int zid,
+            @RequestParam("text") String searchText
+    ) {
+        return cacusService.getBySearchTextAndZid(zid, searchText);
+
     }
 }

@@ -15,6 +15,7 @@ import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
 import SortableList from '../../../ReusableComponents/SortableList';
+import XcodesDropDown from '../../../ReusableComponents/XcodesDropDown';
 
 
 const Pogrndirect = () => {
@@ -58,7 +59,7 @@ const Pogrndirect = () => {
     const fieldConfig = [
         { header: 'GRN Number', field: 'xgrnnum' },
         { header: 'Date', field: 'xdate' },
-        { header: 'Supplier', field: 'xcus' },
+        { header: 'Supplier', field: 'xorg' },
         { header: 'Challan', field: 'xref' },
     ];
 
@@ -129,10 +130,10 @@ const Pogrndirect = () => {
             zid: zid
         };
         addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xitem) {
+            if (response && response.xgrnnum) {
                 console.log("POSt called")
                 console.log(response)
-                setFormData((prev) => ({ ...prev, xitem: response.xitem }));
+                setFormData((prev) => ({ ...prev, xgrnnum: response.xgrnnum }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
                 // alert('Supplier added successfully.');
@@ -161,8 +162,8 @@ const Pogrndirect = () => {
             xref: '',
             xstatus: '',
             xnote: '',
-            xlong:'',
-            xorg:''
+            xlong: '',
+            xorg: ''
 
         });
         alert('Form cleared.');
@@ -185,8 +186,8 @@ const Pogrndirect = () => {
                     xref: '',
                     xstatus: '',
                     xnote: '',
-                    xlong:'',
-                    xorg:''
+                    xlong: '',
+                    xorg: ''
 
                 });
                 setUpdateCount(prevCount => prevCount + 1);
@@ -283,16 +284,18 @@ const Pogrndirect = () => {
                                     label="GRN Number"
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     size="small"
-                                    value={formData.xgrnnum}
+                                    value={formData.xgrnnum || ''}
                                     variant={variant}
                                     fullWidth
                                     onChange={(e) => {
                                         handleChange(e);
+                                        const query = e.target.value;
+                                        const apiSearchUrl = `http://localhost:8080/api/pogrnheader/search?zid=${zid}&text=${query}`;
                                         handleSearch(
                                             e.target.value,
-                                            apiBaseUrl,
+                                            apiSearchUrl,
                                             fieldConfig,
                                             setSearchResults,
                                             setDropdownOpen,
@@ -310,8 +313,8 @@ const Pogrndirect = () => {
                                     label="Date"
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
-                                     type="date"
+                                    }}
+                                    type="date"
                                     size="small"
                                     value={formData.xdate}
                                     variant={variant}
@@ -338,7 +341,7 @@ const Pogrndirect = () => {
                                     value={formData.xcus}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
@@ -354,7 +357,7 @@ const Pogrndirect = () => {
                                     variant={variant}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     inputProps={{
                                         readOnly: true,
                                     }}
@@ -374,7 +377,7 @@ const Pogrndirect = () => {
                                 mb={2}
                             >
 
-                                <TextField
+                                {/* <TextField
                                     id="xwh"
                                     name="xwh"
                                     label="Store Code"
@@ -382,11 +385,27 @@ const Pogrndirect = () => {
                                     value={formData.xwh}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
+                                /> */}
+
+                                <XcodesDropDown
+                                    variant={variant}
+                                    label="Store"
+                                    size="small"
+                                    name="xwh"
+                                    type="Branch"
+                                    onSelect={(value) => handleDropdownSelect("xwh", value)}
+                                    value={formData.xwh}
+                                    defaultValue=""
+                                    InputLabelProps={{
+                                        shrink: true, // Ensure the label shrinks above the input
+                                    }}
                                 />
+
+
                                 {/* Mobile */}
                                 <TextField
                                     id="xlong"
@@ -397,7 +416,7 @@ const Pogrndirect = () => {
                                     variant={variant}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     inputProps={{
                                         readOnly: true,
                                     }}
@@ -425,7 +444,7 @@ const Pogrndirect = () => {
                                     value={formData.xstatus}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     variant={variant}
                                     fullWidth
                                     onChange={handleChange}
@@ -439,7 +458,7 @@ const Pogrndirect = () => {
                                     onChange={handleChange}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     value={formData.xstatusdoc}
                                     fullWidth
 
@@ -455,7 +474,7 @@ const Pogrndirect = () => {
                                     onChange={handleChange}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     fullWidth
                                     // disabled
                                     required
@@ -482,7 +501,7 @@ const Pogrndirect = () => {
                                     value={formData.xnote}
                                     InputLabelProps={{
                                         shrink: true, // Ensure the label shrinks above the input
-                                      }}
+                                    }}
                                     fullWidth
                                     required
                                     multiline
@@ -523,7 +542,7 @@ const Pogrndirect = () => {
                     pageSize={10}
                     onSortChange={handleSortChange}
                     sortField="xgrnnum"
-                    additionalParams={{zid:zid, xstatus: 'Confirmed' }}
+                    additionalParams={{ zid: zid, xstatus: 'Confirmed' }}
                     captionFont=".9rem"
                     xclass="py-4 pl-2"
                     bodyFont=".8rem"

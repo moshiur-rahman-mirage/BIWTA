@@ -27,6 +27,10 @@ public class XcodesService {
         return repository.existsByZidAndXtypeAndXcode(zid, xtype,xcode);
     }
 
+    public List<Xcodes> findByZidAndXtype(int zid,String xtype){
+        return repository.findByZidAndXtype(zid,xtype);
+    }
+
 
     public Optional<Xcodes> findById(XcodesId id) {
         return repository.findById(id);
@@ -53,13 +57,11 @@ public class XcodesService {
     }
 
 
-    public List<Xcodes> searchByText(String zid,String xtype,String searchText) {
-//        return repository.findBySearchText(searchText);
-
+    public List<Xcodes> searchByText(int zid,String xtype,String searchText) {
         return repository.findBySearchTextAndZid(zid, xtype, searchText);
     }
 
-    public List<Xcodes> findActiveXcodesByZidAndXtype(String zid,String xtype) {
+    public List<Xcodes> findActiveXcodesByZidAndXtype(int zid,String xtype) {
         return repository.findActiveXcodesByZidAndType(zid, xtype);
     }
 

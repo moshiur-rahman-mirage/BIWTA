@@ -39,8 +39,12 @@ public class CacusService {
         cacusRepository.deleteById(id);
     }
 
-    public List<Cacus> getCacusByZidAndXtype(Integer zid, String xtype) {
+    public List<Cacus> getCacusByZidAndXtype(int zid, String xtype) {
         return cacusRepository.findByZidAndXtype(zid, xtype);
+    }
+
+    public List<Cacus> getBySearchTextAndZid(int zid,String search){
+        return cacusRepository.findBySearchTextAndZid(zid,search);
     }
 }
 

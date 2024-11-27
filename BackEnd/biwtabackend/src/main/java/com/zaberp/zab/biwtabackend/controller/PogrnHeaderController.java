@@ -3,6 +3,7 @@ package com.zaberp.zab.biwtabackend.controller;
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
+import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
 import com.zaberp.zab.biwtabackend.service.PogrnHeaderService;
@@ -69,5 +70,14 @@ public class PogrnHeaderController {
         PogrnHeaderId id = new PogrnHeaderId(zid, xgrnnum);
         service.deleteGrn(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public List<PogrnheaderXcusdto> search(
+            @RequestParam("zid") int zid,
+            @RequestParam("text") String searchText
+    ) {
+        return service.searchByText(zid, searchText);
+
     }
 }

@@ -109,7 +109,7 @@ const BesicXcodes = ({ title, xtype }) => {
             // );
             console.log("in fetch xtype is "+xtype)
             const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${xtype}&searchText=${query}`)
-
+           
             setSearchResults(response.data);
             setListOpen(true);
 

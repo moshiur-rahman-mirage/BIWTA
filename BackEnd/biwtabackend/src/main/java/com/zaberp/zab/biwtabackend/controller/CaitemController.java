@@ -94,7 +94,7 @@ public class CaitemController {
 
     @GetMapping("/search")
     public List<Caitem> search(
-            @RequestParam("zid") String zid,
+            @RequestParam("zid") int zid,
             @RequestParam("text") String searchText
     ) {
         return caitemService.searchByText(zid, searchText);

@@ -83,7 +83,7 @@ public class XcodesController {
 
     @GetMapping("/searchtext")
     public List<Xcodes> search(
-            @RequestParam("zid") String zid,
+            @RequestParam("zid") int zid,
             @RequestParam("xtype") String xtype,
             @RequestParam("searchText") String searchText
     ) {
@@ -92,9 +92,19 @@ public class XcodesController {
     }
 
 
+    @GetMapping("/dropdownlist")
+    public List<Xcodes> findByZidAndXtype(
+            @RequestParam("zid") int zid,
+            @RequestParam("xtype") String xtype
+    ) {
+        return service.findByZidAndXtype(zid,xtype);
+
+    }
+
+
     @GetMapping("/active")
     public List<Xcodes> findActiveXcodesByZidAndXtype(
-            @RequestParam("zid") String zid,
+            @RequestParam("zid") int zid,
             @RequestParam("xtype") String xtype
     ) {
         return service.findActiveXcodesByZidAndXtype(zid,xtype);

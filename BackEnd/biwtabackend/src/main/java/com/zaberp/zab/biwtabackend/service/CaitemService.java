@@ -71,7 +71,7 @@ public class CaitemService {
         return caitemRepository.findByZid(zid,pageable);
     }
 
-    public List<Caitem> searchByText(String zid, String searchText) {
+    public List<Caitem> searchByText(int zid, String searchText) {
         return caitemRepository.findBySearchTextAndZid(zid,searchText);
     }
 }

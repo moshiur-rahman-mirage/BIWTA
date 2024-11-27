@@ -5,6 +5,7 @@ import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
+import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.repository.PogrnHeaderRepository;
 
 import jakarta.transaction.Transactional;
@@ -69,6 +70,10 @@ import java.util.Optional;
             Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
             Pageable pageable = PageRequest.of(page, size, sort);
             return repository.findPogrnWithSupplier(zid,xstatus,pageable);
+        }
+
+        public List<PogrnheaderXcusdto> searchByText(int zid, String searchText) {
+            return repository.findGrnWithZidAndSearchText(zid,searchText);
         }
     }
 

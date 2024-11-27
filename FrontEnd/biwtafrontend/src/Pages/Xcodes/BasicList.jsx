@@ -22,8 +22,8 @@ const BasicList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode, xlo
         console.log("Date Fetching")
         try {
             // const response = await axios.get(`${apiBaseUrl}/search?zid=${zid}&xtype=${xtype}`);
-            const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${xtype}`)
-
+            const response = await axiosInstance.get(`api/xcodes/dropdownlist?zid=${zid}&xtype=${xtype}`)
+            console.log(response)
             setItems(response.data);
             console.log(response.data)
             setLoading(false);
@@ -48,10 +48,14 @@ const BasicList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode, xlo
             {/* Heading */}
             <Box display="flex" justifyContent="space-between" mb={1} borderBottom={1}>
                 {/* Column Names */}
+
+                <Typography variant="subtitle1" style={{ fontWeight: '', width: '20%' }}>
+                    Type
+                </Typography>
                 <Typography variant="subtitle1" style={{ fontWeight: '', width: '20%' }}>
                     Code
                 </Typography>
-                <Typography variant="subtitle1" style={{ fontWeight: '', width: '55%' }}>
+                <Typography variant="subtitle1" style={{ fontWeight: '', width: '50%' }}>
                     Name
                 </Typography>
                 <Typography variant="subtitle1" style={{ fontWeight: '', width: '10%' }}>
@@ -77,9 +81,12 @@ const BasicList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode, xlo
                             <Box display="flex" justifyContent="space-between" mb={1}>
                                 {/* Left side (item fields) */}
                                 <Box flex="0 1 20%" style={{ width: 'auto' }}>
+                                    <Typography sx={{fontSize}} variant="subtitle1" align="left">{item.xtype || 'N/A'}</Typography>
+                                </Box>
+                                <Box flex="0 1 20%" style={{ width: 'auto' }}>
                                     <Typography sx={{fontSize}} variant="subtitle1" align="left">{item.xcode || 'N/A'}</Typography>
                                 </Box>
-                                <Box flex="0 1 55%" style={{ width: 'auto' }}>
+                                <Box flex="0 1 50%" style={{ width: 'auto' }}>
                                     <Typography sx={{fontSize}} variant="subtitle1" align="left">{item.xlong || 'N/A'}</Typography>
                                 </Box>
                                 <Box flex="0 1 10%" style={{ width: 'auto' }}>

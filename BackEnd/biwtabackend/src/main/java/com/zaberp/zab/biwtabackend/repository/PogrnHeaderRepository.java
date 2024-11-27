@@ -33,5 +33,13 @@ public interface PogrnHeaderRepository extends JpaRepository<Pogrnheader, PogrnH
     Page<PogrnheaderXcusdto> findPogrnWithSupplier(@Param("zid") int zid,
             @Param("xstatus") String xstatus, Pageable pageable);
 
+
+    @Query("SELECT new com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto(" +
+            "p.zid, p.xgrnnum, p.xdate, s.xcus, s.xorg, p.xwh, x.xlong, p.xstatus, p.xstatusgrn, p.zauserid) " +
+            "FROM Pogrnheader p " +
+            "JOIN Cacus s ON p.zid = s.zid AND p.xcus = s.xcus " +
+            "JOIN Xcodes x ON p.zid = x.zid AND p.xwh = x.xcode and x.xtype='Branch' " +
+            "WHERE p.zid=:zid and p.xgrnnum  like %:searchText% or s.xorg like %:searchText%")
+    List<PogrnheaderXcusdto> findGrnWithZidAndSearchText(@Param("zid") int zid, @Param("searchText") String searchText);
 }
 

@@ -1,30 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const DynamicDropdown = ({
-    isOpen, // Controls visibility
-    onClose, // Callback to close dropdown
-    triggerRef, // Ref for positioning
-    data = [], // Data array to display
-    headers = [], // Header titles for columns
-    onSelect, // Callback for item selection
-    dropdownWidth = 600, // Default width
-    dropdownHeight = 400, // Default max height
+    isOpen,
+    onClose,
+    triggerRef,
+    data = [],
+    headers = [],
+    onSelect,
+    rect,
+    dropdownWidth, // Optional: dynamically calculated if not provided
+    dropdownHeight = 400,
 }) => {
     const dropdownRef = useRef(null);
-    const [position, setPosition] = useState({ top: 0, left: 0 });
-    const [hoveredIndex, setHoveredIndex] = useState(null); // Track hovered item index
+    const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+    const [hoveredIndex, setHoveredIndex] = useState(null);
 
     useEffect(() => {
         if (isOpen && triggerRef?.current) {
-            const rect = triggerRef.current.getBoundingClientRect();
-            setPosition({
-                top: rect.bottom + window.scrollY,
-                left: rect.left + window.scrollX,
-            });
-        }
-    }, [isOpen, triggerRef]);
+            const triggerRect = triggerRef.current.getBoundingClientRect();
+            const modalContainer = document.querySelector('.MuiModal-root');
+            console.log("Position of TextField:", triggerRect);
+            const modalRect = modalContainer?.getBoundingClientRect();
 
-    // Close dropdown on outside click
+            // setPosition({
+            //     top: modalRect ? triggerRect.bottom - modalRect.top : window.scrollY + triggerRect.bottom,
+            //     left: modalRect ? triggerRect.left - modalRect.left : window.scrollX + triggerRect.left,
+            //     width: dropdownWidth || triggerRect.width, // Use dynamic width if not provided
+            // });
+
+            if (rect) {
+                setPosition({
+                    top:  rect.top-30,
+                    left:  rect.left-35
+                    
+                });
+               
+            } else {
+                setPosition({
+                    top: modalRect ? triggerRect.bottom - modalRect.top : window.scrollY + triggerRect.bottom,
+                    left: modalRect ? triggerRect.left - modalRect.left : window.scrollX + triggerRect.left,
+                    width: dropdownWidth || triggerRect.width, // Use dynamic width if not provided
+                });
+            }
+
+        }
+    }, [isOpen, triggerRef, dropdownWidth]);
+
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -47,13 +68,13 @@ const DynamicDropdown = ({
                 position: 'absolute',
                 top: position.top,
                 left: position.left,
+                width: position.width,
                 maxHeight: `${dropdownHeight}px`,
-                width: `${dropdownWidth}px`,
                 overflowY: 'auto',
                 border: '1px solid black',
                 borderRadius: '4px',
                 backgroundColor: '#fff',
-                zIndex: 1000,
+                zIndex: 1300,
                 boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
             }}
         >
@@ -68,7 +89,7 @@ const DynamicDropdown = ({
                 }}
             >
                 {headers.map((header, index) => (
-                    <div key={index} style={{ flex: 1, textAlign: 'left' }}>
+                    <div key={index} style={{ flex: 1, textAlign: 'left', paddingRight: '10px' }}>
                         {header}
                     </div>
                 ))}
@@ -84,20 +105,17 @@ const DynamicDropdown = ({
                             padding: '10px',
                             cursor: 'pointer',
                             backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9',
-                            transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+                            transition: 'background-color 0.3s ease',
                             ...(hoveredIndex === index
-                                ? { backgroundColor: '#e0e0e0' } // Highlight on hover
+                                ? { backgroundColor: '#e0e0e0' }
                                 : {}),
                         }}
-                        onClick={() => {
-                            console.log("Dropdown item selected:::::: ", item);
-                            onSelect(item);
-                        }}
-                        onMouseEnter={() => setHoveredIndex(index)} // Set hover state
-                        onMouseLeave={() => setHoveredIndex(null)} // Remove hover state
+                        onClick={() => onSelect(item)}
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
                     >
                         {Object.values(item).map((value, idx) => (
-                            <div key={idx} style={{ flex: 1, textAlign: 'left' }}>
+                            <div key={idx} style={{ fontSize:'12px', flex: 1, textAlign: 'left', paddingRight: '10px' }}>
                                 {value}
                             </div>
                         ))}

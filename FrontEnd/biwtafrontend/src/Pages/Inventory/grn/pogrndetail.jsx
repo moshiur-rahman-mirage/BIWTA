@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
     TextField,
@@ -20,15 +20,25 @@ import Caption from '../../../utility/Caption';
 import XcodesDropDown from '../../../ReusableComponents/XcodesDropDown';
 import SortableList from '../../../ReusableComponents/SortableList';
 import { useAuth } from '../../../Provider/AuthProvider';
+import DynamicDropdown from '../../../ReusableComponents/DynamicDropdown';
+import { handleSearch } from '../../../ReusableComponents/handleSearch';
 
 
 const Pogrndetail = ({ xgrnnum }) => {
     const { zid } = useAuth();
     const variant = 'standard'
+
+    const itemRef = useRef(null);
     const [isTyping, setIsTyping] = useState(false);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const apiBaseUrl = `api/pogrndetail?zid=${zid}&xgrnnum=${xgrnnum}`;
+    const apiBaseUrl = `api/pogrndetails?zid=${zid}&xgrnnum=${xgrnnum}`;
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
+    const [itemDropdownOpen, setItemDropdownOpen] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [rect, setBoundingRect] = useState(null)
+    const apiListUrl = `api/pogrndetails/${zid}/${xgrnnum}`
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -36,14 +46,36 @@ const Pogrndetail = ({ xgrnnum }) => {
         xrow: '',
         xitem: '',
         xqtygrn: '',
-        xrate: '',
+        xrategrn: '',
         xbatch: '',
-        xdateexp: '',
+        xdateexp: new Date().toISOString().split('T')[0],
         xlong: '',
-        xlineamt: ''
+        xlineamt: '',
+        xunitpur: ''
 
 
     });
+
+
+    const itemConfig = [
+        { header: 'Item Code', field: 'xitem' },
+        { header: 'Name', field: 'xdesc' },
+        { header: 'Purchase Unit', field: 'xunitpur' },
+    ];
+
+    const handleItemSelect = useCallback((item) => {
+        console.log('Selected Item:', item);
+        setSelectedItem(item);
+    }, []);
+
+    useEffect(() => {
+        if (selectedItem) {
+            console.log(selectedItem)
+            setFormData({
+                ...selectedItem
+            });
+        }
+    }, [selectedItem]);
 
 
     const handleDropdownSelect = (fieldName, value) => {
@@ -68,6 +100,15 @@ const Pogrndetail = ({ xgrnnum }) => {
         }
     }, [refreshTrigger, handleRefresh]);
 
+    useEffect(() => {
+        // Check if the ref is attached and available after the component mounts
+        if (itemRef.current) {
+            const boundingRect = itemRef.current.getBoundingClientRect(); // Get position
+            console.log("Position of TextField:", boundingRect);
+            setBoundingRect(boundingRect);
+        }
+    }, []);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -87,12 +128,12 @@ const Pogrndetail = ({ xgrnnum }) => {
         const data = {
 
             zid: zid,
-            xgrnnum: formData.xgrnnum,
+            xgrnnum: xgrnnum,
             zauserid: formData.zauserid,
             xrow: formData.xrow,
             xitem: formData.xitem,
             xqtygrn: formData.xqtygrn,
-            xrate: formData.xrate,
+            xrategrn: formData.xrategrn,
             xbatch: formData.xbatch,
             xdateexp: formData.xdateexp,
             xlong: formData.xlong,
@@ -101,7 +142,7 @@ const Pogrndetail = ({ xgrnnum }) => {
         };
 
 
-        const endpoint = "/api/pogrndetail";
+        const endpoint = "/api/pogrndetails";
 
         await handleApiRequest({
             endpoint,
@@ -110,6 +151,13 @@ const Pogrndetail = ({ xgrnnum }) => {
             onSuccess: (response) => {
                 handleRefresh();
                 setRefreshTrigger(true);
+                console.log(response.data.xrow)
+                if (response && response.data.xrow) {
+                    setFormData((prev) => ({ ...prev, xrow: response.data.xrow }));
+                } else {
+                    // alert('Supplier added successfully.');
+                }
+
                 if (method === 'DELETE') {
 
                     setFormData({
@@ -128,12 +176,48 @@ const Pogrndetail = ({ xgrnnum }) => {
                 }
 
             },
+            params: { zid: formData.zid, xgrnnum: formData.xgrnnum, xrow: formData.xrow }
         });
     };
 
     const handleOnRefresh = useCallback((refreshFn) => {
         setRefreshCallback(() => refreshFn);
     }, []);
+
+
+
+    const handleClear = () => {
+        setFormData({
+            zid: zid,
+            zauserid: '',
+            xgrnnum: '',
+            xrow: '',
+            xitem: '',
+            xqtygrn: '',
+            xrategrn: '',
+            xbatch: '',
+            xdateexp: new Date().toISOString().split('T')[0],
+            xlong: '',
+            xlineamt: '',
+            xunitpur: ''
+
+        });
+        alert('Form cleared.');
+    };
+
+
+    const handleItemClick = (result) => {
+        setFormData((prev) => ({
+            ...prev,
+            ...result,
+            zid,
+        }));
+        setItemDropdownOpen(false);
+
+
+    };
+
+
 
 
     return (
@@ -143,7 +227,7 @@ const Pogrndetail = ({ xgrnnum }) => {
                     onAdd={() => handleAction('POST')}
                     onUpdate={() => handleAction('PUT')}
                     onDelete={() => handleAction('DELETE')}
-                //  onClear={handleClear}
+                 onClear={handleClear}
                 // onShow={handleShow}
                 />
             </div>
@@ -172,11 +256,11 @@ const Pogrndetail = ({ xgrnnum }) => {
                         >
                             <Box sx={{
                                 gridColumn: 'span 1',
-                                border: '1px solid #ccc', // Light gray border
-                                borderRadius: '8px', // Optional: Rounded corners
+                                border: '1px solid #ccc',
+                                borderRadius: '8px',
                                 padding: 2,
                             }}>
-                                <Caption title={"Family Information Detail of " } />
+                                <Caption title={"Receive Entry Detail of " + xgrnnum} />
                                 <Box
                                     display="grid"
 
@@ -186,45 +270,44 @@ const Pogrndetail = ({ xgrnnum }) => {
                                 >
 
                                     <TextField
-                                        label="Family member Name"
-                                        name='xname'
+                                        label="Row Number"
+                                        name='xrow'
                                         variant={variant}
                                         size="small"
                                         onChange={handleChange}
-                                        value={formData.xname}
+                                        value={formData.xrow}
                                         fullWidth
-                                        required
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
-                                            },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
+
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
                                             },
                                         }}
                                     />
 
                                     <TextField
-                                        label="Date of Birth"
-                                        type="date"
-                                        name='xbirthdate'
-                                        size='small'
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                        value={formData.xbirthdate}
+                                        label="Unit"
+                                        name='xunitpur'
                                         variant={variant}
+                                        size="small"
+                                        onChange={handleChange}
+                                        value={formData.xunitpur}
                                         fullWidth
 
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
-                                            },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
                                             },
                                         }}
-
+                                        InputProps={{
+                                            sx: {
+                                                fontSize: '1.2rem'
+                                            }
+                                        }}
                                     />
+
                                 </Box>
                                 <Box
                                     display="grid"
@@ -232,38 +315,76 @@ const Pogrndetail = ({ xgrnnum }) => {
                                     gap={2}
                                     mb={2} // margin-bottom
                                 >
-                                    <XcodesDropDown
-                                        id='xsex'
-                                        name='xsex'
-                                        variant={variant}
-                                        label="Gender"
+                                    <DynamicDropdown
+                                        isOpen={itemDropdownOpen}
+                                        onClose={() => setItemDropdownOpen(false)}
+                                        triggerRef={itemRef}
+                                        data={searchResults}
+                                        headers={itemConfig.map((config) => config.header)}
+                                        onSelect={handleItemClick}
+                                        dropdownWidth={400}
+                                        dropdownHeight={300}
+                                        rect={rect}
+                                    />
+                                    {/* Supplier ID Field */}
+                                    <TextField
+                                        inputRef={itemRef}
+                                        id="xitem"
+                                        name="xitem"
+                                        required
+                                        label="Item Code"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
+                                            },
+                                        }}
                                         size="small"
-                                        type="Gender"
-                                        apiUrl={apiBaseUrl}
-                                        onSelect={(value) => handleDropdownSelect("xgender", value)}
-                                        value={formData.xgender}
-                                        fontSize="0.8rem" // Smaller font size for dropdown options
-                                        captionSize="0.8rem"
-
-
+                                        value={formData.xitem || ''}
+                                        variant={variant}
+                                        fullWidth
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            const query = e.target.value;
+                                            const apiSearchUrl = `http://localhost:8080/api/products/search?zid=${zid}&text=${query}`;
+                                            handleSearch(
+                                                e.target.value,
+                                                apiSearchUrl,
+                                                itemConfig,
+                                                setSearchResults,
+                                                setItemDropdownOpen,
+                                                itemRef,
+                                                setDropdownPosition,
+                                                { zid }
+                                            );
+                                        }}
+                                        sx={{ gridColumn: 'span 1' }}
                                     />
 
 
 
-                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
+                                    <TextField
+                                        label="Item Name"
+                                        variant={variant}
+                                        size="small"
+                                        fullWidth
+                                        name='xdesc'
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
+                                            },
+                                        }}
+                                        InputProps={{
+                                            sx: {
+                                                fontSize: '.8rem',
+                                            }
+                                        }}
+                                        onChange={handleChange}
+                                        value={formData.xdesc}
 
-                                        <XcodesDropDown
-                                            variant={variant}
-                                            label="Relation"
-                                            size="small"
-                                            type="Relation"
-                                            name='xrelation'
-                                            onSelect={(value) => handleDropdownSelect("xrelation", value)}
-                                            value={formData.xrelation}
-                                            defaultValue=""
-                                        />
 
-                                    </Stack>
+                                    />
                                 </Box>
 
                                 <Box
@@ -275,47 +396,77 @@ const Pogrndetail = ({ xgrnnum }) => {
 
                                 >
                                     <TextField
-                                        id='xnid'
-                                        name='xnid'
-                                        label="NID"
-                                        size="small"
-                                        onChange={handleChange}
-                                        value={formData.xnid}
+                                        label="Receive Qty"
                                         variant={variant}
+                                        size="small"
                                         fullWidth
+                                        name='xqtygrn'
+                                        onChange={handleChange}
+                                        value={formData.xqtygrn}
                                         required
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
-                                            },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
-                                            },
-                                            gridColumn: 'span 1'
-                                        }}
-
                                         InputLabelProps={{
-                                            shrink: true, // Ensures the label stays above the input field
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
+                                            },
                                         }}
                                     />
 
                                     <TextField
-                                        label="Contact Number"
+                                        label="Rate"
                                         variant={variant}
                                         size="small"
                                         fullWidth
-                                        name='xcontact'
+                                        name='xrategrn'
                                         onChange={handleChange}
-                                        value={formData.xcontact}
-                                        required
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
+                                        value={formData.xrategrn}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
                                             },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
-                                            },
+                                        }}
+                                    />
 
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    border
+                                    gap={2}
+                                    mb={2} // margin-bottom
+
+                                >
+                                    <TextField
+                                        label="Batch"
+                                        variant={variant}
+                                        size="small"
+                                        fullWidth
+                                        name='xbatch'
+                                        onChange={handleChange}
+                                        value={formData.xbatch}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
+                                            },
+                                        }}
+                                    />
+
+                                    <TextField
+                                        label="Expiration Date"
+                                        type='date'
+                                        variant={variant}
+                                        size="small"
+                                        fullWidth
+                                        name='xdateexp'
+                                        onChange={handleChange}
+                                        value={formData.xdateexp}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontSize: '1.2rem', // Adjust font size here
+                                            },
                                         }}
                                     />
 
@@ -329,14 +480,15 @@ const Pogrndetail = ({ xgrnnum }) => {
                             }}>
 
                                 <SortableList
-                                    apiUrl={apiBaseUrl}
+                                    apiUrl={apiListUrl}
 
-                                    caption="Receive Entry List"
+                                    caption="Receive Entry Detail List"
                                     columns={[
-                                        { field: 'Row', title: 'Item Code', width: '10%', },
-                                        { field: 'xitem', title: 'Item', width: '25%' },
-                                        { field: 'xdesc', title: 'Item Code', width: '40%', align: 'center' },
+                                        { field: 'xrow', title: 'Serial', width: '5%', },
+                                        { field: 'xitem', title: 'Item', width: '10%' },
+                                        { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
                                         { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
+                                        { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
                                     ]}
                                     onItemSelect={handleItemSelect}
                                     onRefresh={(refresh) => {
@@ -346,14 +498,15 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         }
                                     }}
                                     pageSize={10}
-                                    onSortChange={handleSortChange}
+                                    // onSortChange={handleSortChange}
                                     sortField="xgrnnum"
-                                    additionalParams={{ zid: zid, xstatus: 'Open' }}
+                                    additionalParams={{}}
                                     captionFont=".9rem"
                                     xclass="py-4 pl-2"
-                                    bodyFont=".8rem"
+                                    bodyFont=".7rem"
                                     mt={0}
                                     page={1}
+                                    isModal
                                 />
 
                             </Box>

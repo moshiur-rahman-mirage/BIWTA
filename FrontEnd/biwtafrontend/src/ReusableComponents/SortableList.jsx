@@ -29,6 +29,7 @@ const SortableList = ({
     bodyFont,
     xclass,
     mt,
+    isModal = false,
 }) => {
     const [items, setItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
@@ -70,9 +71,10 @@ const SortableList = ({
             const apiUrlWithParams = constructApiUrl;
 
 
+           
 
             const response = await axiosInstance.get(apiUrlWithParams, { params: additionalParams });
-        //   console.log(response)
+          
             setItems(response.data.content || []); // Update items based on API response
             setFilteredItems(response.data.content || []);
             setTotalPages(response.data.totalPages || 1);
@@ -123,7 +125,7 @@ const SortableList = ({
     };
 
     return (
-        <div className={`${xclass} shadow-lg pt-0 rounded`} style={{ maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', borderRadius: '4px' }}>
+        <div className={`${xclass} shadow-lg pt-0 rounded`} style={{  maxHeight: isModal ? 'calc(80vh - 100px)' : 'calc(100vh - 100px)', overflowY: 'auto', borderRadius: '4px' }}>
             <Box display="flex" alignItems="left" justifyContent="space-between" mt={mt}>
                 <Caption title={caption}  />
             </Box>

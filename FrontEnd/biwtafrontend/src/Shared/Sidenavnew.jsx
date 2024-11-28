@@ -40,13 +40,13 @@ export default function Sidenavnew() {
     return items.map((item, index) => (
       <div key={`${item.title}-${index}`} className="mb-1">
         <div
-          className={`menu-item flex justify-between items-center px-4 py-3 rounded-lg transition-all cursor-pointer ${
+          className={`menu-item flex justify-between items-center rounded-lg transition-all cursor-pointer ${
             selectedItem === item.title ? "bg-[#5e3b82] text-white" : "hover:bg-[#7c64f8] hover:text-white"
           }`}
         >
           {item.submenu?.length > 0 ? (
             <div
-              className="flex-1 text-sm font-medium"
+              className="flex-1 text-sm px-4 py-3 font-medium"
               onClick={() => {
                 toggleSubmenu(item.title);
                 handleMenuClick(item.title);
@@ -57,7 +57,7 @@ export default function Sidenavnew() {
           ) : (
             <Link
               to={item.to}
-              className="flex-1 text-sm font-medium"
+              className="flex-1 text-sm font-medium px-4 py-3"
               onClick={() => { handleMenuClick(item.title); setIsOpen(!isOpen); }}
             >
               {item.title}

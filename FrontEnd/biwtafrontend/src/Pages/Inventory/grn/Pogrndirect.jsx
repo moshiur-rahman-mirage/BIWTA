@@ -4,6 +4,7 @@ import {
     Box,
     Typography,
     Button,
+    Modal,
 } from '@mui/material';
 import { useAuth } from '../../../Provider/AuthProvider';
 
@@ -17,7 +18,10 @@ import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
 import SortableList from '../../../ReusableComponents/SortableList';
-import XcodesDropDown from '../../../ReusableComponents/XcodesDropDown';
+import XcodesDropDown from '../../../ReusableComponents/XlongDropDown';
+import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
+import PdDependent from '../../DependentInfo/PdDependent';
+import Pogrndetail from './pogrndetail';
 
 
 const Pogrndirect = () => {
@@ -28,7 +32,7 @@ const Pogrndirect = () => {
         zid: zid,
         xgrnnum: '',
         xstatusgrn: '',
-        xdate: '',
+        xdate: new Date().toISOString().split('T')[0],
         xcus: '',
         xwh: '',
         xref: '',
@@ -52,7 +56,7 @@ const Pogrndirect = () => {
     const [updateCount, setUpdateCount] = useState(0);
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
-
+    const [open, setOpen] = useState(false);
 
 
 
@@ -65,7 +69,7 @@ const Pogrndirect = () => {
     const supplierRef = useRef(null);
     const variant = 'standard';
     const apiBaseUrl = `http://localhost:8080/api/pogrnheader`;
-    console.log(apiBaseUrl)
+
     const fieldConfig = [
         { header: 'GRN Number', field: 'xgrnnum' },
         { header: 'Date', field: 'xdate' },
@@ -119,7 +123,9 @@ const Pogrndirect = () => {
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
-            // xlong:xlong
+
+            xwh: value.xcode,  // Update xwh with selected xcode
+            xlong: value.xlong,
         }));
     };
 
@@ -230,6 +236,18 @@ const Pogrndirect = () => {
         });
     };
 
+    const handleOpen = () => {
+        document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
+        document.body.style.overflow = "hidden";
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        document.body.style.paddingRight = "";
+        document.body.style.overflow = "";
+        setOpen(false);
+    };
+
     // Render Loading Page if Necessary
     if (loading) {
         return <LoadingPage />;
@@ -243,7 +261,7 @@ const Pogrndirect = () => {
                 <div className='col-span-1'>
                 </div>
                 <Button
-                    onClick={''}
+                    onClick={handleOpen}
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
@@ -299,8 +317,32 @@ const Pogrndirect = () => {
                     />
                 </div>
 
-                {/* Main Form Section */}
-                {/* <div className="col-span-6"> */}
+
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    disablePortal
+                    disableEnforceFocus
+                    disableAutoFocus
+                >
+                    <Box sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "1300px", // Fixed width
+                        height: "500px", // Fixed height
+                        bgcolor: "background.paper",
+                        border: "2px solid #000",
+                        boxShadow: 24,
+                        p: 4,
+                        zIndex: 10,
+                    }}>
+                        <Pogrndetail xgrnnum={formData.xgrnnum} />
+                    </Box>
+                </Modal>
+                {/* Modal */}
+
                 <Box sx={{
                     gridColumn: 'span 5',
                     // border: '1px solid #ccc', // Light gray border
@@ -484,7 +526,7 @@ const Pogrndirect = () => {
                                     onChange={handleChange}
                                 /> */}
 
-                                    <XcodesDropDown
+                                    <XlongDropDown
                                         variant={variant}
                                         label="Store"
                                         size="small"
@@ -493,6 +535,7 @@ const Pogrndirect = () => {
                                         onSelect={(value) => handleDropdownSelect("xwh", value)}
                                         value={formData.xwh}
                                         defaultValue=""
+                                        withXlong="false"
                                         InputLabelProps={{
                                             shrink: true, // Ensure the label shrinks above the input
                                         }}

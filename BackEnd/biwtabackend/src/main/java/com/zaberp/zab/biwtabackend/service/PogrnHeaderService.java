@@ -45,6 +45,8 @@ import java.util.Optional;
             pogrnheader.setXgrnnum(generatedKey);
             pogrnheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
             pogrnheader.setZtime(LocalDateTime.now());
+            pogrnheader.setXstatus("Open");
+            pogrnheader.setXstatusgrn("Open");
             return repository.save(pogrnheader);
         }
 

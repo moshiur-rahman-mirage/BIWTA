@@ -3,7 +3,7 @@ import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mu
 import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
-const XcodesDropDown = ({
+const XlongDropDown = ({
     variant = "outlined",
     value, // Value passed down from parent
     label,
@@ -47,15 +47,15 @@ const XcodesDropDown = ({
 
     // Handle selection change
     const handleChange = (event) => {
-        const newValue = event.target.value;
-        setSelectedValue(newValue); // Update selected value
-        if (onSelect) onSelect(newValue); // Call parent callback
-        // const selectedXcode = event.target.value;
-        // const selectedOption = options.find(option => option.xcode === selectedXcode);
-        // setSelectedValue(selectedXcode); // Update selected value
-        // if (onSelect && selectedOption) {
-        //     onSelect({ xcode: selectedXcode, xlong: selectedOption.xlong }); // Pass both xcode and xlong
-        // }
+        // const newValue = event.target.value;
+        // setSelectedValue(newValue); // Update selected value
+        // if (onSelect) onSelect(newValue); // Call parent callback
+        const selectedXcode = event.target.value;
+        const selectedOption = options.find(option => option.xcode === selectedXcode);
+        setSelectedValue(selectedXcode); // Update selected value
+        if (onSelect && selectedOption) {
+            onSelect({ xcode: selectedXcode, xlong: selectedOption.xlong }); // Pass both xcode and xlong
+        }
     };
 
     return (
@@ -95,8 +95,10 @@ const XcodesDropDown = ({
                             sx={{
                                 fontSize, // Apply fontSize to each menu item
                             }}
+                            data-xlong={option.xlong} // Attach xlong to the menu item
                         >
-                            {option.xcode} 
+                            {option.xcode}  
+                           
                         </MenuItem>
                     ))}
                 </Select>
@@ -105,4 +107,4 @@ const XcodesDropDown = ({
     );
 };
 
-export default XcodesDropDown;
+export default XlongDropDown;

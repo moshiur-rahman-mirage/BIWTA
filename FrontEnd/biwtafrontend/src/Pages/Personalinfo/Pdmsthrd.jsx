@@ -135,12 +135,11 @@ const Pdmsthrd = () => {
             ...result,
             zid: zid,
         }));
-        // console.log("FormData after update: ", formData);
+       
         setDropdownOpen(false);
     };
 
-    // useEffect(() => { console.log("FormData after update: ", formData); }, [formData]);
-
+  
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
         document.body.style.overflow = "hidden";

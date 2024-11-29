@@ -35,7 +35,6 @@ axiosInstance.interceptors.response.use(
 // Standardized method for GET requests with params
 axiosInstance.getWithParams = async (url, params = {}) => {
   try {
-    console.log('GET Request:', { url, params });
     const response = await axiosInstance.get(url, { params }); // Attach params
     return response.data; // Return the response data directly
   } catch (error) {

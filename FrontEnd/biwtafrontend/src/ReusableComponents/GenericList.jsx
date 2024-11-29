@@ -20,17 +20,16 @@ const GenericList = ({
 
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
-    // console.log(captionFont)
+   
     const fetchData = async () => {
-        console.log("fetchData is called")
+       
         try {
-            console.log(apiUrl);
+          
             setLoading(true);
-            console.log(apiUrl)
+           
             const response = await axiosInstance.get(apiUrl, { params: additionalParams });
             
-            console.log("Response from api is "+response)
-            console.log(response.data)
+           
             setItems(response.data);
         } catch (error) {
             console.error('Error fetching list items:', error);

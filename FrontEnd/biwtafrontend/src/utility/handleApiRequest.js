@@ -13,7 +13,7 @@ export const handleApiRequest = async ({
     onValidationError 
 }) => {
     try {
-        console.log("Data received by handleApiRequest:", data);
+      
         const config = {
             method: method.toUpperCase(), // Ensure the method is uppercase
             url: endpoint,
@@ -22,7 +22,7 @@ export const handleApiRequest = async ({
             data, // Only for POST, PUT, PATCH
         };
 
-        console.log("Axios config before sending:", endpoint);
+      
 
         // Make the API request using axiosInstance
         const response = await axiosInstance(config);
@@ -44,7 +44,7 @@ export const handleApiRequest = async ({
             const errorMessages = error.response.data;
 
             if (typeof errorMessages === 'object') {
-                console.log(errorMessages)
+              
                 let formattedErrors = '';
                 for (const field in errorMessages) {
                     

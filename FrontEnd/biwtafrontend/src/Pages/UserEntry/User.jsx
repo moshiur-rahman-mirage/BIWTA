@@ -136,7 +136,7 @@ const User = () => {
 
     useEffect(() => {
         if (selectedItem) {
-            console.log(selectedItem)
+          
             setFormData({
                 ...selectedItem
             });
@@ -161,8 +161,7 @@ const User = () => {
         };
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xitem) {
-                console.log("POSt called")
-                console.log(response)
+             
                 setFormData((prev) => ({ ...prev, xitem: response.xitem }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
@@ -177,7 +176,7 @@ const User = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-        console.log('Selected Item:', item);
+       
         setSelectedItem(item,);
     }, []);
 
@@ -196,7 +195,7 @@ const User = () => {
     };
 
     const handleDelete = async () => {
-        console.log(formData)
+     
         const endpoint = `api/xusers/${zid}/${formData.zemail}`;
         await handleApiRequest({
             endpoint,
@@ -225,7 +224,7 @@ const User = () => {
             ...formData,
             zid: zid
         };
-        console.log(data)
+    
 
         await handleApiRequest({
             endpoint,

@@ -6,7 +6,7 @@ export default function Sidenavnew() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedMenus, setExpandedMenus] = useState({});
-  const [selectedItem, setSelectedItem] = useState(""); 
+  const [selectedItem, setSelectedItem] = useState("");
   const sidebarWidth = 360;
 
   const toggleSubmenu = (title) => {
@@ -40,9 +40,8 @@ export default function Sidenavnew() {
     return items.map((item, index) => (
       <div key={`${item.title}-${index}`} className="mb-1">
         <div
-          className={`menu-item flex justify-between items-center rounded-lg transition-all cursor-pointer ${
-            selectedItem === item.title ? "bg-[#5e3b82] text-white" : "hover:bg-[#7c64f8] hover:text-white"
-          }`}
+          className={`menu-item flex justify-between items-center rounded-lg transition-all cursor-pointer ${selectedItem === item.title ? "bg-[#5e3b82] text-white" : "hover:bg-[#7c64f8] hover:text-white"
+            }`}
         >
           {item.submenu?.length > 0 ? (
             <div
@@ -66,9 +65,8 @@ export default function Sidenavnew() {
           {item.submenu?.length > 0 && (
             <span
               onClick={() => toggleSubmenu(item.title)}
-              className={`transition-transform transform ${
-                expandedMenus[item.title] ? "rotate-180" : ""
-              }`}
+              className={`transition-transform transform ${expandedMenus[item.title] ? "rotate-180" : ""
+                }`}
             >
               ▼
             </span>
@@ -87,7 +85,7 @@ export default function Sidenavnew() {
 
   return (
     <div>
-    
+
       <div
         className={`fixed z-30 top-0 left-0 h-full bg-[#867df0] text-white shadow-lg transition-transform duration-1000 ease-in-out`}
         style={{
@@ -96,7 +94,7 @@ export default function Sidenavnew() {
           transform: isOpen ? "translateX(0)" : `translateX(-${sidebarWidth}px)`,
         }}
       >
-        
+
         <div className="px-4 pt-4">
           <input
             type="text"
@@ -107,7 +105,7 @@ export default function Sidenavnew() {
           />
         </div>
 
-        
+
         <div
           className="mt-4 overflow-y-auto h-[calc(100vh-64px)]"
           style={{
@@ -123,7 +121,7 @@ export default function Sidenavnew() {
         </div>
       </div>
 
-      
+
       <button
         className="fixed top-1 left-4 z-50 p-2 text-white bg-transparent rounded-full transition-all duration-1000 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
@@ -133,12 +131,17 @@ export default function Sidenavnew() {
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
+          className="h-8 w-10 text-zab-hombtn text-3xl"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox="0 1 24 22"
           stroke="currentColor"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={4}
+            d="M4 6h16M4 12h16M4 18h16"
+          />
         </svg>
       </button>
     </div>

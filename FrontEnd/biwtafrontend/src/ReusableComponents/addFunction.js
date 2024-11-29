@@ -3,7 +3,7 @@ import { handleApiRequest } from "../utility/handleApiRequest";
 export const addFunction=async(
     data,endpoint,method,onSuccess
 ) =>{
-    console.log("inside add function",endpoint)
+   
     try {
        
         await handleApiRequest({

@@ -92,7 +92,7 @@ export default function Sidebar() {
 
 
    const filteredItems = filterMenu(menuitems, searchTerm);
-{{console.log(filteredItems)}}
+
 
   return (
     <div>

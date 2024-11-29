@@ -107,7 +107,7 @@ const BesicXcodes = ({ title, xtype }) => {
             // const response = await axios.get(
             //     `searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`
             // );
-            console.log("in fetch xtype is "+xtype)
+          
             const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${xtype}&searchText=${query}`)
            
             setSearchResults(response.data);
@@ -156,13 +156,12 @@ const BesicXcodes = ({ title, xtype }) => {
 
 
     const handleAction = async (method) => {
-        console.log(zid)
+       
         const endpoint = `/api/xcodes?zid=${zid}&xtype=${xtype}&xcode=${formData.xcode}`;
         // const endpoint = `/api/xcodes`;
 
         const data = { ...formData, zid: zid, };
-        console.log("Data Updating")
-        console.log(data)
+       
         await handleApiRequest({
             endpoint,
             data,

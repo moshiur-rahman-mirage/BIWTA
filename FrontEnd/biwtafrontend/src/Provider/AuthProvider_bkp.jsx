@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const [token,setToken]=useState(null)
 
     const login = (id,zid,token) => {
-        console.log("login invoked with id:", id, "zid:", zid,'token:',token);
+      
         setIsAuthenticated(true);
         setZemail(id);
         setZid(zid);

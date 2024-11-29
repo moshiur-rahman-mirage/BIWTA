@@ -112,7 +112,7 @@ const Supplier = () => {
 
     useEffect(() => {
         if (selectedItem) {
-            console.log(selectedItem)
+          
             setFormData({
                 ...selectedItem
             });
@@ -151,13 +151,10 @@ const Supplier = () => {
     }, []);
 
 
-    // const handleItemSelect = (item) => {
-    //     console.log('Selected Item:', item);
-    //     setSelectedItem(item); // Store selected item data
-    // };
+    
 
     const handleItemSelect = useCallback((item) => {
-        console.log('Selected Item:', item);
+      
         setSelectedItem(item);
     }, []);
 
@@ -220,7 +217,7 @@ const Supplier = () => {
             ...formData,
             zid: zid
         };
-        console.log(data)
+     
 
         await handleApiRequest({
             endpoint,

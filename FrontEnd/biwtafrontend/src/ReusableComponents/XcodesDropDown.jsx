@@ -25,7 +25,7 @@ const XcodesDropDown = ({
             setLoading(true);
             try {
                 const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${type}`);
-                console.log(response)
+            
                 const data = response.data || [];
                 setOptions(data); // Update state with API response
             } catch (error) {

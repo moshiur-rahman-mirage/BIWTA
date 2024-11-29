@@ -25,12 +25,13 @@ import Pogrndetail from './pogrndetail';
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
+import { validateForm } from '../../../ReusableComponents/validateForm';
 
 
 const Pogrndirect = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
-    // State Management
+    console.log(zid, zemail)
     const [formData, setFormData] = useState({
         zid: zid,
         xgrnnum: '',
@@ -44,13 +45,15 @@ const Pogrndirect = () => {
 
 
     });
+    const [formErrors, setFormErrors] = useState({});
+
     const [refreshTrigger, setRefreshTrigger] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
     const [supDropdownOpen, setSupDropdownOpen] = useState(false);
     const [grnDropdownOpen, setGrnDropdownOpen] = useState(false);
-
+    const [directFetch, setDirectFetch] = useState('');
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("Inactive");
@@ -100,7 +103,7 @@ const Pogrndirect = () => {
 
     // Handlers
     const handleChange = (e) => {
-        console.log(e.target)
+        // console.log(e.target)
         const { name, value } = e.target;
         setFormData((prev) => {
             if (prev[name] !== value) {
@@ -111,6 +114,7 @@ const Pogrndirect = () => {
     };
 
     const handleResultClick = (result) => {
+        setDirectFetch('Yes')
         setFormData((prev) => ({
             ...prev,
             ...result,
@@ -122,7 +126,7 @@ const Pogrndirect = () => {
     };
 
     const handleDropdownSelect = (fieldName, value) => {
-        console.log(value)
+        // console.log(value)
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
@@ -132,7 +136,7 @@ const Pogrndirect = () => {
         }));
     };
 
-
+    console.log(directFetch)
     useEffect(() => {
         if (selectedItem) {
             // console.log(convertDate(selectedItem.xdate))
@@ -145,11 +149,28 @@ const Pogrndirect = () => {
 
 
     useEffect(() => {
+        if (refreshCallback && formData.xgrnnum) {
+            refreshCallback(); // Trigger the refresh callback from SortableList
+        }
+    }, [formData.xgrnnum, refreshCallback]);
+
+
+    useEffect(() => {
         setRefreshTrigger(true);
     }, [updateCount]);
 
 
     const handleAdd = async () => {
+        const errors = validateForm(formData, ['xwh', 'xcus']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
 
         const endpoint = 'api/pogrnheader';
         const data = {
@@ -162,6 +183,7 @@ const Pogrndirect = () => {
 
                 setFormData((prev) => ({ ...prev, xgrnnum: response.xgrnnum }));
                 setUpdateCount(prevCount => prevCount + 1);
+                setFormErrors({});
             } else {
                 // alert('Supplier added successfully.');
             }
@@ -169,8 +191,17 @@ const Pogrndirect = () => {
     };
 
 
+    // const handleItemSelect = useCallback((item) => {
+    //     setSelectedItem(item);
+    //     setDirectFetch('Yes');
+    // }, []);
+
+
     const handleItemSelect = useCallback((item) => {
-        setSelectedItem(item);
+        setFormData((prev) => ({
+            ...prev,
+            xgrnnum: item.xgrnnum, // Update xgrnnum based on selected item
+        }));
     }, []);
 
     const handleClear = () => {
@@ -192,7 +223,7 @@ const Pogrndirect = () => {
     };
 
     const handleDelete = async () => {
-        console.log(formData)
+        // console.log(formData)
         const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
         await handleApiRequest({
             endpoint,
@@ -220,28 +251,37 @@ const Pogrndirect = () => {
 
 
     const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xwh', 'xcus']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
         setUpdateCount(prevCount => prevCount + 1);
         const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
         const data = {
             ...formData,
             zid: zid
         };
-        console.log(data)
+        // console.log(data)
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
-            // onSuccess: (response) => {
-            //     setErrors({});
-            // },
         });
+        setFormErrors({});
     };
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
         document.body.style.overflow = "hidden";
         setOpen(true);
+        // setRefreshTrigger(true)
     };
 
     const handleClose = () => {
@@ -365,6 +405,7 @@ const Pogrndirect = () => {
                     disablePortal
                     disableEnforceFocus
                     disableAutoFocus
+                    disableScrollLock
                 >
                     <Box sx={{
                         position: "absolute",
@@ -395,7 +436,7 @@ const Pogrndirect = () => {
 
 
                     <div className="shadow-lg rounded">
-                        <div className="w-full px-2 py-2 pt-0 mx-auto ">
+                        <div className="w-full  py-2 pt-0 mx-auto ">
                             <Caption title="Product Receive Entry" />
                             <Box
                                 component="form"
@@ -403,6 +444,7 @@ const Pogrndirect = () => {
                                     '& > :not(style)': { my: 1 },
                                     mx: 'auto',
                                     gap: 2,
+                                    px: 1,
                                     borderRadius: 2,
                                     bgcolor: 'white',
                                 }}
@@ -433,7 +475,10 @@ const Pogrndirect = () => {
                                         name="xgrnnum"
                                         label="GRN Number"
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         size="small"
                                         value={formData.xgrnnum || ''}
@@ -454,7 +499,14 @@ const Pogrndirect = () => {
                                                 { zid }
                                             );
                                         }}
-                                        sx={{ gridColumn: 'span 1' }}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                     />
                                     {/* Company Field */}
                                     <TextField
@@ -462,7 +514,10 @@ const Pogrndirect = () => {
                                         name="xdate"
                                         label="Date"
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         type="date"
                                         size="small"
@@ -470,7 +525,14 @@ const Pogrndirect = () => {
                                         variant={variant}
                                         fullWidth
                                         onChange={handleChange}
-                                        sx={{ gridColumn: 'span 1' }}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                     />
 
                                 </Box>
@@ -502,12 +564,24 @@ const Pogrndirect = () => {
                                         label="Supplier"
                                         size="small"
                                         value={formData.xcus}
+                                        error={!!formErrors.xcus} 
+                                        helperText={formErrors.xcus}
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         variant={variant}
                                         fullWidth
-                                        sx={{ gridColumn: 'span 1' }}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
@@ -533,14 +607,24 @@ const Pogrndirect = () => {
                                         value={formData.xorg}
                                         variant={variant}
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         inputProps={{
                                             readOnly: true,
                                         }}
                                         fullWidth
                                         onChange={handleChange}
-                                        sx={{ gridColumn: 'span 1' }}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                     />
                                     {/* Phone */}
 
@@ -554,19 +638,7 @@ const Pogrndirect = () => {
                                     mb={2}
                                 >
 
-                                    {/* <TextField
-                                    id="xwh"
-                                    name="xwh"
-                                    label="Store Code"
-                                    size="small"
-                                    value={formData.xwh}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensure the label shrinks above the input
-                                    }}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={handleChange}
-                                /> */}
+
 
                                     <XlongDropDown
                                         variant={variant}
@@ -577,9 +649,14 @@ const Pogrndirect = () => {
                                         onSelect={(value) => handleDropdownSelect("xwh", value)}
                                         value={formData.xwh}
                                         defaultValue=""
+                                        error={!!formErrors.xwh}  // Check if there's an error for this field
+                                        helperText={formErrors.xwh}
                                         withXlong="false"
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                     />
 
@@ -593,13 +670,23 @@ const Pogrndirect = () => {
                                         value={formData.xlong}
                                         variant={variant}
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         inputProps={{
                                             readOnly: true,
                                         }}
                                         fullWidth
                                         onChange={handleChange}
+                                        sx={{
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                     />
 
 
@@ -616,7 +703,7 @@ const Pogrndirect = () => {
 
 
                                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
                                             Status:
                                         </Typography>
                                         <Typography
@@ -639,12 +726,22 @@ const Pogrndirect = () => {
                                         variant={variant}
                                         onChange={handleChange}
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         fullWidth
                                         // disabled
                                         required
-                                        sx={{ gridColumn: 'span 2' }}
+                                        sx={{
+                                            gridColumn: 'span 2',
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
 
                                     />
 
@@ -666,12 +763,22 @@ const Pogrndirect = () => {
                                         onChange={handleChange}
                                         value={formData.xnote}
                                         InputLabelProps={{
-                                            shrink: true, // Ensure the label shrinks above the input
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
                                         }}
                                         fullWidth
                                         required
                                         multiline
-                                        sx={{ gridColumn: 'span 3' }}
+                                        sx={{
+                                            gridColumn: 'span 3',
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                     />
 
 
@@ -683,13 +790,14 @@ const Pogrndirect = () => {
                 </Box >
                 <Box sx={{
                     gridColumn: 'span 6',
-
+                    px: 0,
                     // border: '1px solid #ccc', // Light gray border
                     borderRadius: '8px', // Optional: Rounded corners
                     // padding: 2,
                 }}>
 
                     <SortableList
+                        directFetch='Yes'
                         apiUrl={apiBaseUrl}
                         isFolded={false}
                         caption="Receive Entry List"
@@ -717,6 +825,7 @@ const Pogrndirect = () => {
                         page={1}
                     />
                     <SortableList
+
                         apiUrl={`api/pogrndetails/${zid}/${formData.xgrnnum}`}
                         isFolded={false}
                         caption="Receive Entry Detail List"
@@ -729,9 +838,8 @@ const Pogrndirect = () => {
                         ]}
                         // onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
-                            if (refreshTrigger) {
-                                refresh();
-                                setRefreshTrigger(true);
+                            if (formData.xgrnnum) {
+                                refresh(); // Trigger the refresh only when xgrnnum is available
                             }
                         }}
                         pageSize={10}
@@ -739,11 +847,11 @@ const Pogrndirect = () => {
                         sortField="xgrnnum"
                         additionalParams={{}}
                         captionFont=".9rem"
-                        xclass="py-4 pl-2"
+                        xclass="py-0 pl-2"
                         bodyFont=".7rem"
-                        mt={0}
+                        mt={2}
                         page={1}
-                        // isModal
+                    // isModal
                     />
                 </Box>
             </div >

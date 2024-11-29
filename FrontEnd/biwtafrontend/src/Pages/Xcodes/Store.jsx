@@ -92,23 +92,7 @@ const Store = () => {
 
 
 
-    // const handleResultClick = (result) => {
-
-    //     const updatedZactive = result.zactive == 1 ? true : false;
-    //     setChecked(updatedZactive)
-    //     console.log(checked)
-    //     setFormData({
-    //         xcode: result.xcode,
-    //         xlong: result.xlong,
-    //         xemail: result.xemail,
-    //         xtype: result.xtype,
-    //         xphone: result.xphone,
-    //         xmadd: result.xmadd,
-    //         xtypeobj: result.xtypeobj,
-    //         zactive: checked
-    //     });
-    //     setListOpen(false);
-    // };
+   
 
     const handleResultClick = (result) => {
         const updatedZactive = result.zactive === 1 ? true : false;
@@ -298,8 +282,7 @@ const Store = () => {
 
                                 >
 
-                                    {/* {console.log(isListOpen)} */}
-                                    {/* Search Results Dropdown */}
+                                   
                                     {isListOpen && searchResults.length > 0 && (
                                         <div ref={formRef}
                                             style={{

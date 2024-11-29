@@ -30,7 +30,7 @@ const SearchableList = ({
         try {
             const response = await axiosInstance.get(apiUrl, { params: additionalParams });
             setItems(response.data.content);
-            console.log(response)
+          
             setFilteredItems(response.data.content); // Initialize filtered items
         } catch (error) {
             console.error('Error fetching list items:', error);

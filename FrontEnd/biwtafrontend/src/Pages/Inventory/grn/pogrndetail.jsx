@@ -22,12 +22,14 @@ import SortableList from '../../../ReusableComponents/SortableList';
 import { useAuth } from '../../../Provider/AuthProvider';
 import DynamicDropdown from '../../../ReusableComponents/DynamicDropdown';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
+import { validateForm } from '../../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 
-const Pogrndetail = ({ xgrnnum }) => {
+const Pogrndetail = ({ xgrnnum = '' }) => {
     const { zid } = useAuth();
     const variant = 'standard'
-
+    const [formErrors, setFormErrors] = useState({});
     const itemRef = useRef(null);
     const [isTyping, setIsTyping] = useState(false);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
@@ -64,13 +66,13 @@ const Pogrndetail = ({ xgrnnum }) => {
     ];
 
     const handleItemSelect = useCallback((item) => {
-        console.log('Selected Item:', item);
+
         setSelectedItem(item);
     }, []);
 
     useEffect(() => {
         if (selectedItem) {
-            console.log(selectedItem)
+
             setFormData({
                 ...selectedItem
             });
@@ -104,7 +106,7 @@ const Pogrndetail = ({ xgrnnum }) => {
         // Check if the ref is attached and available after the component mounts
         if (itemRef.current) {
             const boundingRect = itemRef.current.getBoundingClientRect(); // Get position
-            console.log("Position of TextField:", boundingRect);
+
             setBoundingRect(boundingRect);
         }
     }, []);
@@ -122,7 +124,7 @@ const Pogrndetail = ({ xgrnnum }) => {
 
 
     const handleAction = async (method) => {
-        console.log(zid);
+
 
 
         const data = {
@@ -142,6 +144,18 @@ const Pogrndetail = ({ xgrnnum }) => {
         };
 
 
+        const errors = validateForm(formData, ['xitem', 'xqtygrn','xrategrn']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+
         const endpoint = "/api/pogrndetails";
 
         await handleApiRequest({
@@ -151,9 +165,10 @@ const Pogrndetail = ({ xgrnnum }) => {
             onSuccess: (response) => {
                 handleRefresh();
                 setRefreshTrigger(true);
-                console.log(response.data.xrow)
+
                 if (response && response.data.xrow) {
                     setFormData((prev) => ({ ...prev, xrow: response.data.xrow }));
+                    setFormErrors({});
                 } else {
                     // alert('Supplier added successfully.');
                 }
@@ -227,7 +242,7 @@ const Pogrndetail = ({ xgrnnum }) => {
                     onAdd={() => handleAction('POST')}
                     onUpdate={() => handleAction('PUT')}
                     onDelete={() => handleAction('DELETE')}
-                 onClear={handleClear}
+                    onClear={handleClear}
                 // onShow={handleShow}
                 />
             </div>
@@ -277,11 +292,17 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         onChange={handleChange}
                                         value={formData.xrow}
                                         fullWidth
-
+                                        sx={{
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600,
                                             },
                                         }}
                                     />
@@ -294,16 +315,22 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         onChange={handleChange}
                                         value={formData.xunitpur}
                                         fullWidth
-
+                                        sx={{
+                                            '& .MuiInputBase-input': {
+                                                // Remove unnecessary padding
+                                                // Ensure the input spans the full height
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                         InputProps={{
                                             sx: {
-                                                fontSize: '1.2rem'
+                                                fontWeight: 600
                                             }
                                         }}
                                     />
@@ -333,10 +360,12 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         name="xitem"
                                         required
                                         label="Item Code"
+                                        error={!!formErrors.xitem} 
+                                        helperText={formErrors.xitem}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                         size="small"
@@ -358,7 +387,12 @@ const Pogrndetail = ({ xgrnnum }) => {
                                                 { zid }
                                             );
                                         }}
-                                        sx={{ gridColumn: 'span 1' }}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                     />
 
 
@@ -372,13 +406,19 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                         InputProps={{
                                             sx: {
                                                 fontSize: '.8rem',
                                             }
+                                        }}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem'
+                                            },
                                         }}
                                         onChange={handleChange}
                                         value={formData.xdesc}
@@ -402,12 +442,20 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         fullWidth
                                         name='xqtygrn'
                                         onChange={handleChange}
+                                        error={!!formErrors.xqtygrn} 
+                                        helperText={formErrors.xqtygrn}
                                         value={formData.xqtygrn}
                                         required
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                     />
@@ -418,12 +466,20 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         size="small"
                                         fullWidth
                                         name='xrategrn'
+                                        error={!!formErrors.xrategrn} 
+                                        helperText={formErrors.xrategrn}
                                         onChange={handleChange}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         value={formData.xrategrn}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                     />
@@ -445,10 +501,16 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         name='xbatch'
                                         onChange={handleChange}
                                         value={formData.xbatch}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                     />
@@ -461,11 +523,17 @@ const Pogrndetail = ({ xgrnnum }) => {
                                         fullWidth
                                         name='xdateexp'
                                         onChange={handleChange}
+                                        sx={{
+                                            gridColumn: 'span 1',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem'
+                                            },
+                                        }}
                                         value={formData.xdateexp}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
-                                                fontSize: '1.2rem', // Adjust font size here
+                                                fontWeight: 600, // Adjust font size here
                                             },
                                         }}
                                     />

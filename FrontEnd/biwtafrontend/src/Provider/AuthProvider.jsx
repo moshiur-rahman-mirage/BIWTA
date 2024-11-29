@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     // Function to handle user login (using JWT)
     const login = (id, zid, token) => {
-        console.log("login invoked with id:", id, "zid:", zid, "token:", token);
+       
 
         // Set state using passed arguments
         setAuthState({ zid, zemail: id });
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         sessionStorage.setItem("zemail", id);
         sessionStorage.setItem("token", token);
 
-        console.log("Updated login state:", { zid, zemail: id });
+       
     };
 
     // Function to fetch user data after login
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setLoading(false);
 
-        console.log("User logged out");
+      
     };
 
     // Validate user session and token on load
@@ -90,11 +90,7 @@ export const AuthProvider = ({ children }) => {
                 const response = await axiosInstance.get("/auth/validate", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                console.log("Token validation successful:", response.data);
-                // setAuthState({
-                //     zid: response.data.zid,
-                //     zemail: response.data.zemail,
-                // });
+             
                 if(sessionStorage.getItem('zid')!=response.data.zid || sessionStorage.getItem('zemail')!=response.data.zemail ){
                     logout();
                 }

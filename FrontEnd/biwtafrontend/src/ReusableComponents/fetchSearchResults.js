@@ -8,7 +8,7 @@ export const fetchSearchResults = async (query, api, fieldConfig) => {
     try {
         const url = api.replace('{query}', query); // Replace query placeholder in the API if needed
         const response = await axiosInstance.get(url);
-        console.log(response)
+ 
         // Dynamically map the response data to the field configuration
         const filteredResults = response.data.map((item) => {
             const result = {};

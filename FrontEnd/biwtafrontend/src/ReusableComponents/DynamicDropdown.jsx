@@ -19,7 +19,7 @@ const DynamicDropdown = ({
         if (isOpen && triggerRef?.current) {
             const triggerRect = triggerRef.current.getBoundingClientRect();
             const modalContainer = document.querySelector('.MuiModal-root');
-            console.log("Position of TextField:", triggerRect);
+          
             const modalRect = modalContainer?.getBoundingClientRect();
 
             // setPosition({

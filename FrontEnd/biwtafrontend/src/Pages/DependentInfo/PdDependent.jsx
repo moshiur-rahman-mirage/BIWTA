@@ -80,7 +80,7 @@ const PdDependent = ({ xstaff, xname }) => {
 
 
     const handleAction = async (method) => {
-        console.log(zid);
+       
 
 
         const data = {
@@ -97,8 +97,7 @@ const PdDependent = ({ xstaff, xname }) => {
 
         };
 
-        console.log("Data Updating");
-        console.log(data);
+   
 
         const endpoint = "/api/pddependent";
 

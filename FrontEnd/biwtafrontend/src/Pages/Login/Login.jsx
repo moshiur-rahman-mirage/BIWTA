@@ -17,14 +17,14 @@ function Login() {
     const handleSubmit = async (e) => {
       e.preventDefault();
   
-      console.log("called")
+    
       try {
         const response = await axiosInstance.post('http://localhost:8080/auth/login', {
             zemail: userId,
             xpassword: password,
           });
         if (response.status === 200) {
-          console.log(response);
+         
           const { zid,token } = response.data;
           if (!zid) {
             console.error("zid is missing in the response");
@@ -40,8 +40,7 @@ function Login() {
           alert('Invalid credentials');
         }
       } catch (error) {
-        console.log("error")
-        console.log(error)
+      
         if (error.response) {
           logout();
           alert('Invalid credentials');

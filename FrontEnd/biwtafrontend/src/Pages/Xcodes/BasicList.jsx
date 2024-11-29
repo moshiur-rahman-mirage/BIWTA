@@ -19,13 +19,13 @@ const BasicList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode, xlo
     };
 
     const fetchData = async () => {
-        console.log("Date Fetching")
+      
         try {
             // const response = await axios.get(`${apiBaseUrl}/search?zid=${zid}&xtype=${xtype}`);
             const response = await axiosInstance.get(`api/xcodes/dropdownlist?zid=${zid}&xtype=${xtype}`)
-            console.log(response)
+           
             setItems(response.data);
-            console.log(response.data)
+           
             setLoading(false);
         } catch (error) {
             console.error('Error fetching list items:', error);

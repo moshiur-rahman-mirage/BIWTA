@@ -17,11 +17,11 @@ const ItemGroupList = ({ xtype, apiBaseUrl, zid, onItemSelect, onRefresh, xcode,
     };
 
     const fetchData = async () => {
-        console.log("Date Fetching")
+     
         try {
             const response = await axios.get(`${apiBaseUrl}/search?zid=${zid}&xtype=${xtype}`);
             setItems(response.data);
-            console.log(response.data)
+          
             setLoading(false);
         } catch (error) {
             console.error('Error fetching list items:', error);

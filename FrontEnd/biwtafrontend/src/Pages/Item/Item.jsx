@@ -122,7 +122,7 @@ const Item = () => {
 
     useEffect(() => {
         if (selectedItem) {
-            console.log(selectedItem)
+            
             setFormData({
                 ...selectedItem
             });
@@ -147,8 +147,7 @@ const Item = () => {
         };
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xitem) {
-                console.log("POSt called")
-               console.log(response)
+              
                 setFormData((prev) => ({ ...prev, xitem: response.xitem }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
@@ -163,7 +162,7 @@ const Item = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-        console.log('Selected Item:', item);
+      
         setSelectedItem(item);
     }, []);
 
@@ -193,7 +192,7 @@ const Item = () => {
     };
 
     const handleDelete = async () => {
-        console.log(formData)
+     
         const endpoint = `api/products/${zid}/${formData.xitem}`;
         await handleApiRequest({
             endpoint,
@@ -234,7 +233,7 @@ const Item = () => {
             ...formData,
             zid: zid
         };
-        console.log(data)
+     
 
         await handleApiRequest({
             endpoint,

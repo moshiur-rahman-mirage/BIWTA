@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, CircularProgress, FormHelperText } from '@mui/material';
 import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
@@ -11,8 +11,10 @@ const XlongDropDown = ({
     onSelect,
     withXlong,
     defaultValue = '',
-    fontSize = '0.875rem', // Default font size for options
+    fontSize = '0.9rem', // Default font size for options
     captionSize = '0.875rem', // Default font size for the label
+    error, // error state passed from parent
+    helperText,
 }) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
@@ -25,7 +27,7 @@ const XlongDropDown = ({
             setLoading(true);
             try {
                 const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${type}`);
-                console.log(response)
+
                 const data = response.data || [];
                 setOptions(data); // Update state with API response
             } catch (error) {
@@ -63,6 +65,8 @@ const XlongDropDown = ({
             <InputLabel
                 sx={{
                     fontSize: captionSize,
+                    fontWeight: 600,
+
                 }}
             >
                 {label}
@@ -78,7 +82,7 @@ const XlongDropDown = ({
                     // displayEmpty
                     sx={{
                         '& .MuiMenuItem-root': {
-                            fontSize, // Apply fontSize to menu items
+                            fontSize,
                         },
                         fontSize, // Apply fontSize to selected value in dropdown
                     }}
@@ -97,12 +101,15 @@ const XlongDropDown = ({
                             }}
                             data-xlong={option.xlong} // Attach xlong to the menu item
                         >
-                            {option.xcode}  
-                           
+                            {option.xcode}
+
                         </MenuItem>
                     ))}
                 </Select>
             )}
+            {error && helperText && <FormHelperText sx={{ color: 'red' }}>
+                {helperText}
+            </FormHelperText>}
         </FormControl>
     );
 };

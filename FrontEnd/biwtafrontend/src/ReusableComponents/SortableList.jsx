@@ -27,6 +27,7 @@ const SortableList = ({
     additionalParams = {},
     captionFont,
     bodyFont,
+    isFolded=true,
     xclass,
     mt,
     isModal = false,
@@ -35,7 +36,7 @@ const SortableList = ({
     const [filteredItems, setFilteredItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hoveredIndex, setHoveredIndex] = useState(null);
-    const [folded, setFolded] = useState(true);
+    const [folded, setFolded] = useState(isFolded);
     const [searchTerm, setSearchTerm] = useState('');
     const [page, setPage] = useState(1); // Current page (Material-UI pagination is 1-based)
     const [pageSize, setPageSize] = useState(defaultPageSize); // Items per page
@@ -46,6 +47,8 @@ const SortableList = ({
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
 
+
+    console.log(apiUrl)
 
     const handleSortChange = (field) => {
         if (xsortField === field) {
@@ -74,7 +77,7 @@ const SortableList = ({
            
 
             const response = await axiosInstance.get(apiUrlWithParams, { params: additionalParams });
-          
+            console.log(response)
             setItems(response.data.content || []); // Update items based on API response
             setFilteredItems(response.data.content || []);
             setTotalPages(response.data.totalPages || 1);

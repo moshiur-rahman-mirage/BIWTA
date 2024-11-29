@@ -38,6 +38,7 @@ import Imtormoreqheader from "../Pages/Inventory/Transfer/Imtormoreqheader";
 import Imtransfersr from "../Pages/Inventory/Transfer/Imtransfersr";
 import Mmpharmacy from "../Pages/Pharmacy/Mmpharmacy";
 import Eprescription from "../Pages/Prescription/Eprescription";
+import ProcessName from "../Pages/Xcodes/ProcessName";
 
 
 
@@ -68,6 +69,7 @@ const Router = createBrowserRouter([
           {
             path: "codes",
             children: [
+              { path: "processname", element: <ProcessName /> },
               { path: "store", element: <Store /> },
               { path: "storetype", element: <StoreType /> },
               { path: "department", element: <Department /> },

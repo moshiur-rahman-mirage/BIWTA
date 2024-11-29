@@ -1,7 +1,7 @@
 package com.zaberp.zab.biwtabackend.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class PogrndetailXitemdto {
     private int zid;
@@ -9,7 +9,7 @@ public class PogrndetailXitemdto {
     private int xrow;
     private String xitem;
     private String xdesc;
-    private LocalDateTime xdateexp;
+    private Date xdateexp;
     private String xbatch;
     private BigDecimal xqtygrn;
     private BigDecimal xrategrn;
@@ -19,7 +19,7 @@ public class PogrndetailXitemdto {
     public PogrndetailXitemdto() {
     }
 
-    public PogrndetailXitemdto(int zid, String xgrnnum, int xrow, String xitem, String xdesc, LocalDateTime xdateexp, String xbatch, BigDecimal xqtygrn, BigDecimal xrategrn, BigDecimal xlineamt) {
+    public PogrndetailXitemdto(int zid, String xgrnnum, int xrow, String xitem, String xdesc, Date xdateexp, String xbatch, BigDecimal xqtygrn, BigDecimal xrategrn, BigDecimal xlineamt) {
         this.zid = zid;
         this.xgrnnum = xgrnnum;
         this.xrow = xrow;
@@ -82,11 +82,11 @@ public class PogrndetailXitemdto {
         this.xdesc = xdesc;
     }
 
-    public LocalDateTime getXdateexp() {
+    public Date getXdateexp() {
         return xdateexp;
     }
 
-    public void setXdateexp(LocalDateTime xdateexp) {
+    public void setXdateexp(Date xdateexp) {
         this.xdateexp = xdateexp;
     }
 

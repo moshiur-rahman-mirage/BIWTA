@@ -22,6 +22,9 @@ import XcodesDropDown from '../../../ReusableComponents/XlongDropDown';
 import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
 import PdDependent from '../../DependentInfo/PdDependent';
 import Pogrndetail from './pogrndetail';
+import { convertDate } from '../../../utility/convertDate';
+import axiosInstance from '../../../Middleware/AxiosInstance';
+import Swal from 'sweetalert2';
 
 
 const Pogrndirect = () => {
@@ -57,7 +60,7 @@ const Pogrndirect = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
-
+    const apiListUrl = `api/pogrndetails/${zid}/${formData.xgrnnum}`
 
 
     // Handle dropdown value change
@@ -97,8 +100,8 @@ const Pogrndirect = () => {
 
     // Handlers
     const handleChange = (e) => {
+        console.log(e.target)
         const { name, value } = e.target;
-        // setFormData((prev) => ({ ...prev, [name]: value }));
         setFormData((prev) => {
             if (prev[name] !== value) {
                 return { ...prev, [name]: value };
@@ -132,9 +135,10 @@ const Pogrndirect = () => {
 
     useEffect(() => {
         if (selectedItem) {
-            console.log(selectedItem)
+            // console.log(convertDate(selectedItem.xdate))
             setFormData({
-                ...selectedItem
+                ...selectedItem,
+                xdate: convertDate(selectedItem.xdate)
             });
         }
     }, [selectedItem]);
@@ -155,8 +159,7 @@ const Pogrndirect = () => {
         };
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xgrnnum) {
-                console.log("POSt called")
-                console.log(response)
+
                 setFormData((prev) => ({ ...prev, xgrnnum: response.xgrnnum }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
@@ -167,7 +170,6 @@ const Pogrndirect = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-        console.log('Selected Item:', item);
         setSelectedItem(item);
     }, []);
 
@@ -248,7 +250,47 @@ const Pogrndirect = () => {
         setOpen(false);
     };
 
-    // Render Loading Page if Necessary
+    const handleConfirm = async () => {
+        setStatus("Processing...");
+
+        // Prepare the parameters to send in the request body
+        const params = {
+            zid: 100000,
+            zemail: zemail,
+            xgrnnum: formData.xgrnnum,
+            xdate: formData.xdate,  // Make sure this is a valid date format
+            xwh: formData.xwh,
+            len: 8
+        };
+
+        try {
+
+            const response = await axiosInstance.post("/api/pogrnheader/confirmGRN", params);
+
+            // Handle success response
+            setStatus(response.data);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Operation completed successfully'
+            });
+
+        } catch (error) {
+            // Handle error response
+            setStatus("Error: " + (error.response?.data || error.message));
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong. Please try again.'
+            });
+        }
+    };
+
+
+
+
     if (loading) {
         return <LoadingPage />;
     }
@@ -265,9 +307,8 @@ const Pogrndirect = () => {
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
-                        paddingX: 1, // equivalent to Tailwind's px-2
-                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
+                        paddingX: 1,
+                        paddingY: 0.5,
                         height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
@@ -279,7 +320,7 @@ const Pogrndirect = () => {
                     Detail
                 </Button>
                 <Button
-                    onClick={''}
+                    onClick={handleConfirm}
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
@@ -335,7 +376,7 @@ const Pogrndirect = () => {
                         bgcolor: "background.paper",
                         border: "2px solid #000",
                         boxShadow: 24,
-                        borderRadius:"5px",
+                        borderRadius: "5px",
                         p: 4,
                         zIndex: 10,
                     }}>
@@ -650,7 +691,7 @@ const Pogrndirect = () => {
 
                     <SortableList
                         apiUrl={apiBaseUrl}
-
+                        isFolded={false}
                         caption="Receive Entry List"
                         columns={[
                             { field: 'xgrnnum', title: 'Item Code', width: '25%', },
@@ -674,6 +715,35 @@ const Pogrndirect = () => {
                         bodyFont=".8rem"
                         mt={0}
                         page={1}
+                    />
+                    <SortableList
+                        apiUrl={`api/pogrndetails/${zid}/${formData.xgrnnum}`}
+                        isFolded={false}
+                        caption="Receive Entry Detail List"
+                        columns={[
+                            { field: 'xrow', title: 'Serial', width: '5%', },
+                            { field: 'xitem', title: 'Item', width: '10%' },
+                            { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
+                            { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
+                            { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
+                        ]}
+                        // onItemSelect={handleItemSelect}
+                        onRefresh={(refresh) => {
+                            if (refreshTrigger) {
+                                refresh();
+                                setRefreshTrigger(true);
+                            }
+                        }}
+                        pageSize={10}
+                        // onSortChange={handleSortChange}
+                        sortField="xgrnnum"
+                        additionalParams={{}}
+                        captionFont=".9rem"
+                        xclass="py-4 pl-2"
+                        bodyFont=".7rem"
+                        mt={0}
+                        page={1}
+                        // isModal
                     />
                 </Box>
             </div >

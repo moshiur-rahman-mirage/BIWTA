@@ -10,8 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,5 +43,8 @@ public interface PogrnHeaderRepository extends JpaRepository<Pogrnheader, PogrnH
             "JOIN Xcodes x ON p.zid = x.zid AND p.xwh = x.xcode and x.xtype='Branch' " +
             "WHERE p.zid=:zid and p.xgrnnum  like %:searchText% or s.xorg like %:searchText%")
     List<PogrnheaderXcusdto> findGrnWithZidAndSearchText(@Param("zid") int zid, @Param("searchText") String searchText);
+
+    @Procedure(procedureName = "zabsp_PO_confirmGRN")
+    void confirmGRN(int zid, String user, String xgrnnum, Date xdate, String xwh, int len);
 }
 

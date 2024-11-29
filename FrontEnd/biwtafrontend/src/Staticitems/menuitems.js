@@ -16,6 +16,7 @@ export const menuitems = [
         title: "Codes & Parameters",
         to: "administrations/codes",
         submenu: [
+          { title: "Process Name", to: "administrations/codes/processname" },
           { title: "Store", to: "administrations/codes/store" },
           { title: "Store Type", to: "administrations/codes/storetype" },
           { title: "Department", to: "administrations/codes/department" },

@@ -1,5 +1,6 @@
 package com.zaberp.zab.biwtabackend.controller;
 
+import com.zaberp.zab.biwtabackend.dto.ConfirmGrnTdo;
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +80,16 @@ public class PogrnHeaderController {
             @RequestParam("text") String searchText
     ) {
         return service.searchByText(zid, searchText);
+    }
 
+    @PostMapping("/confirmGRN")
+    public String confirmGRN(@RequestBody ConfirmGrnTdo confirmGrn){
+        int zid = confirmGrn.getZid();
+        String zemail=confirmGrn.getZemail();
+        String xgrnnum = confirmGrn.getXgrnnum();
+        Date xdate = confirmGrn.getXdate();
+        String xwh = confirmGrn.getXwh();
+        int len=confirmGrn.getLen();
+        return service.confirmGRN(zid, zemail, xgrnnum,xdate,xwh,len);
     }
 }

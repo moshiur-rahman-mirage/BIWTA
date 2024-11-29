@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -62,7 +63,7 @@ public class Pogrndetail extends BaseEntity {
     private String xbatch;
 
     @Column(name = "xdateexp")
-    private LocalDateTime xdateexp;
+    private Date xdateexp;
 
     @Column(name = "xdisc")
     private BigDecimal xdisc;

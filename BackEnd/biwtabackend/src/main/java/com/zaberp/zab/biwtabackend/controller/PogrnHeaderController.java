@@ -1,11 +1,8 @@
 package com.zaberp.zab.biwtabackend.controller;
 
-import com.zaberp.zab.biwtabackend.dto.ConfirmGrnTdo;
+import com.zaberp.zab.biwtabackend.dto.ConfirmGrnDto;
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
-import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
-import com.zaberp.zab.biwtabackend.model.Cacus;
-import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
 import com.zaberp.zab.biwtabackend.service.PogrnHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +81,7 @@ public class PogrnHeaderController {
     }
 
     @PostMapping("/confirmGRN")
-    public String confirmGRN(@RequestBody ConfirmGrnTdo confirmGrn){
+    public String confirmGRN(@RequestBody ConfirmGrnDto confirmGrn){
         int zid = confirmGrn.getZid();
         String zemail=confirmGrn.getZemail();
         String xgrnnum = confirmGrn.getXgrnnum();

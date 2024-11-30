@@ -16,14 +16,13 @@ public class ImtorDto {
     String xitem;
     String xitemname;
 
-    public ImtorDto(int zid, String xtornum, Date xdate, String xfwh, String xfwhdesc, String xstatustor, String xlong) {
+    public ImtorDto(int zid, String xtornum, Date xdate, String xfwh, String xfwhdesc,String xstatustor) {
         this.zid = zid;
         this.xtornum = xtornum;
         this.xdate = xdate;
         this.xfwh = xfwh;
         this.xfwhdesc = xfwhdesc;
         this.xstatustor = xstatustor;
-        this.xlong = xlong;
     }
 
     public ImtorDto(int zid, String xtornum, Date xdate, String xfwh, String xfwhdesc, String xtwh, String xtwhdesc, String xstatustor, String xlong) {
@@ -37,6 +36,8 @@ public class ImtorDto {
         this.xstatustor = xstatustor;
         this.xlong = xlong;
     }
+
+
 
 
 }

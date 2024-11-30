@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -38,7 +39,7 @@ public class Imtorheader extends BaseEntity {
     private String zuuserid;
 
     @Column(name = "xdate")
-    private LocalDate xdate;
+    private Date xdate;
 
     @Column(name = "xdatecom")
     private LocalDate xdatecom;

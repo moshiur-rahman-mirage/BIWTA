@@ -31,7 +31,7 @@ public interface PogrnHeaderRepository extends JpaRepository<Pogrnheader, PogrnH
             "FROM Pogrnheader p " +
             "JOIN Cacus s ON p.zid = s.zid AND p.xcus = s.xcus " +
             "JOIN Xcodes x ON p.zid = x.zid AND p.xwh = x.xcode and x.xtype='Branch' " +
-            "WHERE p.zid=:zid and p.xstatus = :xstatus and p.zauserid=:user")
+            "WHERE p.zid=:zid and p.xstatusgrn = :xstatus and p.zauserid=:user")
     Page<PogrnheaderXcusdto> findPogrnWithSupplier(@Param("zid") int zid,
             @Param("xstatus") String xstatus,@Param("user") String user, Pageable pageable);
 

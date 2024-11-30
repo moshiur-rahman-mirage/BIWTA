@@ -198,9 +198,10 @@ const Pogrndirect = () => {
 
 
     const handleItemSelect = useCallback((item) => {
+        console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xgrnnum: item.xgrnnum, // Update xgrnnum based on selected item
+            xgrnnum: item.xgrnnum,xwh:item.xwh,xcus:item.xcus,xref:item.xref,xorg:item.xorg,xlong:item.xlong
         }));
     }, []);
 
@@ -717,7 +718,7 @@ const Pogrndirect = () => {
                                                 color: status === 'Confirmed' ? 'green' : 'red', // Conditional styling
                                             }}
                                         >
-                                            {formData.xstatus}
+                                            {formData.xstatusgrn}
                                         </Typography>
                                     </Box>
 
@@ -821,7 +822,7 @@ const Pogrndirect = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"
-                        additionalParams={{ zid: zid, xstatus: 'Open',user:zemail }}
+                        additionalParams={{ zid: zid, xstatusgrn: 'Open',user:zemail }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

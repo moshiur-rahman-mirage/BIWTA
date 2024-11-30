@@ -16,7 +16,6 @@ import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
 import { handleApiRequest } from '../../../utility/handleApiRequest';
 import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
-
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
@@ -34,10 +33,10 @@ const Imtorheaderdam = () => {
         xtornum: '',
         xstatustor: '',
         xdate: new Date().toISOString().split('T')[0],
-        xwh: '',
-        xlong: '',
-        xstatus: 'Open',
+        xfwh: '',
+        xfwhdesc: '',
         xnote: '',
+        xlong: ''
 
 
     });
@@ -59,23 +58,24 @@ const Imtorheaderdam = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
-    const apiListUrl = `api/pogrndetails/${zid}/${formData.xgrnnum}`
+    const apiListUrl = `api/pogrndetails/${zid}/${formData.xtornum}`
 
 
     // Handle dropdown value change
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
     };
+
     // References
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/pogrnheader`;
+    const apiBaseUrl = `http://localhost:8080/api/imtorheader`;
 
     const fieldConfig = [
         { header: 'Damage Number', field: 'xtornum' },
         { header: 'Date', field: 'xdate' },
-        { header: 'xwh', field: 'xwh' },
+        { header: 'xfwh', field: 'xfwh' },
         { header: 'Note', field: 'xlong' },
     ];
 
@@ -122,13 +122,13 @@ const Imtorheaderdam = () => {
     };
 
     const handleDropdownSelect = (fieldName, value) => {
-        // console.log(value)
+        console.log(value)
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
 
-            xwh: value.xcode,  // Update xwh with selected xcode
-            xlong: value.xlong,
+            xfwh: value.xcode,
+            xfwhdesc: value.xlong,
         }));
     };
 
@@ -145,10 +145,10 @@ const Imtorheaderdam = () => {
 
 
     useEffect(() => {
-        if (refreshCallback && formData.xgrnnum) {
+        if (refreshCallback && formData.xtornum) {
             refreshCallback(); // Trigger the refresh callback from SortableList
         }
-    }, [formData.xgrnnum, refreshCallback]);
+    }, [formData.xtornum, refreshCallback]);
 
 
     useEffect(() => {
@@ -157,7 +157,7 @@ const Imtorheaderdam = () => {
 
 
     const handleAdd = async () => {
-        const errors = validateForm(formData, ['xwh', 'xcus']);
+        const errors = validateForm(formData, ['xfwh']);
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
             Swal.fire({
@@ -168,16 +168,17 @@ const Imtorheaderdam = () => {
             return;
         }
 
-        const endpoint = 'api/pogrnheader';
+        const endpoint = 'api/imtorheader';
         const data = {
             ...formData,
             zauserid: zemail,
             zid: zid
         };
-        addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xgrnnum) {
 
-                setFormData((prev) => ({ ...prev, xgrnnum: response.xgrnnum }));
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xtornum) {
+
+                setFormData((prev) => ({ ...prev, xtornum: response.xtornum, xstatustor: response.xstatustor }));
                 setUpdateCount(prevCount => prevCount + 1);
                 setFormErrors({});
             } else {
@@ -189,25 +190,23 @@ const Imtorheaderdam = () => {
 
 
     const handleItemSelect = useCallback((item) => {
+        console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xgrnnum: item.xgrnnum, // Update xgrnnum based on selected item
+            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong,xfwhdesc:item.xfwhdesc
         }));
     }, []);
 
     const handleClear = () => {
         setFormData({
             zid: zid,
-            xgrnnum: '',
-            xstatusgrn: '',
+            xtornum: '',
+            xstatustor: '',
             xdate: new Date().toISOString().split('T')[0],
-            xcus: '',
-            xwh: '',
-            xref: '',
-            xstatus: '',
+            xfwh: '',
+            xfwhdesc: '',
             xnote: '',
-            xlong: '',
-            xorg: ''
+            xlong: ''
 
         });
         alert('Form cleared.');
@@ -215,23 +214,20 @@ const Imtorheaderdam = () => {
 
     const handleDelete = async () => {
         // console.log(formData)
-        const endpoint = `api/imtorheader/${zid}/${formData.xgrnnum}`;
+        const endpoint = `api/imtorheader/${zid}/${formData.xtornum}`;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
             onSuccess: (response) => {
                 setFormData({
                     zid: zid,
-                    xgrnnum: '',
-                    xstatusgrn: '',
+                    xtornum: '',
+                    xstatustor: '',
                     xdate: new Date().toISOString().split('T')[0],
-                    xcus: '',
-                    xwh: '',
-                    xref: '',
-                    xstatus: '',
+                    xfwh: '',
+                    xfwhdesc: '',
                     xnote: '',
-                    xlong: '',
-                    xorg: ''
+                    xlong: ''
 
                 });
                 setUpdateCount(prevCount => prevCount + 1);
@@ -242,7 +238,7 @@ const Imtorheaderdam = () => {
 
 
     const handleUpdate = async () => {
-        const errors = validateForm(formData, ['xwh', 'xcus']);
+        const errors = validateForm(formData, ['xfwh']);
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
             Swal.fire({
@@ -253,12 +249,11 @@ const Imtorheaderdam = () => {
             return;
         }
         setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
+        const endpoint = `api/imtorheader/${zid}/${formData.xtornum}`;
         const data = {
             ...formData,
             zid: zid
         };
-        // console.log(data)
 
         await handleApiRequest({
             endpoint,
@@ -272,7 +267,6 @@ const Imtorheaderdam = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
         document.body.style.overflow = "hidden";
         setOpen(true);
-        // setRefreshTrigger(true)
     };
 
     const handleClose = () => {
@@ -284,43 +278,39 @@ const Imtorheaderdam = () => {
 
 
     const handleConfirm = async () => {
-      if (window.confirm('Confirm This GRN?')) {
-        setStatus("Processing...");
+        if (window.confirm('Confirm This GRN?')) {
+            setStatus("Processing...");
+            const params = {
+                zid: 100000,
+                zemail: zemail,
+                xtornum: formData.xtornum,
+                xdate: formData.xdate,
+                xfwh: formData.xfwh,
+                len: 8
+            };
 
-        // Prepare the parameters to send in the request body
-        const params = {
-            zid: 100000,
-            zemail: zemail,
-            xgrnnum: formData.xgrnnum,
-            xdate: formData.xdate,  // Make sure this is a valid date format
-            xwh: formData.xwh,
-            len: 8
-        };
+            try {
 
-        try {
+                const response = await axiosInstance.post("/api/imtorheader/confirmDam", params);
+                setStatus(response.data);
 
-            const response = await axiosInstance.post("/api/imtorheader/confirmDam", params);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Operation completed successfully'
+                });
 
-            // Handle success response
-            setStatus(response.data);
+            } catch (error) {
+                // Handle error response
+                setStatus("Error: " + (error.response?.data || error.message));
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Operation completed successfully'
-            });
-
-        } catch (error) {
-            // Handle error response
-            setStatus("Error: " + (error.response?.data || error.message));
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong. Please try again.'
-            });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong. Please try again.'
+                });
+            }
         }
-    }
     };
 
 
@@ -344,13 +334,12 @@ const Imtorheaderdam = () => {
                         marginLeft: 1,
                         paddingX: 1,
                         paddingY: 0.5,
-                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        height: '2.5rem',
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
                         },
                     }}
                     size="medium"
-
                 >
                     Detail
                 </Button>
@@ -416,7 +405,7 @@ const Imtorheaderdam = () => {
                         p: 4,
                         zIndex: 10,
                     }}>
-                        <Imtordetaildam xgrnnum={formData.xgrnnum} />
+                        <Imtordetaildam xtornum={formData.xtornum} />
                     </Box>
                 </Modal>
                 {/* Modal */}
@@ -532,97 +521,7 @@ const Imtorheaderdam = () => {
 
                                 </Box>
 
-                                {/* Row 2 */}
-                                {/* <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(2, 1fr)"
-                                    gap={2}
-                                    mb={2}
-                                >
 
-
-                                    <DynamicDropdown
-                                        isOpen={supDropdownOpen}
-                                        onClose={() => setSupDropdownOpen(false)}
-                                        triggerRef={supplierRef}
-                                        data={searchResults}
-                                        headers={supConfig.map((config) => config.header)}
-                                        onSelect={handleResultClick}
-                                        dropdownWidth={600}
-                                        dropdownHeight={400}
-                                    />
-                                  
-                                    <TextField
-                                        ref={supplierRef}
-                                        id="xcus"
-                                        name="xcus"
-                                        label="Supplier"
-                                        size="small"
-                                        value={formData.xcus}
-                                        error={!!formErrors.xcus} 
-                                        helperText={formErrors.xcus}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        variant={variant}
-                                        fullWidth
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                              
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            const query = e.target.value;
-                                            const apiSupUrl = `http://localhost:8080/api/cacus/search?zid=${zid}&text=${query}`;
-                                            handleSearch(
-                                                e.target.value,
-                                                apiSupUrl,
-                                                supConfig,
-                                                setSearchResults,
-                                                setSupDropdownOpen,
-                                                supplierRef,
-                                                setDropdownPosition,
-                                                { zid }
-                                            );
-                                        }}
-                                    />
-                                   
-                                    <TextField
-                                        id="xorg"
-                                        name="xorg"
-                                        label="Supplier Name"
-                                        size="small"
-                                        value={formData.xorg}
-                                        variant={variant}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        inputProps={{
-                                            readOnly: true,
-                                        }}
-                                        fullWidth
-                                        onChange={handleChange}
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                    />
-                                  
-
-                                </Box> */}
-
-                                {/* Row 3 */}
                                 <Box
                                     display="grid"
                                     gridTemplateColumns="repeat(2, 1fr)"
@@ -636,13 +535,13 @@ const Imtorheaderdam = () => {
                                         variant={variant}
                                         label="Store"
                                         size="small"
-                                        name="xwh"
+                                        name="xfwh"
                                         type="Branch"
-                                        onSelect={(value) => handleDropdownSelect("xwh", value)}
-                                        value={formData.xwh}
+                                        onSelect={(value) => handleDropdownSelect("xfwh", value)}
+                                        value={formData.xfwh}
                                         defaultValue=""
-                                        error={!!formErrors.xwh}  // Check if there's an error for this field
-                                        helperText={formErrors.xwh}
+                                        error={!!formErrors.xfwh}  // Check if there's an error for this field
+                                        helperText={formErrors.xfwh}
                                         withXlong="false"
                                         InputLabelProps={{
                                             shrink: true,
@@ -655,11 +554,11 @@ const Imtorheaderdam = () => {
 
                                     {/* Mobile */}
                                     <TextField
-                                        id="xlong"
-                                        name="xlong"
+                                        id="xfwhdesc"
+                                        name="xfwhdesc"
                                         label="Store Name"
                                         size="small"
-                                        value={formData.xlong}
+                                        value={formData.xfwhdesc}
                                         variant={variant}
                                         InputLabelProps={{
                                             shrink: true,
@@ -708,34 +607,9 @@ const Imtorheaderdam = () => {
                                             {formData.xstatustor}
                                         </Typography>
                                     </Box>
+                                    <div>
 
-                                    <TextField
-                                        id='xref'
-                                        name='xref'
-                                        label="Challan No"
-                                        size="small"
-                                        value={formData.xref}
-                                        variant={variant}
-                                        onChange={handleChange}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        fullWidth
-                                        // disabled
-                                        required
-                                        sx={{
-                                            gridColumn: 'span 2',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-
-                                    />
+                                    </div>
 
 
 
@@ -792,12 +666,12 @@ const Imtorheaderdam = () => {
                         directFetch='Yes'
                         apiUrl={apiBaseUrl}
                         isFolded={false}
-                        caption="Receive Entry List"
+                        caption="Damage Entry List"
                         columns={[
-                            { field: 'xgrnnum', title: 'Item Code', width: '25%', },
-                            { field: 'xcus', title: 'Name', width: '25%' },
-                            { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
-                            { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },
+                            { field: 'xtornum', title: 'Damage Number', width: '25%', align:'left' },
+                            { field: 'xfwh', title: 'Store', width: '25%', align: 'left' },
+                            { field: 'xfwhdesc', title: 'Store Name', width: '40%',align: 'left' },
+                            { field: 'xdate', title: 'Date', width: '10%', align: 'left' },
                         ]}
                         onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
@@ -808,8 +682,8 @@ const Imtorheaderdam = () => {
                         }}
                         pageSize={10}
                         onSortChange={handleSortChange}
-                        sortField="xgrnnum"
-                        additionalParams={{ zid: zid, xstatus: 'Open',user:zemail }}
+                        sortField="xtornum"
+                        additionalParams={{ zid: zid, xstatustor: 'Open', user: zemail }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"
@@ -818,9 +692,9 @@ const Imtorheaderdam = () => {
                     />
                     <SortableList
 
-                        apiUrl={`api/pogrndetails/${zid}/${formData.xgrnnum}`}
+                        apiUrl={`api/imtordetails/${zid}/${formData.xtornum}`}
                         isFolded={false}
-                        caption="Receive Entry Detail List"
+                        caption="Damage Entry Detail List"
                         columns={[
                             { field: 'xrow', title: 'Serial', width: '5%', },
                             { field: 'xitem', title: 'Item', width: '10%' },
@@ -830,13 +704,13 @@ const Imtorheaderdam = () => {
                         ]}
                         // onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
-                            if (formData.xgrnnum) {
-                                refresh(); // Trigger the refresh only when xgrnnum is available
+                            if (formData.xtornum) {
+                                refresh(); // Trigger the refresh only when xtornum is available
                             }
                         }}
                         pageSize={10}
                         // onSortChange={handleSortChange}
-                        sortField="xgrnnum"
+                        sortField="xtornum"
                         additionalParams={{}}
                         captionFont=".9rem"
                         xclass="py-0 pl-2"

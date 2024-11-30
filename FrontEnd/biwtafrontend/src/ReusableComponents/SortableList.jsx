@@ -23,7 +23,6 @@ const SortableList = ({
     onItemSelect,
     onRefresh,
     pageSize: defaultPageSize = 10,
-    // onSortChange,
     sortField,
     additionalParams = {},
     captionFont,
@@ -39,51 +38,36 @@ const SortableList = ({
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [folded, setFolded] = useState(isFolded);
     const [searchTerm, setSearchTerm] = useState('');
-    const [page, setPage] = useState(1); // Current page (Material-UI pagination is 1-based)
-    const [pageSize, setPageSize] = useState(defaultPageSize); // Items per page
-    const [xtotalPages, setxTotalPages] = useState(0); // Total pages
-    const [xsortField, setSortField] = useState(sortField); // Current field to sort by
-    const [sortOrder, setSortOrder] = useState('asc'); // Current sort order
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(defaultPageSize);
+    const [xtotalPages, setxTotalPages] = useState(0);
+    const [xsortField, setSortField] = useState(sortField);
+    const [sortOrder, setSortOrder] = useState('asc');
 
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
-
-
-
-
-
 
     const constructApiUrl = useMemo(() => {
         return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'asc'}`;
     }, [apiUrl, page, pageSize, xsortField, sortOrder]);
 
-
     const fetchData = async () => {
-        // console.log(directFetch)
-        // console.log(constructApiUrl)
-       
-            setLoading(true);
-            try {
-                const apiUrlWithParams = constructApiUrl;
-
-                const response = await axiosInstance.get(apiUrlWithParams, { params: additionalParams });
-
-                setItems(response.data.content || []);
-                setFilteredItems(response.data.content || []);
-                setxTotalPages(response.data.page.totalPages || 1);
-            } catch (error) {
-                console.error('Error fetching list items:', error);
-            } finally {
-                setLoading(false);
-            }
-        
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get(constructApiUrl, { params: additionalParams });
+            setItems(response.data.content || []);
+            setFilteredItems(response.data.content || []);
+            setxTotalPages(response.data.page.totalPages || 1);
+        } catch (error) {
+            console.error('Error fetching list items:', error);
+        } finally {
+            setLoading(false);
+        }
     };
-
 
     useEffect(() => {
         if (onRefresh) {
             onRefresh(() => fetchData());
-
         }
     }, [onRefresh]);
 
@@ -99,8 +83,6 @@ const SortableList = ({
             items.filter((item) =>
                 columns.some((col) =>
                     String(item[col.field] || '').toLowerCase().includes(value)
-
-
                 )
             )
         );
@@ -112,7 +94,6 @@ const SortableList = ({
         setPage(newPage);
     };
 
-
     const handlePageSizeChange = (event) => {
         setPageSize(event.target.value);
         setPage(1);
@@ -121,11 +102,11 @@ const SortableList = ({
 
     return (
         <div className={`${xclass} shadow-lg pt-0 rounded`} style={{ maxHeight: isModal ? 'calc(80vh - 100px)' : 'calc(100vh - 100px)', overflowY: 'auto', borderRadius: '4px' }}>
-            <Box display="flex" alignItems="left" justifyContent="space-between" mt={mt}>
+            <Box display="flex" justifyContent="space-between" mt={mt}>
                 <Caption title={caption} />
             </Box>
-            <Box display="flex" alignItems="left" justifyContent="space-between" gap={2}>
-                <TextField
+            <Box display="flex" justifyContent="space-between" gap={2}>
+            <TextField
                     sx={{
                         height: '30px', // Adjust overall height
                         marginTop: '2px',
@@ -151,6 +132,10 @@ const SortableList = ({
                     placeholder="Search..."
                     value={searchTerm}
                     onChange={handleSearch}
+						 
+									  
+																	 
+					  
                 />
                 <Box display="flex" alignItems="left" justifyContent="space-between" gap={2} >
 
@@ -198,16 +183,16 @@ const SortableList = ({
 
             {!folded && (
                 <>
-                    {/* Table Header */}
-                    <Grid container spacing={0} mt={0} mb={0} sx={{
-                        borderBottom: '1px solid #000',
-                    }} >
+                    <Grid container spacing={1} sx={{ borderBottom: '1px solid #ccc', padding: '8px 0' }}>
                         {columns.map((col, idx) => (
-                            <Grid item xs={12 / columns.length} key={idx}>
+                            <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left' }}>
                                 <Typography
                                     variant="subtitle1"
-                                    style={{ fontWeight: 'bold', fontSize: captionFont || '1rem', cursor: 'pointer' }}
-                                    onClick={() => onSortChange(col.field)}
+                                    sx={{
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                    }}
+                                    onClick={() => setSortField(col.field)}
                                 >
                                     {col.title}{' '}
                                     {xsortField === col.field ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
@@ -215,55 +200,41 @@ const SortableList = ({
                             </Grid>
                         ))}
                     </Grid>
-
-                    {/* Table Content */}
                     {loading ? (
                         <Typography>Loading...</Typography>
                     ) : filteredItems.length === 0 ? (
                         <Typography>No items available</Typography>
                     ) : (
-                        <Box>
-                            {filteredItems.map((item, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => onItemSelect(item)}
-                                    onMouseEnter={() => handleMouseEnter(index)}
-                                    onMouseLeave={handleMouseLeave}
-                                    style={{
-                                        backgroundColor: hoveredIndex === index ? '#f0f0f0' : 'transparent',
-                                        cursor: 'pointer',
-                                        padding: '8px 0',
-
-                                    }}
-                                >
-                                    <Grid container spacing={2}>
-                                        {columns.map((col, idx) => (
-                                            <Grid item xs={12 / columns.length} key={idx}>
-                                                <Typography
-                                                    style={{
-                                                        fontSize: bodyFont || '0.875rem',
-                                                        textAlign: 'left',
-                                                    }}
-                                                // onClick={() => handleSortChange(col.field)}
-                                                >
-                                                    {item[col.field] || 'N/A'}
-                                                </Typography>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                    {index < filteredItems.length - 1 && <Divider />}
-                                </div>
-                            ))}
-                        </Box>
+                        filteredItems.map((item, index) => (
+                            <Box
+                                key={index}
+                                onClick={() => onItemSelect(item)}
+                                onMouseEnter={() => handleMouseEnter(index)}
+                                onMouseLeave={handleMouseLeave}
+                                sx={{
+                                    backgroundColor: hoveredIndex === index ? '#f0f0f0' : 'transparent',
+                                    cursor: 'pointer',
+                                    padding: '8px 0',
+                                }}
+                            >
+                                <Grid container spacing={1}>
+                                    {columns.map((col, idx) => (
+                                        <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left' }}>
+                                            <Typography sx={{ fontSize: bodyFont || '0.875rem' }}>
+                                                {item[col.field] || 'N/A'}
+                                            </Typography>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                                {index < filteredItems.length - 1 && <Divider />}
+                            </Box>
+                        ))
                     )}
-
-
                     <Box mt={2} display="flex" justifyContent="space-between" alignItems="center">
                         <Pagination
                             count={xtotalPages}
                             page={page}
                             onChange={handlePageChange}
-                            // color="#8979EE"
                             size="small"
                         />
                     </Box>

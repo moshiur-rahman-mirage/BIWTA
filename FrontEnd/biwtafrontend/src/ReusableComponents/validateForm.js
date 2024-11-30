@@ -6,9 +6,15 @@ export const validateForm = (formData,fieldsToValidate = []) => {
         switch (field) {
             case 'xwh':
                 if (!formData.xwh) {
-                    errors.xwh = 'Warehouse is required.';
+                    errors.xwh = 'Store is required.';
                 }
                 break;
+
+                case 'xfwh':
+                    if (!formData.xfwh) {
+                        errors.xfwh = 'Store is required.';
+                    }
+                    break;
 
             case 'xcus':
                 if (!formData.xcus) {

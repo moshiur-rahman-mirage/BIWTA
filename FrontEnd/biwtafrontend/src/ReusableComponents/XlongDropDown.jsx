@@ -101,7 +101,7 @@ const XlongDropDown = ({
                             }}
                             data-xlong={option.xlong} // Attach xlong to the menu item
                         >
-                            {option.xcode}
+                            {option.xcode}-{option.xlong}
 
                         </MenuItem>
                     ))}

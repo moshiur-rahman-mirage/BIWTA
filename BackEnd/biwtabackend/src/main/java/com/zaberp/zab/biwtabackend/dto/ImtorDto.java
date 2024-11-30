@@ -16,6 +16,10 @@ public class ImtorDto {
     String xitem;
     String xitemname;
 
+    public ImtorDto(){
+
+    }
+
     public ImtorDto(int zid, String xtornum, Date xdate, String xfwh, String xfwhdesc,String xstatustor) {
         this.zid = zid;
         this.xtornum = xtornum;
@@ -38,6 +42,99 @@ public class ImtorDto {
     }
 
 
+    public int getZid() {
+        return zid;
+    }
 
+    public void setZid(int zid) {
+        this.zid = zid;
+    }
 
+    public int getXrow() {
+        return xrow;
+    }
+
+    public void setXrow(int xrow) {
+        this.xrow = xrow;
+    }
+
+    public String getXtornum() {
+        return xtornum;
+    }
+
+    public void setXtornum(String xtornum) {
+        this.xtornum = xtornum;
+    }
+
+    public Date getXdate() {
+        return xdate;
+    }
+
+    public void setXdate(Date xdate) {
+        this.xdate = xdate;
+    }
+
+    public String getXfwh() {
+        return xfwh;
+    }
+
+    public void setXfwh(String xfwh) {
+        this.xfwh = xfwh;
+    }
+
+    public String getXfwhdesc() {
+        return xfwhdesc;
+    }
+
+    public void setXfwhdesc(String xfwhdesc) {
+        this.xfwhdesc = xfwhdesc;
+    }
+
+    public String getXtwh() {
+        return xtwh;
+    }
+
+    public void setXtwh(String xtwh) {
+        this.xtwh = xtwh;
+    }
+
+    public String getXtwhdesc() {
+        return xtwhdesc;
+    }
+
+    public void setXtwhdesc(String xtwhdesc) {
+        this.xtwhdesc = xtwhdesc;
+    }
+
+    public String getXstatustor() {
+        return xstatustor;
+    }
+
+    public void setXstatustor(String xstatustor) {
+        this.xstatustor = xstatustor;
+    }
+
+    public String getXlong() {
+        return xlong;
+    }
+
+    public void setXlong(String xlong) {
+        this.xlong = xlong;
+    }
+
+    public String getXitem() {
+        return xitem;
+    }
+
+    public void setXitem(String xitem) {
+        this.xitem = xitem;
+    }
+
+    public String getXitemname() {
+        return xitemname;
+    }
+
+    public void setXitemname(String xitemname) {
+        this.xitemname = xitemname;
+    }
 }

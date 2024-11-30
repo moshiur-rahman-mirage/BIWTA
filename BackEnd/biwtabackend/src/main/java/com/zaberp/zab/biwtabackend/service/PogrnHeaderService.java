@@ -80,10 +80,10 @@ import java.util.Optional;
             }
         }
 
-        public Page<PogrnheaderXcusdto> findPogrnWithSupplier(int zid, String xstatus, int page, int size, String sortBy, boolean ascending) {
+        public Page<PogrnheaderXcusdto> findPogrnWithSupplier(int zid, String xstatus,String user, int page, int size, String sortBy, boolean ascending) {
             Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
             Pageable pageable = PageRequest.of(page, size, sort);
-            return repository.findPogrnWithSupplier(zid,xstatus,pageable);
+            return repository.findPogrnWithSupplier(zid,xstatus,user,pageable);
         }
 
         public List<PogrnheaderXcusdto> searchByText(int zid, String searchText) {

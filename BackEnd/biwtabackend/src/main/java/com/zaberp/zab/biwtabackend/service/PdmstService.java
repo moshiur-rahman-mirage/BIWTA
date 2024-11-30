@@ -2,6 +2,7 @@ package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.PdmstId;
 import com.zaberp.zab.biwtabackend.model.Pdmst;
+import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.repository.PdmstRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -124,6 +125,12 @@ public class PdmstService {
     private Specification<Pdmst> xmobileEquals(String xmobile) {
         return (root, query, builder) ->
                 xmobile == null || xmobile.isEmpty() ? builder.conjunction() : builder.equal(root.get("xmobile"), xmobile);
+    }
+
+
+    public Pdmst findByZidAndXposition(int zid,String xposition){
+
+        return repository.findByZidAndXposition(zid,xposition);
     }
 }
 

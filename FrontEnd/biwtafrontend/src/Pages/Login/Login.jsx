@@ -24,15 +24,15 @@ function Login() {
             xpassword: password,
           });
         if (response.status === 200) {
-         
-          const { zid,token } = response.data;
+          console.log(response)
+          const { zid,token,xname,zorg } = response.data;
           if (!zid) {
             console.error("zid is missing in the response");
             alert("An error occurred: zid not found.");
             return;
           }
 
-          login( userId, zid,token);
+          login( userId, zid,token,xname,zorg);
           navigate('/main');
         }
         else if (response.status === 401) {

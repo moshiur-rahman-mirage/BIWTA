@@ -15,6 +15,7 @@ import LoadingPage from '../Loading/Loading';
 
 
 const BesicXcodes = ({ title, xtype }) => {
+    const variant = 'standard';
     const typeRef = useRef(null);
     const [searchResults, setSearchResults] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
@@ -281,9 +282,15 @@ const BesicXcodes = ({ title, xtype }) => {
                                         name="xcode"
                                         label="Code"
                                         value={formData.xcode}
+                                        
                                         onChange={handleChange}
-                                        variant="outlined"
+                                        variant={variant}
                                         sx={{ gridColumn: 'span 1' }}
+                                        size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            
+                                        }}
                                     />
                                     <TextField
                                         id="xlong"
@@ -291,8 +298,13 @@ const BesicXcodes = ({ title, xtype }) => {
                                         label="Name"
                                         value={formData.xlong}
                                         onChange={handleChange}
-                                        variant="outlined"
+                                        variant={variant}
                                         sx={{ gridColumn: 'span 2' }}
+                                        size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            
+                                        }}
                                     />
                                     <Checkbox
                                         // checked={checked}

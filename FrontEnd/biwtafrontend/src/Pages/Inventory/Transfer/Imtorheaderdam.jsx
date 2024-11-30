@@ -7,39 +7,35 @@ import {
     Modal,
 } from '@mui/material';
 import { useAuth } from '../../../Provider/AuthProvider';
-
+import LoadingPage from '../../Loading/Loading';
 import HelmetTitle from '../../../utility/HelmetTitle';
 import SideButtons from '../../../Shared/SideButtons';
 import Caption from '../../../utility/Caption';
 import DynamicDropdown from '../../../ReusableComponents/DynamicDropdown';
-
+import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
 import { handleApiRequest } from '../../../utility/handleApiRequest';
 import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
-import LoadingPage from '../../Loading/Loading';
-import SortableList from '../../../ReusableComponents/SortableList';
-import XcodesDropDown from '../../../ReusableComponents/XlongDropDown';
-import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
-import PdDependent from '../../DependentInfo/PdDependent';
-import Pogrndetail from './pogrndetail';
+
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
 import { validateForm } from '../../../ReusableComponents/validateForm';
+import Imtordetaildam from './Imtordetaildam';
+import SortableList from '../../../ReusableComponents/SortableList';
 
 
-const Pogrndirect = () => {
+const Imtorheaderdam = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
     console.log(zid, zemail)
     const [formData, setFormData] = useState({
         zid: zid,
-        xgrnnum: '',
-        xstatusgrn: '',
+        xtornum: '',
+        xstatustor: '',
         xdate: new Date().toISOString().split('T')[0],
-        xcus: '',
         xwh: '',
-        xref: '',
+        xlong: '',
         xstatus: 'Open',
         xnote: '',
 
@@ -77,10 +73,10 @@ const Pogrndirect = () => {
     const apiBaseUrl = `http://localhost:8080/api/pogrnheader`;
 
     const fieldConfig = [
-        { header: 'GRN Number', field: 'xgrnnum' },
+        { header: 'Damage Number', field: 'xtornum' },
         { header: 'Date', field: 'xdate' },
-        { header: 'Supplier', field: 'xorg' },
-        { header: 'Challan', field: 'xref' },
+        { header: 'xwh', field: 'xwh' },
+        { header: 'Note', field: 'xlong' },
     ];
 
 
@@ -191,11 +187,6 @@ const Pogrndirect = () => {
     };
 
 
-    // const handleItemSelect = useCallback((item) => {
-    //     setSelectedItem(item);
-    //     setDirectFetch('Yes');
-    // }, []);
-
 
     const handleItemSelect = useCallback((item) => {
         setFormData((prev) => ({
@@ -224,7 +215,7 @@ const Pogrndirect = () => {
 
     const handleDelete = async () => {
         // console.log(formData)
-        const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
+        const endpoint = `api/imtorheader/${zid}/${formData.xgrnnum}`;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
@@ -308,7 +299,7 @@ const Pogrndirect = () => {
 
         try {
 
-            const response = await axiosInstance.post("/api/pogrnheader/confirmGRN", params);
+            const response = await axiosInstance.post("/api/imtorheader/confirmDam", params);
 
             // Handle success response
             setStatus(response.data);
@@ -390,7 +381,7 @@ const Pogrndirect = () => {
 
 
                 {/* Helmet Title for Page */}
-                <HelmetTitle title="Product Receive Entry" />
+                <HelmetTitle title="Product Damage Entry" />
 
                 {/* Sidebar with Action Buttons */}
                 <div className="col-span-1">
@@ -425,7 +416,7 @@ const Pogrndirect = () => {
                         p: 4,
                         zIndex: 10,
                     }}>
-                        <Pogrndetail xgrnnum={formData.xgrnnum} />
+                        <Imtordetaildam xgrnnum={formData.xgrnnum} />
                     </Box>
                 </Modal>
                 {/* Modal */}
@@ -441,7 +432,7 @@ const Pogrndirect = () => {
 
                     <div className="shadow-lg rounded">
                         <div className="w-full  py-2 pt-0 mx-auto ">
-                            <Caption title="Product Receive Entry" />
+                            <Caption title="Product Damage Entry" />
                             <Box
                                 component="form"
                                 sx={{
@@ -475,9 +466,9 @@ const Pogrndirect = () => {
                                     {/* Supplier ID Field */}
                                     <TextField
                                         ref={triggerRef}
-                                        id="xgrnnum"
-                                        name="xgrnnum"
-                                        label="GRN Number"
+                                        id="xtornum"
+                                        name="xtornum"
+                                        label="Damage Number"
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -485,13 +476,13 @@ const Pogrndirect = () => {
                                             },
                                         }}
                                         size="small"
-                                        value={formData.xgrnnum || ''}
+                                        value={formData.xtornum || ''}
                                         variant={variant}
                                         fullWidth
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/pogrnheader/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `http://localhost:8080/api/imtorheader/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -516,7 +507,7 @@ const Pogrndirect = () => {
                                     <TextField
                                         id="xdate"
                                         name="xdate"
-                                        label="Date"
+                                        label="Damage Date"
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -542,7 +533,7 @@ const Pogrndirect = () => {
                                 </Box>
 
                                 {/* Row 2 */}
-                                <Box
+                                {/* <Box
                                     display="grid"
                                     gridTemplateColumns="repeat(2, 1fr)"
                                     gap={2}
@@ -560,7 +551,7 @@ const Pogrndirect = () => {
                                         dropdownWidth={600}
                                         dropdownHeight={400}
                                     />
-                                    {/* Mailing Address */}
+                                  
                                     <TextField
                                         ref={supplierRef}
                                         id="xcus"
@@ -581,8 +572,7 @@ const Pogrndirect = () => {
                                         sx={{
                                             gridColumn: 'span 1',
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
+                                              
                                                 fontSize: '.9rem'
                                             },
                                         }}
@@ -602,7 +592,7 @@ const Pogrndirect = () => {
                                             );
                                         }}
                                     />
-                                    {/* Email */}
+                                   
                                     <TextField
                                         id="xorg"
                                         name="xorg"
@@ -624,15 +614,13 @@ const Pogrndirect = () => {
                                         sx={{
                                             gridColumn: 'span 1',
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
                                                 fontSize: '.9rem'
                                             },
                                         }}
                                     />
-                                    {/* Phone */}
+                                  
 
-                                </Box>
+                                </Box> */}
 
                                 {/* Row 3 */}
                                 <Box
@@ -717,7 +705,7 @@ const Pogrndirect = () => {
                                                 color: status === 'Confirmed' ? 'green' : 'red', // Conditional styling
                                             }}
                                         >
-                                            {formData.xstatus}
+                                            {formData.xstatustor}
                                         </Typography>
                                     </Box>
 
@@ -863,4 +851,4 @@ const Pogrndirect = () => {
     );
 };
 
-export default Pogrndirect;
+export default Imtorheaderdam;

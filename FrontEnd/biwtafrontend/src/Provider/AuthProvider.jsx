@@ -20,20 +20,27 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [zid, setZid] = useState(null);
     const [zemail, setZemail] = useState(null);
+    const [xname,setXname]=useState(null);
+    const [zorg,setZorg]=useState(null);
 
     // Function to handle user login (using JWT)
-    const login = (id, zid, token) => {
+    const login = (id, zid, token,xname,zorg) => {
        
 
         // Set state using passed arguments
-        setAuthState({ zid, zemail: id });
+        setAuthState({ zid, zemail: id,xname:xname,zorg:zorg });
         setToken(token);
         setZid(zid);
         setZemail(id);
-        // Store in sessionStorage
-        sessionStorage.setItem("zid", zid);
-        sessionStorage.setItem("zemail", id);
-        sessionStorage.setItem("token", token);
+        setZorg(zorg);
+        setXname(xname);
+        console.log(zorg)
+        // Store in localStorage
+        localStorage.setItem("zid", zid);
+        localStorage.setItem("zemail", id);
+        localStorage.setItem("token", token);
+        localStorage.setItem("xname", xname);
+        localStorage.setItem("zorg",zorg)
 
        
     };
@@ -58,9 +65,9 @@ export const AuthProvider = ({ children }) => {
     // Function to handle user logout
     const logout = () => {
         setLoading(true);
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("zid");
-        sessionStorage.removeItem("zemail");
+        localStorage.removeItem("token");
+        localStorage.removeItem("zid");
+        localStorage.removeItem("zemail");
 
         setAuthState({ zid: null, zemail: null });
         setToken(null);
@@ -72,9 +79,9 @@ export const AuthProvider = ({ children }) => {
 
     // Validate user session and token on load
     useEffect(() => {
-        const storedZid = sessionStorage.getItem("zid");
-        const storedZemail = sessionStorage.getItem("zemail");
-        const storedToken = sessionStorage.getItem("token");
+        const storedZid = localStorage.getItem("zid");
+        const storedZemail = localStorage.getItem("zemail");
+        const storedToken = localStorage.getItem("token");
 
         if (storedZid && storedZemail && storedToken) {
             setAuthState({ zid: storedZid, zemail: storedZemail });
@@ -91,13 +98,13 @@ export const AuthProvider = ({ children }) => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
              
-                if(sessionStorage.getItem('zid')!=response.data.zid || sessionStorage.getItem('zemail')!=response.data.zemail ){
+                if(localStorage.getItem('zid')!=response.data.zid || localStorage.getItem('zemail')!=response.data.zemail ){
                     logout();
                 }
             } catch (error) {
                 console.error("User validation failed:", error);
                 // setAuthState({ zid: null, zemail: null });
-                sessionStorage.clear();
+                localStorage.clear();
                 logout();
             }
         };
@@ -111,9 +118,9 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const handleStorageChange = () => {
-            const storedToken = sessionStorage.getItem("token");
-            const storedZid = sessionStorage.getItem("zid");
-            const storedZemail = sessionStorage.getItem("zemail");
+            const storedToken = localStorage.getItem("token");
+            const storedZid = localStorage.getItem("zid");
+            const storedZemail = localStorage.getItem("zemail");
 
             if (!storedToken || !storedZid || !storedZemail) {
                 logout(); // Logout if any critical value is missing
@@ -142,7 +149,9 @@ export const AuthProvider = ({ children }) => {
         loading,
         user,
         setAuthState,
-        fetchUserData
+        fetchUserData,
+        xname:authState.xname,
+        zorg:authState.zorg
     };
 
     return (

@@ -1,4 +1,5 @@
 package com.zaberp.zab.biwtabackend.service;
+import com.zaberp.zab.biwtabackend.model.Xusers;
 import com.zaberp.zab.biwtabackend.model.Zbusiness;
 import com.zaberp.zab.biwtabackend.repository.ZbusinessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,11 @@ public class ZbusinessService {
 
     public void deleteZbusiness(Integer id) {
         zbusinessRepository.deleteById(id);
+    }
+
+    public Zbusiness findByZid(int zid){
+
+        return zbusinessRepository.findByZid(zid);
     }
 }
 

@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ZbusinessRepository extends JpaRepository<Zbusiness, Integer> {
+    Zbusiness findByZid(int zid);
 }
 

@@ -35,11 +35,12 @@ public class PogrnHeaderController {
     public Page<PogrnheaderXcusdto> getItems(
             @RequestParam int zid,
             @RequestParam(defaultValue = "Open") String xstatus,
+            @RequestParam String user,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "xgrnnum") String sortBy,
             @RequestParam(defaultValue = "true") boolean ascending) {
-        return service.findPogrnWithSupplier(zid,xstatus,page, size, sortBy, ascending);
+        return service.findPogrnWithSupplier(zid,xstatus,user,page, size, sortBy, ascending);
     }
 
     @PostMapping

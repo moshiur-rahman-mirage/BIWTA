@@ -63,6 +63,7 @@ const XcodesDropDown = ({
             <InputLabel
                 sx={{
                     fontSize: captionSize,
+                    fontWeight: 600,
                 }}
             >
                 {label}

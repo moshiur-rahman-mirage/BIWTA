@@ -39,6 +39,7 @@ import Imtransfersr from "../Pages/Inventory/Transfer/Imtransfersr";
 import Mmpharmacy from "../Pages/Pharmacy/Mmpharmacy";
 import Eprescription from "../Pages/Prescription/Eprescription";
 import ProcessName from "../Pages/Xcodes/ProcessName";
+import Imtorheaderdam from "../Pages/Inventory/Transfer/Imtorheaderdam";
 
 
 
@@ -116,7 +117,8 @@ const Router = createBrowserRouter([
             { path: "grn/batchstock", element: <Batchstock/> },
             { path: "transfer/imtorheader", element: <Imtorheader/> },
             { path: "transfer/imtormoreqheader", element: <Imtormoreqheader/> },
-            { path: "transfer/imtransfersr", element: <Imtransfersr/> }
+            { path: "transfer/imtransfersr", element: <Imtransfersr/> },
+            { path: "transfer/imtorheaderdam", element: <Imtorheaderdam/> }
         ],
       },
      

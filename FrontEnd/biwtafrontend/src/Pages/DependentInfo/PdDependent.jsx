@@ -187,16 +187,23 @@ const PdDependent = ({ xstaff, xname }) => {
                                         name='xname'
                                         variant={variant}
                                         size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600, // Adjust font size here
+                                            },
+    
+                                        }}
                                         onChange={handleChange}
                                         value={formData.xname}
                                         fullWidth
                                         required
                                         sx={{
                                             '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                             '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                         }}
                                     />
@@ -205,19 +212,22 @@ const PdDependent = ({ xstaff, xname }) => {
                                         label="Date of Birth"
                                         type="date"
                                         name='xbirthdate'
-                                        size='small'
+                                        size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+    
+                                        }}
                                         onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
                                         value={formData.xbirthdate}
                                         variant={variant}
                                         fullWidth
 
                                         sx={{
                                             '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                             '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                         }}
 
@@ -235,12 +245,16 @@ const PdDependent = ({ xstaff, xname }) => {
                                         variant={variant}
                                         label="Gender"
                                         size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+    
+                                        }}
                                         type="Gender"
                                         apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
-                                        fontSize="0.8rem" // Smaller font size for dropdown options
-                                        captionSize="0.8rem"
+                                        fontSize="0.9rem" // Smaller font size for dropdown options
+                                        captionSize="0.9rem"
 
 
                                     />
@@ -253,6 +267,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                             variant={variant}
                                             label="Relation"
                                             size="small"
+                                            InputLabelProps={{
+                                                shrink: true,
+        
+                                            }}
                                             type="Relation"
                                             name='xrelation'
                                             onSelect={(value) => handleDropdownSelect("xrelation", value)}
@@ -276,6 +294,13 @@ const PdDependent = ({ xstaff, xname }) => {
                                         name='xnid'
                                         label="NID"
                                         size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx:{
+                                                fontWeight:600
+                                            }
+    
+                                        }}
                                         onChange={handleChange}
                                         value={formData.xnid}
                                         variant={variant}
@@ -283,23 +308,27 @@ const PdDependent = ({ xstaff, xname }) => {
                                         required
                                         sx={{
                                             '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                             '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                             gridColumn: 'span 1'
                                         }}
 
-                                        InputLabelProps={{
-                                            shrink: true, // Ensures the label stays above the input field
-                                        }}
                                     />
 
                                     <TextField
                                         label="Contact Number"
                                         variant={variant}
                                         size="small"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx:{
+                                                fontWeight:600
+                                            }
+    
+                                        }}
                                         fullWidth
                                         name='xcontact'
                                         onChange={handleChange}
@@ -307,10 +336,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                         required
                                         sx={{
                                             '& .MuiInputLabel-root': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
                                             '& .MuiInputBase-input': {
-                                                fontSize: '0.85rem',
+                                                fontSize: '0.9rem',
                                             },
 
                                         }}

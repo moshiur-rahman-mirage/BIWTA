@@ -1,8 +1,11 @@
 package com.zaberp.zab.biwtabackend.jwt;
 
+import com.zaberp.zab.biwtabackend.model.Pdmst;
 import com.zaberp.zab.biwtabackend.model.Xusers;
+import com.zaberp.zab.biwtabackend.model.Zbusiness;
+import com.zaberp.zab.biwtabackend.service.PdmstService;
 import com.zaberp.zab.biwtabackend.service.XusersService;
-import com.zaberp.zab.biwtabackend.util.ApplicationContextData;
+import com.zaberp.zab.biwtabackend.service.ZbusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +28,23 @@ public class AuthController {
     @Autowired
     private final XusersService service;
 
+    @Autowired final PdmstService pdmstService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, XusersService service) {
+    @Autowired final ZbusinessService zbusinessService;
+
+
+    public AuthController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, XusersService service, PdmstService pdmstService, ZbusinessService zbusinessService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.service = service;
+        this.pdmstService = pdmstService;
+        this.zbusinessService = zbusinessService;
     }
 
 
 
 
-//    // Working perfectly
+    // Working perfectly
 //    @PostMapping("/login")
 //    public Map<String, String> login(@RequestBody Map<String, String> request) {
 //        Authentication authentication = authenticationManager.authenticate(
@@ -64,7 +73,8 @@ public class AuthController {
 
         // Fetch the user details from the database
         Xusers user = service.findByZemail(username);
-
+        Pdmst pdmst = pdmstService.findByZidAndXposition(user.getZid(),user.getXposition());
+        Zbusiness zbusiness = zbusinessService.findByZid(user.getZid());
 
         // Generate the JWT token
         String token = jwtTokenUtil.generateToken(username);
@@ -74,8 +84,9 @@ public class AuthController {
         response.put("token", token);
         response.put("zid", user.getZid());
         response.put("xwh", user.getXwh());
-        response.put("xroles", user.getXrole()); // Add roles or any other field as needed
-
+        response.put("xname", pdmst != null ? pdmst.getXname() : user.getZemail());
+        response.put("xroles", user.getXrole());
+        response.put("zorg",zbusiness.getZorg());
         // Return the response as JSON
         return ResponseEntity.ok(response);
     }

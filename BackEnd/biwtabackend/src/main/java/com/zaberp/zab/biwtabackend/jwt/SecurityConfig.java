@@ -31,16 +31,16 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers("/public/**", "/status", "/error").permitAll()
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/public/**", "/status", "/error").permitAll()
+                        .anyRequest().authenticated()
+//                                .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

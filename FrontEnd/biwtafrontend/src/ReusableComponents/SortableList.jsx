@@ -189,8 +189,9 @@ const SortableList = ({
                                 <Typography
                                     variant="subtitle1"
                                     sx={{
-                                        fontWeight: 'bold',
+                                        fontWeight: '600',
                                         cursor: 'pointer',
+                                        fontSize:'14px'
                                     }}
                                     onClick={() => setSortField(col.field)}
                                 >

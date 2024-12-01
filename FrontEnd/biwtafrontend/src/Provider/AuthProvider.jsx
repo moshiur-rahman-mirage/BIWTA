@@ -68,7 +68,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         localStorage.removeItem("zid");
         localStorage.removeItem("zemail");
-
+        localStorage.removeItem("xname");
+        localStorage.removeItem("zorg");
+        localStorage.removeItem("authToken")
         setAuthState({ zid: null, zemail: null });
         setToken(null);
         setUser(null);

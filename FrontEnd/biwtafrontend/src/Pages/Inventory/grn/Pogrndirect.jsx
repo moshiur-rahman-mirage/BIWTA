@@ -79,6 +79,7 @@ const Pogrndirect = () => {
     const fieldConfig = [
         { header: 'GRN Number', field: 'xgrnnum' },
         { header: 'Date', field: 'xdate' },
+        { header: 'Store', field: 'xwh' },
         { header: 'Supplier', field: 'xorg' },
         { header: 'Challan', field: 'xref' },
     ];
@@ -805,9 +806,9 @@ const Pogrndirect = () => {
                         directFetch='Yes'
                         apiUrl={apiBaseUrl}
                         isFolded={false}
-                        caption="Receive Entry List"
+                        caption="Open Product Receive Entry List"
                         columns={[
-                            { field: 'xgrnnum', title: 'Item Code', width: '25%', },
+                            { field: 'xgrnnum', title: 'GRN Number', width: '25%', },
                             { field: 'xcus', title: 'Name', width: '25%' },
                             { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
                             { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },

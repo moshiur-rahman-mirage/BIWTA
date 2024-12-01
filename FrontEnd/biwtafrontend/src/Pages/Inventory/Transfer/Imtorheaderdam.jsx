@@ -58,7 +58,7 @@ const Imtorheaderdam = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
-    const apiListUrl = `api/pogrndetails/${zid}/${formData.xtornum}`
+    const apiListUrl = `api/imtordetails/requisition/${zid}/${formData.xtornum}`
 
 
     // Handle dropdown value change
@@ -198,6 +198,7 @@ const Imtorheaderdam = () => {
     }, []);
 
     const handleClear = () => {
+        // handleItemSelect();
         setFormData({
             zid: zid,
             xtornum: '',
@@ -278,7 +279,7 @@ const Imtorheaderdam = () => {
 
 
     const handleConfirm = async () => {
-        if (window.confirm('Confirm This GRN?')) {
+        if (window.confirm('Confirm This Damage?')) {
             setStatus("Processing...");
             const params = {
                 zid: 100000,
@@ -286,6 +287,8 @@ const Imtorheaderdam = () => {
                 xtornum: formData.xtornum,
                 xdate: formData.xdate,
                 xfwh: formData.xfwh,
+                xtwh:'',
+                xstatustor:formData.xstatustor,
                 len: 8
             };
 
@@ -471,7 +474,7 @@ const Imtorheaderdam = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/imtorheader/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `http://localhost:8080/api/imtorheader/search?action=Damage&zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -696,11 +699,11 @@ const Imtorheaderdam = () => {
                         isFolded={false}
                         caption="Damage Entry Detail List"
                         columns={[
-                            { field: 'xrow', title: 'Serial', width: '5%', },
-                            { field: 'xitem', title: 'Item', width: '10%' },
-                            { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
-                            { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
-                            { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
+                            { field: 'xrow', title: 'Serial', width: '5%',align: 'left' },
+                            { field: 'xitem', title: 'Item', width: '10%',align: 'left' },
+                            { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
+                            { field: 'xqtyord', title: 'Damage Quantity', width: '65%', align: 'left' },
+                            
                         ]}
                         // onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {

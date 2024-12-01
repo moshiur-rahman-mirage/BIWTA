@@ -2,11 +2,8 @@ package com.zaberp.zab.biwtabackend.service;
 
 
 import com.zaberp.zab.biwtabackend.dto.ImtorDto;
-import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
-import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
-import com.zaberp.zab.biwtabackend.model.Pogrnheader;
 import com.zaberp.zab.biwtabackend.repository.ImtorheaderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -45,12 +43,22 @@ public class ImtorheaderService {
     }
 
 
-    public Imtorheader createDam(Imtorheader imtorheader) {
-        String generatedKey=primaryKeyService.getGeneratedPrimaryKey(imtorheader.getZid(),"Transfer Transaction","DAM-",6);
+    public Imtorheader createTransaction(Imtorheader imtorheader,String action) {
+        String trn="";
+        String tempStatus="";
+        if ("damage".equalsIgnoreCase(action)){
+            trn = "DAM-";
+            tempStatus="Checked";
+        }
+        else if ("Requisition".equalsIgnoreCase(action)){
+            trn = "SR--";
+            tempStatus="Approved";
+        }
+        String generatedKey=primaryKeyService.getGeneratedPrimaryKey(imtorheader.getZid(),"Transfer Transaction",trn,6);
         imtorheader.setXtornum(generatedKey);
         imtorheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
         imtorheader.setZtime(LocalDateTime.now());
-        imtorheader.setXstatustor("Open");
+        imtorheader.setXstatustor(tempStatus);
         return repository.save(imtorheader);
     }
 
@@ -78,17 +86,49 @@ public class ImtorheaderService {
         return repository.findImtorWithZidAndStatusAndUser(zid,xstatus,user,pageable);
     }
 
-    public List<ImtorDto> searchByText(int zid, String searchText) {
-        return repository.findGrnWithZidAndSearchText(zid,searchText);
+    public List<ImtorDto> searchByText(int zid,String action, String searchText) {
+        return repository.findImtorWithZidAndSearchText(zid,action,searchText);
     }
 
 
 
-    public String confirmImtor(int zid, String user, String xposition,String xtornum, Date xdate, String xwh,String xtwh,String xstatustor,String xtype, int len) {
+    public String confirmImtor(int zid, String user,String position,String xtornum, Date xdate, String xwh,String xtwh,String xstatustor,String screen, int len) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Format date for readability
+        System.out.println("Parameters being passed:");
+        System.out.println("zid: " + zid);
+        System.out.println("user: " + user);
+        System.out.println("position: " + position);
+        System.out.println("xtornum: " + xtornum);
+        System.out.println("xdate: " + sdf.format(xdate));
+        System.out.println("xwh: " + xwh);
+        System.out.println("xtwh: " + xtwh);
+        System.out.println("xstatustor: " + xstatustor);
+        System.out.println("screen: " + screen);
+        System.out.println("len: " + len);
         try {
             String sql = "EXEC zabsp_confirmTO @zid = ?, @user = ?,@position=?, @tornum = ?, @date = ?, @fwh = ?,@twh=?,@statustor=?,@screen=?, @trnlength = ?";
 
-            jdbcTemplate.update(sql, zid, user, xposition,xtornum, new java.sql.Date(xdate.getTime()), xwh,xtwh,xstatustor,xtype, len);
+            jdbcTemplate.update(sql, zid, user,position, xtornum, new java.sql.Date(xdate.getTime()), xwh,xtwh,xstatustor,"Transfer", len);
+
+            return "Procedure executed successfully!";
+        } catch (Exception e) {
+            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
+        }
+    }
+
+
+    public String checkSR(int zid, String user,String xtornum, Date xdate, String xfwh,String xstatustor) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println("Parameters being passed:");
+        System.out.println("zid: " + zid);
+        System.out.println("user: " + user);
+        System.out.println("xtornum: " + xtornum);
+        System.out.println("xdate: " + sdf.format(xdate));
+        System.out.println("xstatustor: " + xstatustor);
+        try {
+            String sql = "EXEC zabsp_IM_CheckMORequisition @zid = ?, @user = ?, @tornum = ?, @date = ?, @wh = ?,@statustor=?";
+
+            jdbcTemplate.update(sql, zid, user, xtornum, new java.sql.Date(xdate.getTime()), xfwh,xstatustor);
 
             return "Procedure executed successfully!";
         } catch (Exception e) {

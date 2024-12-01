@@ -26,7 +26,7 @@ import { validateForm } from '../../../ReusableComponents/validateForm';
 import Swal from 'sweetalert2';
 
 
-const Imtordetaildam = ({ xtornum = '' }) => {
+const Imtordetail = ({ xtornum = '' }) => {
     const { zid } = useAuth();
     const variant = 'standard'
     const [formErrors, setFormErrors] = useState({});
@@ -59,7 +59,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
     const itemConfig = [
         { header: 'Item Code', field: 'xitem' },
         { header: 'Name', field: 'xdesc' },
-        { header: 'Purchase Unit', field: 'xunitpur' },
+        { header: 'Unit', field: 'xunit' },
     ];
 
     const handleItemSelect = useCallback((item) => {
@@ -205,7 +205,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
             xbatch: '',
             xlong: '',
             xlineamt: '',
-            xunitpur: ''
+            xunit: ''
 
         });
         alert('Form cleared.');
@@ -266,7 +266,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
                                 borderRadius: '8px',
                                 padding: 2,
                             }}>
-                                <Caption title={"Damage Entry Detail of " + xtornum} />
+                                <Caption title={"Requisition Detail of " + xtornum} />
                                 <Box
                                     display="grid"
 
@@ -300,11 +300,11 @@ const Imtordetaildam = ({ xtornum = '' }) => {
 
                                     <TextField
                                         label="Unit"
-                                        name='xunitpur'
+                                        name='xunit'
                                         variant={variant}
                                         size="small"
                                         onChange={handleChange}
-                                        value={formData.xunitpur}
+                                        value={formData.xunit}
                                         fullWidth
                                         sx={{
                                             '& .MuiInputBase-input': {
@@ -427,7 +427,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
 
                                 >
                                     <TextField
-                                        label="Damage Qty"
+                                        label="Requisition Qty"
                                         variant={variant}
                                         size="small"
                                         fullWidth
@@ -499,12 +499,12 @@ const Imtordetaildam = ({ xtornum = '' }) => {
                                 <SortableList
                                     apiUrl={apiListUrl}
 
-                                    caption="Damage Entry Detail List"
+                                    caption="Requisition Detail List"
                                     columns={[
                                         { field: 'xrow', title: 'Serial', width: '5%',align: 'left' },
                                         { field: 'xitem', title: 'Item', width: '10%',align: 'left' },
                                         { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
-                                        { field: 'xprepqty', title: 'Damage Quantity', width: '65%', align: 'left' },
+                                        { field: 'xprepqty', title: 'Required Quantity', width: '65%', align: 'left' },
                                         
                                     ]}
                                     onItemSelect={handleItemSelect}
@@ -549,4 +549,4 @@ const Imtordetaildam = ({ xtornum = '' }) => {
     );
 };
 
-export default Imtordetaildam;
+export default Imtordetail;

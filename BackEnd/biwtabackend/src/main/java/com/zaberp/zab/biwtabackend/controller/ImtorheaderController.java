@@ -36,7 +36,7 @@ public class ImtorheaderController {
     public Page<ImtorDto> getItems(
             @RequestParam int zid,
             @RequestParam(defaultValue = "Open") String xstatus,
-            @RequestParam String user,
+            @RequestParam(defaultValue = "") String user,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "xtornum") String sortBy,
@@ -44,9 +44,11 @@ public class ImtorheaderController {
         return service.findImtorWithZidAndStatusAndUser(zid,xstatus,user,page, size, sortBy, ascending);
     }
 
-    @PostMapping
-    public ResponseEntity<Imtorheader> createItem(@RequestBody Imtorheader imtorheader) {
-        Imtorheader createDam = service.createDam(imtorheader);
+    @PostMapping()
+    public ResponseEntity<Imtorheader> createItem(
+            @RequestBody Imtorheader imtorheader,
+            @RequestParam("action") String action) {
+        Imtorheader createDam = service.createTransaction(imtorheader,action);
         return ResponseEntity.ok(createDam);
     }
 
@@ -79,9 +81,10 @@ public class ImtorheaderController {
     @GetMapping("/search")
     public List<ImtorDto> search(
             @RequestParam("zid") int zid,
+            @RequestParam("action") String action,
             @RequestParam("text") String searchText
     ) {
-        return service.searchByText(zid, searchText);
+        return service.searchByText(zid, action, searchText);
     }
 
     @PostMapping("/confirmDam")
@@ -91,12 +94,22 @@ public class ImtorheaderController {
         String xposition=imtor.getXposition();
         String xtornum = imtor.getXtornum();
         Date xdate = imtor.getXdate();
-        String xwh = imtor.getXwh();
+        String xwh = imtor.getXfwh();
         String xtwh=imtor.getXtwh();
         String xstatustor=imtor.getXstatustor();
-        String xtype = imtor.getXtype();
         int xlen=imtor.getLen();
-        return service.confirmImtor(zid, zemail,xposition,xtornum,xdate,xwh,xtwh,xstatustor,xtype,xlen);
+        return service.confirmImtor(zid, zemail,xposition,xtornum,xdate,xwh,xtwh,"Checked","Transfer",xlen);
+    }
+
+    @PostMapping("/checksr")
+    public String checkSR(@RequestBody ConfirmImtorDto imtor){
+        int zid = imtor.getZid();
+        String zemail=imtor.getUser();
+        String xtornum = imtor.getXtornum();
+        Date xdate = imtor.getXdate();
+        String xfwh = imtor.getXfwh();
+        String xstatustor=imtor.getXstatustor();
+        return service.checkSR(zid, zemail,xtornum,xdate,xfwh,xstatustor);
     }
 }
 

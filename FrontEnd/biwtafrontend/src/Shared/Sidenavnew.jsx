@@ -40,12 +40,12 @@ export default function Sidenavnew() {
     return items.map((item, index) => (
       <div key={`${item.title}-${index}`} className="mb-1">
         <div
-          className={`menu-item flex justify-between items-center rounded-lg transition-all cursor-pointer ${selectedItem === item.title ? "bg-[#5e3b82] text-white" : "hover:bg-[#7c64f8] hover:text-white"
+          className={`menu-item flex justify-between items-center rounded-lg transition-all cursor-pointer ${selectedItem === item.title ? "bg-[#A390FF] text-white" : "hover:bg-[#A390FF] hover:text-white"
             }`}
         >
           {item.submenu?.length > 0 ? (
             <div
-              className="flex-1 text-sm px-4 py-3 font-medium"
+              className="flex-1 text-sm px-4 py-3 font-medium text-[#333333]"
               onClick={() => {
                 toggleSubmenu(item.title);
                 handleMenuClick(item.title);
@@ -56,7 +56,7 @@ export default function Sidenavnew() {
           ) : (
             <Link
               to={item.to}
-              className="flex-1 text-sm font-medium px-4 py-3"
+              className="flex-1 text-sm font-medium px-4 py-3 text-[#333333]"
               onClick={() => { handleMenuClick(item.title); setIsOpen(!isOpen); }}
             >
               {item.title}
@@ -65,7 +65,7 @@ export default function Sidenavnew() {
           {item.submenu?.length > 0 && (
             <span
               onClick={() => toggleSubmenu(item.title)}
-              className={`transition-transform transform ${expandedMenus[item.title] ? "rotate-180" : ""
+              className={` mr-4 transition-transform transform ${expandedMenus[item.title] ? "rotate-180" : ""
                 }`}
             >
               ▼
@@ -73,7 +73,7 @@ export default function Sidenavnew() {
           )}
         </div>
         {item.submenu && expandedMenus[item.title] && (
-          <div className="ml-4 border-l border-gray-600 pl-4">
+          <div className="ml-4 border-l border-gray-600 py-4">
             {renderMenu(item.submenu)}
           </div>
         )}
@@ -87,9 +87,9 @@ export default function Sidenavnew() {
     <div>
 
       <div
-        className={`fixed z-30 top-0 left-0 h-full bg-[#867df0] text-white shadow-lg transition-transform duration-1000 ease-in-out`}
+        className={`fixed z-30 top-0 left-0 h-full bg-[#E0E0E0] text-white shadow-lg transition-transform duration-1000 ease-in-out`}
         style={{
-          background: "linear-gradient(to bottom, #8979ee, #5e3b82)",
+          // background: "linear-gradient(to bottom, #8979ee, #5e3b82)",
           width: `${sidebarWidth}px`,
           transform: isOpen ? "translateX(0)" : `translateX(-${sidebarWidth}px)`,
         }}
@@ -99,7 +99,7 @@ export default function Sidenavnew() {
           <input
             type="text"
             placeholder="Search..."
-            className="w-full px-3 py-2 bg-[#f2f2f2] text-[#333333] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-3 py-2 bg-[#f2f2f2] text-[#333333] rounded-lg focus:outline-none focus:ring-2 focus:[#A390FF] transition"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -116,14 +116,14 @@ export default function Sidenavnew() {
           {filteredItems.length > 0 ? (
             renderMenu(filteredItems)
           ) : (
-            <div className="px-4 py-2 text-sm text-[#3f30a5]">No matching items found</div>
+            <div className="px-4 py-2 text-sm text-[#333333]">No matching items found</div>
           )}
         </div>
       </div>
 
 
       <button
-        className="fixed top-1 left-4 z-50 p-2 text-white bg-transparent rounded-full transition-all duration-1000 focus:outline-none"
+        className="fixed top-1 left-4 z-50 p-2 text-[#333333] bg-transparent rounded-full transition-all duration-1000 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
         style={{
           left: isOpen ? `${sidebarWidth + 10}px` : "10px",

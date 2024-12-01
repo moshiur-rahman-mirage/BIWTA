@@ -10,7 +10,7 @@ public class ConfirmImtorDto {
     String xposition;
     String xtornum;
     Date xdate;
-    String xwh;
+    String xfwh;
     String xtwh;
     String xstatustor;
     String xtype;
@@ -58,12 +58,12 @@ public class ConfirmImtorDto {
         this.xdate = xdate;
     }
 
-    public String getXwh() {
-        return xwh;
+    public String getXfwh() {
+        return xfwh;
     }
 
     public void setXwh(String xwh) {
-        this.xwh = xwh;
+        this.xfwh = xfwh;
     }
 
     public String getXtwh() {
@@ -97,6 +97,8 @@ public class ConfirmImtorDto {
     public void setLen(int len) {
         this.len = len;
     }
+
+
 }
 
 

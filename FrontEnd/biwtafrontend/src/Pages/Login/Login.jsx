@@ -17,7 +17,7 @@ function Login() {
     const handleSubmit = async (e) => {
       e.preventDefault();
   
-    
+      logout();
       try {
         const response = await axiosInstance.post('http://localhost:8080/auth/login', {
             zemail: userId,

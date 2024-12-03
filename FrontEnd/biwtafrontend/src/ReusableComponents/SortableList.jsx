@@ -55,6 +55,8 @@ const SortableList = ({
         setLoading(true);
         try {
             const response = await axiosInstance.get(constructApiUrl, { params: additionalParams });
+            console.log(response)
+            console.log(constructApiUrl)
             setItems(response.data.content || []);
             setFilteredItems(response.data.content || []);
             setxTotalPages(response.data.page.totalPages || 1);

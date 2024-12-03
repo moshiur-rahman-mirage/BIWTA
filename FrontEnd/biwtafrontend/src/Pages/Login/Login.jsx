@@ -25,14 +25,14 @@ function Login() {
           });
         if (response.status === 200) {
           console.log(response)
-          const { zid,token,xname,zorg } = response.data;
+          const { zid,token,xname,zorg,xwh } = response.data;
           if (!zid) {
             console.error("zid is missing in the response");
             alert("An error occurred: zid not found.");
             return;
           }
 
-          login( userId, zid,token,xname,zorg);
+          login( userId, zid,token,xname,zorg,xwh);
           navigate('/main');
         }
         else if (response.status === 401) {

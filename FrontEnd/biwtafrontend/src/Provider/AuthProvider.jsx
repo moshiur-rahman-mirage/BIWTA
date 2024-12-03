@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     const [zorg,setZorg]=useState(null);
 
     // Function to handle user login (using JWT)
-    const login = (id, zid, token,xname,zorg) => {
+    const login = (id, zid, token,xname,zorg,xwh) => {
        
 
         // Set state using passed arguments
@@ -40,7 +40,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("zemail", id);
         localStorage.setItem("token", token);
         localStorage.setItem("xname", xname);
-        localStorage.setItem("zorg",zorg)
+        localStorage.setItem("zorg",zorg);
+        localStorage.setItem("xwh",xwh)
 
        
     };
@@ -70,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("zemail");
         localStorage.removeItem("xname");
         localStorage.removeItem("zorg");
+        localStorage.removeItem("xwh")
         localStorage.removeItem("authToken")
         setAuthState({ zid: null, zemail: null });
         setToken(null);

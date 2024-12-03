@@ -73,12 +73,15 @@ const Imtormoreqheader = () => {
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/imtorheader?action=Requisition`;
+    const apiBaseUrl = `http://localhost:8080/api/imtorheader`;
+    const apiListUrl2 = `http://localhost:8080/api/imtorheader/confirmed`;
 
     const fieldConfig = [
         { header: 'Requisition Number', field: 'xtornum' },
         { header: 'Date', field: 'xdate' },
-        { header: 'From Store', field: 'xfwhdesc' },
+        { header: 'From Store', field: 'xfwh' },
+        { header: 'Store Name', field: 'xfwhdesc' },
+        { header: 'Status', field: 'xstatustor' }
     ];
 
 
@@ -133,15 +136,17 @@ const Imtormoreqheader = () => {
                 updatedState.xfwh = value.xcode;
                 updatedState.xfwhdesc = value.xlong;
             }
-
             if (fieldName === 'xtwh') {
                 updatedState.xtwh = value.xcode;
                 updatedState.xtwhdesc = value.xlong;
             }
-
             return updatedState;
         });
     };
+
+
+
+
 
 
     console.log(directFetch)
@@ -205,7 +210,7 @@ const Imtormoreqheader = () => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong, xfwhdesc: item.xfwhdesc
+            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong, xfwhdesc: item.xfwhdesc, xstatustor: item.xstatustor,
         }));
     }, []);
 
@@ -292,7 +297,7 @@ const Imtormoreqheader = () => {
 
 
     const handleConfirm = async () => {
-        if (window.confirm('Confirm This GRN?')) {
+        if (window.confirm('Issue Item?')) {
             setStatus("Processing...");
             const params = {
                 zid: 100000,
@@ -305,7 +310,7 @@ const Imtormoreqheader = () => {
 
             try {
 
-                const response = await axiosInstance.post("/api/imtorheader/confirmSR", params);
+                const response = await axiosInstance.post("/api/imtorheader/confirmsr", params);
                 setStatus(response.data);
 
                 Swal.fire({
@@ -329,37 +334,37 @@ const Imtormoreqheader = () => {
 
 
     const handleCheck = async () => {
-            setStatus("Processing...");
-            const params = {
-                zid: 100000,
-                zemail: zemail,
-                xtornum: formData.xtornum,
-                xdate: formData.xdate,
-                xfwh: formData.xfwh,
-                xstatustor:formData.xstatustor
-            };
+        setStatus("Processing...");
+        const params = {
+            zid: 100000,
+            zemail: zemail,
+            xtornum: formData.xtornum,
+            xdate: formData.xdate,
+            xfwh: formData.xfwh,
+            xstatustor: formData.xstatustor
+        };
 
-            try {
+        try {
 
-                const response = await axiosInstance.post("/api/imtorheader/checksr", params);
-                setStatus(response.data);
+            const response = await axiosInstance.post("/api/imtorheader/checksr", params);
+            setStatus(response.data);
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Operation completed successfully'
-                });
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Operation completed successfully'
+            });
 
-            } catch (error) {
-                setStatus("Error: " + (error.response?.data || error.message));
+        } catch (error) {
+            setStatus("Error: " + (error.response?.data || error.message));
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong. Please try again.'
-                });
-            }
-        
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong. Please try again.'
+            });
+        }
+
     };
 
 
@@ -378,7 +383,7 @@ const Imtormoreqheader = () => {
                 </div>
 
                 <Button
-                    onClick={handleConfirm}
+                    onClick={handleCheck}
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
@@ -545,7 +550,9 @@ const Imtormoreqheader = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/imtorheader/search?action=Requisition&zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `http://localhost:8080/api/imtorheader/search?action=requisition&zid=${zid}&text=${query}`;
+                                            // const apiSearchUrl = `http://localhost:8080/api/imtorheader/All?zid=${zid}&text=${encodeURIComponent(query)}`;
+
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -626,102 +633,6 @@ const Imtormoreqheader = () => {
                                     />
 
 
-                                    {/* Mobile */}
-                                    <TextField
-                                        id="xfwhdesc"
-                                        name="xfwhdesc"
-                                        label="Store Name"
-                                        size="small"
-                                        value={formData.xfwhdesc}
-                                        variant={variant}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        inputProps={{
-                                            readOnly: true,
-                                        }}
-                                        fullWidth
-                                        onChange={handleChange}
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                    />
-
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(2, 1fr)"
-                                    gap={2}
-                                    mb={2}
-                                >
-
-
-
-                                    {/* <XlongDropDown
-                                        variant={variant}
-                                        label="To Store"
-                                        size="small"
-                                        name="xtwh"
-                                        type="Branch"
-                                        onSelect={(value) => handleDropdownSelect("xtwh", value)}
-                                        value={formData.xtwh}
-                                        defaultValue=""
-                                        error={!!formErrors.xtwh}  // Check if there's an error for this field
-                                        helperText={formErrors.xtwh}
-                                        withXlong="false"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                    />
-
-
-                                 
-                                    <TextField
-                                        id="xtwhdesc"
-                                        name="xtwhdesc"
-                                        label="Store Name"
-                                        size="small"
-                                        value={formData.xtwhdesc}
-                                        variant={variant}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        inputProps={{
-                                            readOnly: true,
-                                        }}
-                                        fullWidth
-                                        onChange={handleChange}
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                    /> */}
-
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(3, 1fr)"
-                                    gap={2}
-                                    mb={2} // margin-bottom
-                                >
-
-
                                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
                                         <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
                                             Status:
@@ -736,6 +647,30 @@ const Imtormoreqheader = () => {
                                             {formData.xstatustor}
                                         </Typography>
                                     </Box>
+
+
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(2, 1fr)"
+                                    gap={2}
+                                    mb={2}
+                                >
+
+
+
+
+
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+
+
+
                                     <div>
 
                                     </div>
@@ -757,6 +692,7 @@ const Imtormoreqheader = () => {
                                         size="small"
                                         onChange={handleChange}
                                         value={formData.xnote}
+                                        readOnly
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -793,7 +729,7 @@ const Imtormoreqheader = () => {
 
                     <SortableList
                         directFetch='Yes'
-                        apiUrl={apiBaseUrl}
+                        apiUrl={apiListUrl2}
                         isFolded={false}
                         caption="Store Requisition List"
                         columns={[
@@ -812,7 +748,7 @@ const Imtormoreqheader = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xtornum"
-                        additionalParams={{ zid: zid, xstatustor: 'Approved', zauserid: '' }}
+                        additionalParams={{ zid: zid, user: zemail, xtrn: 'SR--' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"
@@ -821,8 +757,6 @@ const Imtormoreqheader = () => {
                     />
                     <SortableList
 
-
-
                         apiUrl={`api/imtordetails/${zid}/${formData.xtornum}`}
                         isFolded={false}
                         caption="Store Requisition Detail List"
@@ -830,7 +764,8 @@ const Imtormoreqheader = () => {
                             { field: 'xrow', title: 'Serial', width: '5%', align: 'left' },
                             { field: 'xitem', title: 'Item', width: '10%', align: 'left' },
                             { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
-                            { field: 'xqtyord', title: 'Required Quantity', width: '65%', align: 'left' },
+                            { field: 'xprepqty', title: 'Required Quantity', width: '65%', align: 'left' },
+                            { field: 'xstype', title: 'Stock Status', width: '65%', align: 'left' },
 
                         ]}
                         // onItemSelect={handleItemSelect}

@@ -13,7 +13,7 @@ public class JwtTokenUtil {
 
 
     private static final String SECRET_KEY = "h9Zj3GwhrXzCv8jUJqBj2GzW2QzUN37xPZHed1VExYE=";
-    private static final long EXPIRATION_TIME = 10000000; // 1 hour
+    private static final long EXPIRATION_TIME = 14400000; // 1 hour
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 

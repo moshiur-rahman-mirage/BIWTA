@@ -10,6 +10,7 @@ export const menuitems = [
           { title: "Item", to: "administrations/master/item" },
           { title: "Supplier", to: "administrations/master/supplier" },
           { title: "User", to: "administrations/master/user" },
+          { title: "Approval Layer", to: "administrations/master/applayer" },
         ],
       },
       {

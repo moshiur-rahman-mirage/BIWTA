@@ -8,15 +8,13 @@ import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
 import com.zaberp.zab.biwtabackend.service.ImtorheaderService;
 import com.zaberp.zab.biwtabackend.util.SearchUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/imtorheader")
@@ -36,12 +34,25 @@ public class ImtorheaderController {
     public Page<ImtorDto> getItems(
             @RequestParam int zid,
             @RequestParam(defaultValue = "Open") String xstatus,
+            @RequestParam(defaultValue ="") String xtrn,
             @RequestParam(defaultValue = "") String user,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "xtornum") String sortBy,
             @RequestParam(defaultValue = "true") boolean ascending) {
-        return service.findImtorWithZidAndStatusAndUser(zid,xstatus,user,page, size, sortBy, ascending);
+        return service.findImtorWithZidAndStatusAndUser(zid,xstatus,xtrn,user,page, size, sortBy, ascending);
+    }
+
+
+    @GetMapping("/confirmed")
+    public Page<ImtorDto> getAppvoedItems(
+            @RequestParam int zid,
+            @RequestParam(defaultValue ="") String xtrn,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "xtornum") String sortBy,
+            @RequestParam(defaultValue = "true") boolean ascending) {
+        return service.findImtorWithZidAndStatus(zid,xtrn,page, size, sortBy, ascending);
     }
 
     @PostMapping()
@@ -63,11 +74,25 @@ public class ImtorheaderController {
         return ResponseEntity.ok(service.updateByZidAndXtornum(entity));
     }
 
-//    @DeleteMapping("/{zid}/{xgrnnum}")
-//    public ResponseEntity<Void> deleteByZidAndXgrnnum(@PathVariable int zid, @PathVariable String xgrnnum) {
-//        service.deleteByZidAndXgrnnum(zid, xgrnnum);
-//        return ResponseEntity.noContent().build();
-//    }
+    @Transactional
+    @PatchMapping("/{zid}/{xtornum}")
+    public ResponseEntity<String> updateImtorheader(
+            @PathVariable int zid,
+            @PathVariable String xtornum,
+            @RequestBody Map<String, Object> updates) {
+
+
+        List<String> excludeColumns = List.of("xfwhdesc","xtwhdesc","xdate", "ztime", "zauserid", "xstatustor");
+
+        // Call the service method
+        boolean success = service.updateImtorheader(zid, xtornum, updates, excludeColumns);
+
+        if (success) {
+            return ResponseEntity.ok("Update successful.");
+        } else {
+            return ResponseEntity.badRequest().body("No records were updated. Please check the input.");
+        }
+    }
 
     @DeleteMapping("/{zid}/{xtornum}")
     public ResponseEntity<Void> delteXtornum(
@@ -81,10 +106,19 @@ public class ImtorheaderController {
     @GetMapping("/search")
     public List<ImtorDto> search(
             @RequestParam("zid") int zid,
-            @RequestParam("action") String action,
+            @RequestParam(value = "action", required = false, defaultValue = "") String action,
             @RequestParam("text") String searchText
     ) {
         return service.searchByText(zid, action, searchText);
+    }
+
+
+    @GetMapping("/All")
+    public List<ImtorDto> search(
+            @RequestParam("zid") int zid,
+            @RequestParam("text") String searchText
+    ) {
+        return service.searchByText(zid,  searchText);
     }
 
     @PostMapping("/confirmDam")
@@ -99,6 +133,21 @@ public class ImtorheaderController {
         String xstatustor=imtor.getXstatustor();
         int xlen=imtor.getLen();
         return service.confirmImtor(zid, zemail,xposition,xtornum,xdate,xwh,xtwh,"Checked","Transfer",xlen);
+    }
+
+
+    @PostMapping("/confirmsr")
+    public String confirmSR(@RequestBody ConfirmImtorDto imtor){
+        int zid = imtor.getZid();
+        String zemail=imtor.getUser();
+        String xposition=imtor.getXposition();
+        String xtornum = imtor.getXtornum();
+        Date xdate = imtor.getXdate();
+        String xwh = imtor.getXfwh();
+        String xtwh=imtor.getXtwh();
+        String xstatustor=imtor.getXstatustor();
+        int xlen=imtor.getLen();
+        return service.confirmImtor(zid, zemail,xposition,xtornum,xdate,xwh,xtwh,xstatustor,"Transfer",xlen);
     }
 
     @PostMapping("/checksr")

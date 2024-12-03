@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface CaitemRepository extends JpaRepository<Caitem, CaitemId> {
 
-    @Query("SELECT e FROM Caitem e WHERE e.zid = :zid and e.xdesc LIKE %:searchText% or e.xgenericdesc like %:searchText% or e.xgenericname like %:searchText% ")
+    @Query("SELECT e FROM Caitem e WHERE e.zid = :zid and e.xdesc LIKE %:searchText% or e.xgenericdesc like %:searchText% or e.xgenericname like %:searchText% or e.xitem like %:searchText% ")
     List<Caitem> findBySearchTextAndZid(@Param("zid") int zid, @Param("searchText") String searchText);
 
 

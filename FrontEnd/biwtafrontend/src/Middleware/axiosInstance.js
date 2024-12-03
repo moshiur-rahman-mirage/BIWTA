@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 // Create an Axios instance with a base URL
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080', // Replace with your backend's base URL
@@ -26,7 +25,7 @@ axiosInstance.interceptors.response.use(
   (response) => response, // Forward the response if successful
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.error('Unauthorized! Redirecting to login...');
+        
       // Handle unauthorized cases (e.g., redirect to login)
     }
     return Promise.reject(error);

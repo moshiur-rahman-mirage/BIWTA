@@ -20,7 +20,6 @@ import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
 import { validateForm } from '../../../ReusableComponents/validateForm';
-import Imtordetaildam from './Imtordetaildam';
 import SortableList from '../../../ReusableComponents/SortableList';
 import Imtordetail from './Imtordetail';
 
@@ -28,13 +27,15 @@ import Imtordetail from './Imtordetail';
 const Imtorheader = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
+    console.log(zemail)
+    const xwh = localStorage.getItem("xwh");
     console.log(zid, zemail)
     const [formData, setFormData] = useState({
         zid: zid,
         xtornum: '',
         xstatustor: '',
         xdate: new Date().toISOString().split('T')[0],
-        xfwh: '',
+        xfwh: xwh,
         xfwhdesc: '',
         xtwh: '',
         xtwhdesc: '',
@@ -73,12 +74,15 @@ const Imtorheader = () => {
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/imtorheader?action=Requisition`;
+    const apiBaseUrl = `http://localhost:8080/api/imtorheader`;
 
     const fieldConfig = [
         { header: 'Requisition Number', field: 'xtornum' },
         { header: 'Date', field: 'xdate' },
-        { header: 'From Store', field: 'xfwhdesc' },
+        { header: 'From Store', field: 'xfwh' },
+        { header: 'Store Name', field: 'xfwhdesc' },
+        { header: 'To Store', field: 'xtwh' },
+        { header: 'Store Name', field: 'xtwhdesc' },
     ];
 
 
@@ -205,7 +209,7 @@ const Imtorheader = () => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong, xfwhdesc: item.xfwhdesc
+            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong, xfwhdesc: item.xfwhdesc, xstatustor: item.xstatustor, xtwh: item.xtwh
         }));
     }, []);
 
@@ -215,10 +219,10 @@ const Imtorheader = () => {
             xtornum: '',
             xstatustor: '',
             xdate: new Date().toISOString().split('T')[0],
-            xfwh: '',
+            xfwh: xwh,
             xfwhdesc: '',
-            xtwh:'',
-            xtwhdesc:'',
+            xtwh: '',
+            xtwhdesc: '',
             xnote: '',
             xlong: ''
 
@@ -238,7 +242,7 @@ const Imtorheader = () => {
                     xtornum: '',
                     xstatustor: '',
                     xdate: new Date().toISOString().split('T')[0],
-                    xfwh: '',
+                    xfwh: xwh,
                     xfwhdesc: '',
                     xnote: '',
                     xlong: ''
@@ -272,7 +276,7 @@ const Imtorheader = () => {
         await handleApiRequest({
             endpoint,
             data,
-            method: 'PUT',
+            method: 'PATCH',
         });
         setFormErrors({});
     };
@@ -563,7 +567,12 @@ const Imtorheader = () => {
                                                 fontWeight: 600,
                                             },
                                         }}
+                                        sx={{
+                                            pointerEvents: 'none', // Disables interaction with the dropdown
+                                        }}
                                     />
+
+
 
 
                                     {/* Mobile */}
@@ -574,6 +583,7 @@ const Imtorheader = () => {
                                         size="small"
                                         value={formData.xfwhdesc}
                                         variant={variant}
+                                        hidden
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -583,24 +593,16 @@ const Imtorheader = () => {
                                         inputProps={{
                                             readOnly: true,
                                         }}
-                                        fullWidth
                                         onChange={handleChange}
                                         sx={{
+                                            display: 'none', // Completely hides the TextField
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
+                                                fontSize: '.9rem',
                                             },
                                         }}
                                     />
 
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(2, 1fr)"
-                                    gap={2}
-                                    mb={2}
-                                >
+
 
 
 
@@ -633,6 +635,7 @@ const Imtorheader = () => {
                                         size="small"
                                         value={formData.xtwhdesc}
                                         variant={variant}
+                                        hidden
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -642,13 +645,11 @@ const Imtorheader = () => {
                                         inputProps={{
                                             readOnly: true,
                                         }}
-                                        fullWidth
                                         onChange={handleChange}
                                         sx={{
+                                            display: 'none', // Completely hides the TextField
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
+                                                fontSize: '.9rem',
                                             },
                                         }}
                                     />
@@ -752,7 +753,7 @@ const Imtorheader = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xtornum"
-                        additionalParams={{ zid: zid, xstatustor: 'Open', user: zemail }}
+                        additionalParams={{ zid: zid, xstatustor: 'Approved', user: zemail,xtrn:'SR--' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

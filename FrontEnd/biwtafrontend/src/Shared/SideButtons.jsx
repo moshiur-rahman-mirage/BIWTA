@@ -28,7 +28,7 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, showAdd = true, showU
                     }}
                     size="medium"
                     onClick={onAdd}
-                    startIcon={<FaPlus />} // Adding the icon at the start
+                    // startIcon={<FaPlus />} 
                 >
                     Add
                 </Button>
@@ -49,7 +49,7 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, showAdd = true, showU
                     }}
                     size="medium"
                     onClick={onUpdate}
-                    startIcon={<FaPlus />} // Adding the icon at the start
+                    // startIcon={<FaPlus />}
                 >
                     Update
                 </Button>
@@ -70,7 +70,7 @@ const SideButtons = ({ onAdd, onUpdate, onDelete, onClear, showAdd = true, showU
                     }}
                     size="medium"
                     onClick={onDelete}
-                    startIcon={<HiOutlineTrash />} // Adding the icon at the start
+                    // startIcon={<HiOutlineTrash />} 
                 >
                     Delete
                 </Button>

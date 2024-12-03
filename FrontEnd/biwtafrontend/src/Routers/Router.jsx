@@ -40,6 +40,7 @@ import Mmpharmacy from "../Pages/Pharmacy/Mmpharmacy";
 import Eprescription from "../Pages/Prescription/Eprescription";
 import ProcessName from "../Pages/Xcodes/ProcessName";
 import Imtorheaderdam from "../Pages/Inventory/Transfer/Imtorheaderdam";
+import ApprovalLayer from "../Pages/ApprovalLayer/ApprovalLayer";
 
 
 
@@ -65,6 +66,8 @@ const Router = createBrowserRouter([
               { path: "item", element: <Item /> },
               { path: "supplier", element: <Supplier /> },
               { path: "user", element: <User /> },
+              { path: "applayer", element: <ApprovalLayer /> },
+              
             ],
           },
           {

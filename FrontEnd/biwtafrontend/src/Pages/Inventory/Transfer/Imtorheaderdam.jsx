@@ -168,7 +168,7 @@ const Imtorheaderdam = () => {
             return;
         }
 
-        const endpoint = 'api/imtorheader';
+        const endpoint = 'api/imtorheader?action=Damage';
         const data = {
             ...formData,
             zauserid: zemail,
@@ -193,7 +193,7 @@ const Imtorheaderdam = () => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong,xfwhdesc:item.xfwhdesc
+            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong,xfwhdesc:item.xfwhdesc,xstatustor:item.xstatustor
         }));
     }, []);
 
@@ -259,7 +259,7 @@ const Imtorheaderdam = () => {
         await handleApiRequest({
             endpoint,
             data,
-            method: 'PUT',
+            method: 'PATCH',
         });
         setFormErrors({});
     };
@@ -556,7 +556,7 @@ const Imtorheaderdam = () => {
 
 
                                     {/* Mobile */}
-                                    <TextField
+                                    {/* <TextField
                                         id="xfwhdesc"
                                         name="xfwhdesc"
                                         label="Store Name"
@@ -581,7 +581,7 @@ const Imtorheaderdam = () => {
                                                 fontSize: '.9rem'
                                             },
                                         }}
-                                    />
+                                    /> */}
 
 
                                     {/* Fax */}
@@ -686,7 +686,7 @@ const Imtorheaderdam = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xtornum"
-                        additionalParams={{ zid: zid, xstatustor: 'Open', user: zemail }}
+                        additionalParams={{ zid: zid, xstatustor: 'Open', user: zemail,xtrn:'DAM-' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

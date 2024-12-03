@@ -56,6 +56,7 @@ public class ImtordetailController {
             @PathVariable("xtornum") String xtornum,
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
+
         return service.getImtordetail(zid,xtornum, page, size);
     }
 

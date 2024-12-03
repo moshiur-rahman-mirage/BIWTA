@@ -44,6 +44,9 @@ public class Imtorheader extends BaseEntity {
     @Column(name = "xdatecom")
     private LocalDate xdatecom;
 
+    @Column(name = "xtrn")
+    private String xtrn;
+
     @Column(name = "xfwh", length = 50)
     private String xfwh;
 

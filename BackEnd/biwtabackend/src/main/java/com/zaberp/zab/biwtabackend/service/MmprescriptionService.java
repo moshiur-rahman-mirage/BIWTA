@@ -28,9 +28,7 @@ public class MmprescriptionService {
     }
 
     public Mmprescription save(Mmprescription mmprescription) {
-        if (mmprescription.getXcase()=="") {
-            throw new IllegalArgumentException("Validation failed: Case Number Required.");
-        }
+
         String generatedKey=primaryKeyService.getGeneratedPrimaryKey(mmprescription.getZid(),"Inventory Transaction","RX--",6);
         mmprescription.setXcase(generatedKey);
         return mmprescriptionRepository.save(mmprescription);

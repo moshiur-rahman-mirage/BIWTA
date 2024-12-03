@@ -43,7 +43,7 @@ const ApprovalLayer = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-    const baseUrl=axiosInstance;
+    const baseUrl = axiosInstance;
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -75,8 +75,6 @@ const ApprovalLayer = () => {
 
         setFormData((prevState) => {
             const updatedState = { ...prevState, [fieldName]: value };
-
-
             return updatedState;
         });
     };
@@ -115,7 +113,6 @@ const ApprovalLayer = () => {
 
 
     const handleChange = (e) => {
-        // console.log(e.target)
         const { name, value } = e.target;
         setFormData((prev) => {
             if (prev[name] !== value) {
@@ -143,6 +140,7 @@ const ApprovalLayer = () => {
             ...formData,
             zid: zid
         };
+
 
         await handleApiRequest({
             endpoint,
@@ -226,7 +224,7 @@ const ApprovalLayer = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `api/pdsignatoryrpt?${formData.zid}&${query}`;
+                                            const apiSearchUrl = `api/pdsignatoryrpt/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -241,8 +239,6 @@ const ApprovalLayer = () => {
                                         sx={{
                                             gridColumn: 'span 1',
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
                                                 fontSize: '.9rem'
                                             },
                                         }}
@@ -250,8 +246,6 @@ const ApprovalLayer = () => {
                                         fullWidth
                                         sx={{
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
                                                 fontSize: '.9rem'
                                             },
                                         }}
@@ -400,15 +394,12 @@ const ApprovalLayer = () => {
                             }}>
 
                                 <SortableList
-                                    // apiUrl={apiListUrl}
-
+                                    apiUrl={`api/pdsignatoryrpt/signatory/${formData.zid}`}
                                     caption="Approver Layers "
                                     columns={[
                                         { field: 'xrow', title: 'Serial', width: '5%', },
-                                        { field: 'xitem', title: 'Item', width: '10%' },
-                                        { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
-                                        { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
-                                        { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
+                                        { field: 'xtypetrn', title: 'Item Code', width: '65%', align: 'center' },
+                                      
                                     ]}
                                     // onItemSelect={handleItemSelect}
                                     // onRefresh={(refresh) => {

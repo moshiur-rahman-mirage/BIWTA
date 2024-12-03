@@ -7,6 +7,7 @@ import com.zaberp.zab.biwtabackend.model.Pdsignatoryrpt;
 import com.zaberp.zab.biwtabackend.service.PdsignatoryrptService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,11 +51,8 @@ public class PdsignatoryrptController {
             @PathVariable int zid,
             @PathVariable int xrow,
             @RequestBody Map<String, Object> updates) {
-
-
         List<String> excludeColumns = List.of("ztime", "zauserid");
 
-        // Call the service method
         boolean success = service.updatePdsignatoryrpt(zid, xrow, updates, excludeColumns);
 
         if (success) {
@@ -62,6 +60,18 @@ public class PdsignatoryrptController {
         } else {
             return ResponseEntity.badRequest().body("No records were updated. Please check the input.");
         }
+    }
+
+
+
+    @GetMapping("/signatory/{zid}")
+    public Page<Pdsignatoryrpt> getItems(
+            @PathVariable int zid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "xrow") String sortBy,
+            @RequestParam(defaultValue = "true") boolean ascending) {
+        return service.getSignatoryWithPaginationAndSorting(zid,page, size, sortBy, ascending);
     }
 
 

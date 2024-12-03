@@ -147,8 +147,8 @@ export const AuthProvider = ({ children }) => {
     const authInfo = {
         login,
         logout,
-        zemail: authState.zemail,
-        zid: authState.zid,
+        zemail,
+        zid,
         token,
         loading,
         user,

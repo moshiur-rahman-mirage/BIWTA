@@ -4,6 +4,8 @@ package com.zaberp.zab.biwtabackend.repository;
 import com.zaberp.zab.biwtabackend.id.PdsignatoryrptId;
 import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pdsignatoryrpt;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,5 +23,7 @@ public interface PdsignatoryrptRepository extends JpaRepository<Pdsignatoryrpt, 
 
     @Query("SELECT e FROM Pdsignatoryrpt e WHERE e.zid = :zid and e.xtypetrn LIKE %:searchText% ")
     List<Pdsignatoryrpt> findBySearchTextAndZid(@Param("zid") int zid, @Param("searchText") String searchText);
+
+    Page<Pdsignatoryrpt> findByZid(int zid, Pageable pageable);
 }
 

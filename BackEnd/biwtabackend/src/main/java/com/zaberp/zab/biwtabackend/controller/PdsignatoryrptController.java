@@ -4,11 +4,13 @@ package com.zaberp.zab.biwtabackend.controller;
 import com.zaberp.zab.biwtabackend.id.PdsignatoryrptId;
 import com.zaberp.zab.biwtabackend.model.Pdsignatoryrpt;
 import com.zaberp.zab.biwtabackend.service.PdsignatoryrptService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pdsignatoryrpt")
@@ -38,6 +40,27 @@ public class PdsignatoryrptController {
     @PutMapping
     public ResponseEntity<Pdsignatoryrpt> updateRecord(@RequestBody Pdsignatoryrpt record) {
         return ResponseEntity.ok(service.saveRecord(record));
+    }
+
+
+    @Transactional
+    @PatchMapping("/{zid}/{xrow}")
+    public ResponseEntity<String> updatePdsignatory(
+            @PathVariable int zid,
+            @PathVariable int xrow,
+            @RequestBody Map<String, Object> updates) {
+
+
+        List<String> excludeColumns = List.of("ztime", "zauserid");
+
+        // Call the service method
+        boolean success = service.updatePdsignatoryrpt(zid, xrow, updates, excludeColumns);
+
+        if (success) {
+            return ResponseEntity.ok("Update successful.");
+        } else {
+            return ResponseEntity.badRequest().body("No records were updated. Please check the input.");
+        }
     }
 
     @DeleteMapping("/{zid}/{xtypetrn}")

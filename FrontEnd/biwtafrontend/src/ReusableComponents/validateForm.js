@@ -4,6 +4,16 @@ export const validateForm = (formData,fieldsToValidate = []) => {
     // Validate only the fields specified in `fieldsToValidate`
     fieldsToValidate.forEach((field) => {
         switch (field) {
+            case 'xtypetrn':
+                if (!formData.xtypetrn) {
+                    errors.xtypetrn = 'Type is required.';
+                }
+                break;
+                case 'xnofsignatory':
+                    if (!formData.xnofsignatory) {
+                        errors.xnofsignatory = 'Signatory Number Is Required.';
+                    }
+                    break;
             case 'xwh':
                 if (!formData.xwh) {
                     errors.xwh = 'Store is required.';

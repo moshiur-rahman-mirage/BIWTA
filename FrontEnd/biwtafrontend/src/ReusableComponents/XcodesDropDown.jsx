@@ -61,8 +61,9 @@ const XcodesDropDown = ({
     return (
         <FormControl fullWidth variant={variant} size="small">
             <InputLabel
+              shrink
                 sx={{
-                    fontSize: captionSize,
+                    fontSize: '1rem',
                     fontWeight: 600,
                 }}
             >

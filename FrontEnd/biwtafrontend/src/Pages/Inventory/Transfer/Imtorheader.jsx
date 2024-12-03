@@ -368,7 +368,7 @@ const Imtorheader = () => {
                         marginLeft: 1,
                         paddingX: 2, // equivalent to Tailwind's px-2
                         paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
+                      
                         height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600

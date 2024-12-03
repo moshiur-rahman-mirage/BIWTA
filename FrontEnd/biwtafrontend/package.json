@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.7",
     "@tanstack/react-query": "^5.60.5",
     "axios": "^1.7.7",
@@ -28,8 +29,8 @@
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.28.0",
     "react-scroll": "^1.9.0",
-    "sort-by": "^1.2.0",
-    "sweetalert2": "^11.14.5"
+    "sort-by": "^0.0.2",
+    "sweetalert2": "^11.6.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

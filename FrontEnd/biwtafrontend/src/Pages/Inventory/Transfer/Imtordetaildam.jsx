@@ -366,7 +366,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/products/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `api/products/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,

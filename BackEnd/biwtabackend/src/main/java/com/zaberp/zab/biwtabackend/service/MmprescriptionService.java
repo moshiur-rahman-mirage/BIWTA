@@ -28,7 +28,6 @@ public class MmprescriptionService {
     }
 
     public Mmprescription save(Mmprescription mmprescription) {
-
         String generatedKey=primaryKeyService.getGeneratedPrimaryKey(mmprescription.getZid(),"Inventory Transaction","RX--",6);
         mmprescription.setXcase(generatedKey);
         return mmprescriptionRepository.save(mmprescription);

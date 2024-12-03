@@ -55,7 +55,7 @@ const User = () => {
 
     // Configuration
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/xusers/search?zid=${zid}&searchtext={query}`;
+    const apiBaseUrl = `api/xusers/search?zid=${zid}&searchtext={query}`;
     const apiSearchUrl = apiBaseUrl
     const apiStaffUrl = `/api/pdmst/searchtext?zid=${zid}&searchText={query}`;
     const fieldConfig = [

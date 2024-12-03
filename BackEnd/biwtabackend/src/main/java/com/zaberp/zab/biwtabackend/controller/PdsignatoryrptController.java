@@ -2,6 +2,7 @@ package com.zaberp.zab.biwtabackend.controller;
 
 
 import com.zaberp.zab.biwtabackend.id.PdsignatoryrptId;
+import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pdsignatoryrpt;
 import com.zaberp.zab.biwtabackend.service.PdsignatoryrptService;
 import jakarta.transaction.Transactional;
@@ -61,6 +62,16 @@ public class PdsignatoryrptController {
         } else {
             return ResponseEntity.badRequest().body("No records were updated. Please check the input.");
         }
+    }
+
+
+    @GetMapping("/search")
+    public List<Pdsignatoryrpt> search(
+            @RequestParam("zid") int zid,
+            @RequestParam("text") String searchText
+    ) {
+        return service.searchByText(zid, searchText);
+
     }
 
     @DeleteMapping("/{zid}/{xtypetrn}")

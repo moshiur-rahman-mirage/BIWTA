@@ -26,6 +26,7 @@ import { validateForm } from '../../ReusableComponents/validateForm';
 import { addFunction } from '../../ReusableComponents/addFunction';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import { handleSearch } from '../../ReusableComponents/handleSearch';
+import axiosInstance from '../../Middleware/AxiosInstance';
 const ApprovalLayer = () => {
 
     const variant = 'standard'
@@ -42,6 +43,7 @@ const ApprovalLayer = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const baseUrl=axiosInstance;
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -224,7 +226,7 @@ const ApprovalLayer = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/pdsignatoryrpt/${formData.zid}/${formData.xtypetrn}`;
+                                            const apiSearchUrl = `api/pdsignatoryrpt?${formData.zid}&${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,

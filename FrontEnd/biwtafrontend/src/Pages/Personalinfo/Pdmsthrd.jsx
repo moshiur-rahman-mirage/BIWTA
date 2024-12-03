@@ -69,7 +69,7 @@ const Pdmsthrd = () => {
 
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const triggerRef = useRef(null);
-    const apiBaseUrl = "http://localhost:8080/api/pdmst";
+    const apiBaseUrl = "api/pdmst";
     const variant = 'standard'
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);

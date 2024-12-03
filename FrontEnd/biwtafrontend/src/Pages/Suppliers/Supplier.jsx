@@ -65,7 +65,7 @@ const Supplier = () => {
 
     // Configuration
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/cacus/${zid}/type/supplier`;
+    const apiBaseUrl = `api/cacus/${zid}/type/supplier`;
     const fieldConfig = [
         { header: 'ID', field: 'xcus' },
         { header: 'Company Name', field: 'xorg' },
@@ -303,7 +303,7 @@ const Supplier = () => {
                                     onChange={(e) => {
                                         handleChange(e);
                                         const query = e.target.value;
-                                        const apiSearchUrl = `http://localhost:8080/api/cacus/search?zid=${zid}&text=${query}`;
+                                        const apiSearchUrl = `api/cacus/search?zid=${zid}&text=${query}`;
                                         handleSearch(
                                             e.target.value,
                                             apiSearchUrl,

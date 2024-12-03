@@ -74,7 +74,7 @@ const Imtorheader = () => {
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/imtorheader`;
+    const apiBaseUrl = `api/imtorheader`;
 
     const fieldConfig = [
         { header: 'Requisition Number', field: 'xtornum' },
@@ -489,7 +489,7 @@ const Imtorheader = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/imtorheader/search?action=Requisition&zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `api/imtorheader/search?action=Requisition&zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,

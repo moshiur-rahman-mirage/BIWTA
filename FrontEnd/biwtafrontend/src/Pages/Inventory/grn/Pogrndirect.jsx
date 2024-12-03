@@ -74,7 +74,7 @@ const Pogrndirect = () => {
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/pogrnheader`;
+    const apiBaseUrl = `api/pogrnheader`;
 
     const fieldConfig = [
         { header: 'GRN Number', field: 'xgrnnum' },
@@ -493,7 +493,7 @@ const Pogrndirect = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/pogrnheader/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `api/pogrnheader/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -591,7 +591,7 @@ const Pogrndirect = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSupUrl = `http://localhost:8080/api/cacus/search?zid=${zid}&text=${query}`;
+                                            const apiSupUrl = `api/cacus/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSupUrl,

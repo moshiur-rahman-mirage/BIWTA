@@ -43,7 +43,7 @@ const ItemGroup = () => {
     });
     const [errors, setErrors] = useState({});
     const [refreshList, setRefreshList] = useState(() => () => { });
-    const apiBaseUrl = "http://localhost:8080/api/xcodes";
+    const apiBaseUrl = "api/xcodes";
     const formRef = useRef(null);
 
     // Handle input changes and fetch results for search

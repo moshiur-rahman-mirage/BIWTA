@@ -1,6 +1,7 @@
 package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.PdsignatoryrptId;
+import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pdsignatoryrpt;
 import com.zaberp.zab.biwtabackend.repository.PdsignatoryrptRepository;
 import com.zaberp.zab.biwtabackend.repository.custom.CustomPdsignatoryrptRepository;
@@ -40,6 +41,11 @@ public class PdsignatoryrptService {
     public boolean updatePdsignatoryrpt(int zid, int xrow, Map<String, Object> updates, List<String> excludeColumns) {
         int rowsUpdated = customRepository.updateExcludingColumns(zid, xrow, updates, excludeColumns);
         return rowsUpdated > 0;
+    }
+
+
+    public List<Pdsignatoryrpt> searchByText(int zid, String searchText) {
+        return repository.findBySearchTextAndZid(zid,searchText);
     }
 
     public void deleteRecord(PdsignatoryrptId id) {

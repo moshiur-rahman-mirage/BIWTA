@@ -21,9 +21,11 @@ import Caption from "../../utility/Caption"
 import SortableList from "../../ReusableComponents/SortableList"
 import { useAuth } from '../../Provider/AuthProvider';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
+import DynamicDropdown from '../../ReusableComponents/DynamicDropdown';
 import { validateForm } from '../../ReusableComponents/validateForm';
 import { addFunction } from '../../ReusableComponents/addFunction';
 import { handleApiRequest } from '../../utility/handleApiRequest';
+import { handleSearch } from '../../ReusableComponents/handleSearch';
 const ApprovalLayer = () => {
 
     const variant = 'standard'
@@ -39,6 +41,7 @@ const ApprovalLayer = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -48,6 +51,16 @@ const ApprovalLayer = () => {
         xyesno: 'Yes',
 
     });
+
+    const handleResultClick = (result) => {
+        setFormData((prev) => ({
+            ...prev,
+            ...result,
+            zid,
+        }));
+        setDropdownOpen(false);
+
+    };
 
     useEffect(() => {
         setRefreshTrigger(true);
@@ -192,8 +205,8 @@ const ApprovalLayer = () => {
 
 
                                     <DynamicDropdown
-                                        isOpen={grnDropdownOpen}
-                                        onClose={() => setGrnDropdownOpen(false)}
+                                        isOpen={dropdownOpen}
+                                        onClose={() => setDropdownOpen(false)}
                                         triggerRef={triggerRef}
                                         data={searchResults}
                                         headers={fieldConfig.map((config) => config.header)}
@@ -211,7 +224,7 @@ const ApprovalLayer = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/pdsignatoryrpt/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `http://localhost:8080/api/pdsignatoryrpt/${formData.zid}/${formData.xtypetrn}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,

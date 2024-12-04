@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
 
     // Function to handle user logout
     const logout = () => {
+        console.log("log out calling")
         setLoading(true);
         localStorage.removeItem("token");
         localStorage.removeItem("zid");
@@ -81,19 +82,24 @@ export const AuthProvider = ({ children }) => {
       
     };
 
-    // Validate user session and token on load
+
+
     useEffect(() => {
         const storedZid = localStorage.getItem("zid");
         const storedZemail = localStorage.getItem("zemail");
         const storedToken = localStorage.getItem("token");
-
+    
         if (storedZid && storedZemail && storedToken) {
             setAuthState({ zid: storedZid, zemail: storedZemail });
             setToken(storedToken);
+            setZid(storedZid); // Make sure to set this too
+            setZemail(storedZemail); // Same for zemail
         } else {
             setAuthState({ zid: null, zemail: null });
         }
+        setLoading(false);
     }, []);
+    
 
     useEffect(() => {
         const validateUser = async () => {
@@ -101,22 +107,31 @@ export const AuthProvider = ({ children }) => {
                 const response = await axiosInstance.get("/auth/validate", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-             
-                if(localStorage.getItem('zid')!=response.data.zid || localStorage.getItem('zemail')!=response.data.zemail ){
+    
+                setLoading(false);
+    
+                if (
+                    localStorage.getItem('zid') !== String(response.data.zid) ||
+                    localStorage.getItem('zemail') !== String(response.data.zemail)
+                ) {
+                    console.log(localStorage.getItem('zid'),localStorage.getItem('zemail'))
+                    console.log(response.data)
                     logout();
                 }
             } catch (error) {
                 console.error("User validation failed:", error);
-                // setAuthState({ zid: null, zemail: null });
-                localStorage.clear();
+                setLoading(false); 
                 logout();
             }
         };
-
+    
         if (token && zid && zemail) {
             validateUser();
+        } else {
+            setLoading(false);  
         }
     }, [token, zid, zemail]);
+    
 
 
 

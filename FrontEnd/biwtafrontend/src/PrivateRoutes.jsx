@@ -1,20 +1,22 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+
 import { useAuth } from './Provider/AuthProvider';
 import LoadingPage from './Pages/Loading/Loading';
  // Make sure you're importing the auth context
 
 const PrivateRoutes = ({ element }) => {
-    const { zid,token } = useAuth();  
-
+    const { zid,token,loading,logout } = useAuth();  
+    
+    console.log(zid,token,loading)
    
-    if (!zid || !token) {
-        return <LoadingPage/>
+    if (loading) {
+        return <LoadingPage />; // Show loading while authentication data is being fetched
     }
-
     
-        return element;
+    // if (!zid || !token) {
+    //     logout();
+    // }
     
+    return element;
 
      
 };

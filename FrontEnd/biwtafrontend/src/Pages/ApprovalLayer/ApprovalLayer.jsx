@@ -353,10 +353,11 @@ const ApprovalLayer = () => {
                                 >
 
                                     <div className='col-span-2 text-red-400'>
-                                0 => No Approval
-                                1 => 1 Layer Approval
-                                2 => 2 Layer Approval
-
+                                        0 =&gt; No Approval,
+                                      
+                                        1 =&gt; 1 Layer Approval,
+                                       
+                                        2 =&gt; 2 Layer Approval
                                     </div>
 
 
@@ -399,7 +400,7 @@ const ApprovalLayer = () => {
                                     columns={[
                                         { field: 'xrow', title: 'Serial', width: '5%', },
                                         { field: 'xtypetrn', title: 'Item Code', width: '65%', align: 'center' },
-                                      
+
                                     ]}
                                     // onItemSelect={handleItemSelect}
                                     // onRefresh={(refresh) => {
@@ -410,7 +411,7 @@ const ApprovalLayer = () => {
                                     // }}
                                     pageSize={10}
                                     // onSortChange={handleSortChange}
-                                    sortField="xgrnnum"
+                                    sortField="xrow"
                                     additionalParams={{}}
                                     captionFont=".9rem"
                                     xclass="py-4 pl-2"

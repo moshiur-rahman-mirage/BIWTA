@@ -8,6 +8,7 @@ import com.zaberp.zab.biwtabackend.model.Pogrnheader;
 import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.repository.PogrnHeaderRepository;
 
+import com.zaberp.zab.biwtabackend.repository.custom.CustomPogrnheaderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -37,6 +38,9 @@ import java.util.Optional;
 
         @Autowired
         private PogrnHeaderRepository repository;
+
+        @Autowired
+        private CustomPogrnheaderRepository customRepository;
 
         @Autowired
         private JdbcTemplate jdbcTemplate;
@@ -80,10 +84,10 @@ import java.util.Optional;
             }
         }
 
-        public Page<PogrnheaderXcusdto> findPogrnWithSupplier(int zid, String xstatus,String user, int page, int size, String sortBy, boolean ascending) {
+        public Page<PogrnheaderXcusdto> findPogrnWithSupplier(int zid, String user, int page, int size, String sortBy, boolean ascending) {
             Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
             Pageable pageable = PageRequest.of(page, size, sort);
-            return repository.findPogrnWithSupplier(zid,xstatus,user,pageable);
+            return repository.findPogrnWithSupplier(zid,user,pageable);
         }
 
         public List<PogrnheaderXcusdto> searchByText(int zid, String searchText) {
@@ -107,6 +111,33 @@ import java.util.Optional;
             } catch (Exception e) {
                 throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
             }
+        }
+
+
+
+
+        public String confirmRequest(int zid, String user, String position,String wh,String tornum,String request) {
+            System.out.println("Executing procedure with params:");
+            System.out.println("zid: " + zid + ", user: " + user + ", tornum: " + tornum + ", wh: " + wh+", position "+position );
+
+            try {
+                // Prepare the SQL query
+                String sql = "EXEC zabsp_Confirmed_Request_SAS @zid = ?, @user = ?, @position=?,@wh=?,@tornum=?,@request=?";
+
+                // Execute the query with parameter binding
+                jdbcTemplate.update(sql, zid, user, position, wh, tornum,request);
+
+                return "Procedure executed successfully!";
+            } catch (Exception e) {
+                throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
+            }
+        }
+
+
+
+        public boolean updatePogrnheader(int zid, String xgrnnum, Map<String, Object> updates, List<String> excludeColumns) {
+            int rowsUpdated = customRepository.updateExcludingColumns(zid, xgrnnum, updates, excludeColumns);
+            return rowsUpdated > 0;
         }
 
     }

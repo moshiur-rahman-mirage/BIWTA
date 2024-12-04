@@ -57,6 +57,7 @@ public class Pogrnheader {
     private String xcus;
     private Integer xsign;
     private Date xexpirydate;
+    private String xsign1;
     private String xlctype;
     private String xregi;
     private String xstaff;

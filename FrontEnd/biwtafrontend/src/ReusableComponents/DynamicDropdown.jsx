@@ -22,12 +22,6 @@ const DynamicDropdown = ({
           
             const modalRect = modalContainer?.getBoundingClientRect();
 
-            // setPosition({
-            //     top: modalRect ? triggerRect.bottom - modalRect.top : window.scrollY + triggerRect.bottom,
-            //     left: modalRect ? triggerRect.left - modalRect.left : window.scrollX + triggerRect.left,
-            //     width: dropdownWidth || triggerRect.width, // Use dynamic width if not provided
-            // });
-
             if (rect) {
                 setPosition({
                     top:  rect.top-30,

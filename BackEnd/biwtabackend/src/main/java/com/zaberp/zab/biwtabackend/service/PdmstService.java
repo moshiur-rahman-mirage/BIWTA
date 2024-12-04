@@ -72,6 +72,13 @@ public class PdmstService {
         return repository.findById(id);
     }
 
+    public List<Pdmst> findByZidAndZactive(int zid, String zactive) {
+        System.out.println("Repository Input - zid: " + zid + ", zactive: " + zactive);
+        List<Pdmst> results = repository.findByZidAndZactive(zid, zactive);
+        System.out.println("Repository Output: " + results);
+        return results;
+    }
+
     public List<Pdmst> findPdmst(Integer zid, String xstaff) {
         Specification<Pdmst> spec = Specification.where(zidEquals(zid))
                 .and(xstaffEquals(xstaff));

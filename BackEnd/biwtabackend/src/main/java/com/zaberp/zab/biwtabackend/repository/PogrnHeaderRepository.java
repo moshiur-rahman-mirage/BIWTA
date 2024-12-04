@@ -27,13 +27,13 @@ public interface PogrnHeaderRepository extends JpaRepository<Pogrnheader, PogrnH
 
 
     @Query("SELECT new com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto(" +
-            "p.zid, p.xgrnnum, p.xdate, s.xcus, s.xorg, p.xwh, x.xlong, p.xstatus, p.xstatusgrn, p.zauserid) " +
+            "p.zid, p.xgrnnum, p.xdate, s.xcus, s.xorg, p.xwh, x.xlong, p.xstatus, p.xstatusdoc, p.zauserid) " +
             "FROM Pogrnheader p " +
             "JOIN Cacus s ON p.zid = s.zid AND p.xcus = s.xcus " +
             "JOIN Xcodes x ON p.zid = x.zid AND p.xwh = x.xcode and x.xtype='Branch' " +
-            "WHERE p.zid=:zid and p.xstatusgrn = :xstatus and p.zauserid=:user")
+            "WHERE p.zid=:zid and p.xstatusdoc <>'Approved' and p.zauserid=:user")
     Page<PogrnheaderXcusdto> findPogrnWithSupplier(@Param("zid") int zid,
-            @Param("xstatus") String xstatus,@Param("user") String user, Pageable pageable);
+           @Param("user") String user, Pageable pageable);
 
 
     @Query("SELECT new com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto(" +

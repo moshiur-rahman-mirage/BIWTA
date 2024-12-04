@@ -6,6 +6,11 @@ public class ConfirmGrnDto {
 
     private int zid;
     private String zemail;
+    private String user;
+    private String position;
+    private String tornum;
+    private String wh;
+    private String request;
     private String xgrnnum;
     private Date xdate;
     private String xwh;
@@ -58,6 +63,46 @@ public class ConfirmGrnDto {
 
     public void setLen(int len) {
         this.len = len;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getTornum() {
+        return tornum;
+    }
+
+    public void setTornum(String tornum) {
+        this.tornum = tornum;
+    }
+
+    public String getWh() {
+        return wh;
+    }
+
+    public void setWh(String wh) {
+        this.wh = wh;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
     }
 }
 

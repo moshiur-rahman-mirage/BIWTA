@@ -3,13 +3,10 @@ import axiosInstance from '../Middleware/AxiosInstance';
 
 
 export const fetchSearchResults = async (query, api, fieldConfig) => {
-    if (!query) return []; // Return empty results if no query
-
+    if (!query) return []; 
     try {
-        const url = api.replace('{query}', query); // Replace query placeholder in the API if needed
+        const url = api.replace('{query}', query); 
         const response = await axiosInstance.get(url);
- 
-        // Dynamically map the response data to the field configuration
         const filteredResults = response.data.map((item) => {
             const result = {};
             fieldConfig.forEach(({ field }) => {
@@ -21,6 +18,6 @@ export const fetchSearchResults = async (query, api, fieldConfig) => {
         return filteredResults;
     } catch (error) {
         console.error('Error fetching search results:', error);
-        throw error; // Re-throw to handle in the calling component
+        throw error; 
     }
 };

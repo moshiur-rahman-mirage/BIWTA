@@ -64,6 +64,15 @@ const ApprovalLayer = () => {
 
     };
 
+
+    const handleItemSelect = useCallback((item) => {
+        console.log(item)
+        setFormData((prev) => ({
+            ...prev,
+            xrow: item.xrow, xtypetrn: item.xtypetrn, xnofsignatory: item.xnofsignatory, xyesno: item.xyesno
+        }));
+    }, []);
+
     useEffect(() => {
         setRefreshTrigger(true);
     }, [updateCount]);
@@ -134,13 +143,12 @@ const ApprovalLayer = () => {
             });
             return;
         }
-        setUpdateCount(prevCount => prevCount + 1);
+       
         const endpoint = `api/pdsignatoryrpt/${zid}/${formData.xrow}`;
         const data = {
             ...formData,
             zid: zid
         };
-
 
         await handleApiRequest({
             endpoint,
@@ -148,6 +156,42 @@ const ApprovalLayer = () => {
             method: 'PATCH',
         });
         setFormErrors({});
+        setUpdateCount(prevCount => prevCount + 1);
+    };
+
+    const handleDelete = async () => {
+        // console.log(formData)
+        const endpoint = `api/pdsignatoryrpt/${zid}/${formData.xtypetrn}`;
+        await handleApiRequest({
+            endpoint,
+            method: 'DELETE',
+            onSuccess: (response) => {
+                setFormData({
+                    zid: zid,
+                    xrow: '',
+                    xtypetrn: '',
+                    xnofsignatory: '',
+                    xyesno: 'Yes'
+
+                });
+                setUpdateCount(prevCount => prevCount + 1);
+
+            },
+        });
+    };
+
+
+    const handleClear = async () => {
+        // console.log(formData)
+       
+                setFormData({
+                    zid: zid,
+                    xrow: '',
+                    xtypetrn: '',
+                    xnofsignatory: '',
+                    xyesno: 'Yes'
+
+                })
     };
 
 
@@ -161,8 +205,8 @@ const ApprovalLayer = () => {
                 <SideButtons
                     onAdd={handleAdd}
                     onUpdate={handleUpdate}
-                    onDelete={''}
-                    onClear={''}
+                    onDelete={handleDelete}
+                    onClear={handleClear}
                 />
             </div>
             <div className='col-span-11 '>
@@ -244,11 +288,6 @@ const ApprovalLayer = () => {
                                         }}
                                         value={formData.xrow}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -354,9 +393,9 @@ const ApprovalLayer = () => {
 
                                     <div className='col-span-2 text-red-400'>
                                         0 =&gt; No Approval,
-                                      
+
                                         1 =&gt; 1 Layer Approval,
-                                       
+
                                         2 =&gt; 2 Layer Approval
                                     </div>
 
@@ -399,16 +438,18 @@ const ApprovalLayer = () => {
                                     caption="Approver Layers "
                                     columns={[
                                         { field: 'xrow', title: 'Serial', width: '5%', },
-                                        { field: 'xtypetrn', title: 'Item Code', width: '65%', align: 'center' },
+                                        { field: 'xtypetrn', title: 'Approval Type', width: '65%', align: 'center' },
+                                        { field: 'xnofsignatory', title: 'Signatory Number', width: '65%', align: 'center' },
+                                        { field: 'xyesno', title: 'Approval Mandatory?', width: '65%', align: 'center' }
 
                                     ]}
-                                    // onItemSelect={handleItemSelect}
-                                    // onRefresh={(refresh) => {
-                                    //     if (refreshTrigger) {
-                                    //         refresh();
-                                    //         setRefreshTrigger(false);
-                                    //     }
-                                    // }}
+                                    onItemSelect={handleItemSelect}
+                                    onRefresh={(refresh) => {
+                                        if (refreshTrigger) {
+                                            refresh();
+                                            setRefreshTrigger(false);
+                                        }
+                                    }}
                                     pageSize={10}
                                     // onSortChange={handleSortChange}
                                     sortField="xrow"

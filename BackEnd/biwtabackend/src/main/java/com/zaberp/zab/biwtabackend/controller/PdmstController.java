@@ -65,16 +65,11 @@ public class PdmstController {
         }
     }
 
-    @GetMapping("/search")
-    public List<Pdmst> searchPdmst(
-
-            @RequestParam Integer zid,
-            @RequestParam(required = false) String xstaff,
-            @RequestParam(required = false) String xposition,
-            @RequestParam(required = false) String xmobile
-
+    @GetMapping("approver/{zid}")
+    public List<Pdmst> findbyZidAndZactive(
+            @PathVariable int zid
     ) {
-        return service.findPdmst(zid,xstaff,xposition,xmobile);
+        return service.findByZidAndZactive(zid,"1");
     }
 
     @GetMapping("/searchtext")

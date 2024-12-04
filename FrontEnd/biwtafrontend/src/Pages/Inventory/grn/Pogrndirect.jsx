@@ -5,6 +5,10 @@ import {
     Typography,
     Button,
     Modal,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
 import { useAuth } from '../../../Provider/AuthProvider';
 
@@ -18,14 +22,13 @@ import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
 import SortableList from '../../../ReusableComponents/SortableList';
-import XcodesDropDown from '../../../ReusableComponents/XlongDropDown';
 import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
-import PdDependent from '../../DependentInfo/PdDependent';
 import Pogrndetail from './pogrndetail';
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
 import { validateForm } from '../../../ReusableComponents/validateForm';
+import GenericDropDown from '../../../ReusableComponents/GenericDropDown';
 
 
 const Pogrndirect = () => {
@@ -41,7 +44,9 @@ const Pogrndirect = () => {
         xwh: '',
         xref: '',
         xstatus: 'Open',
+        xstatusdoc:'',
         xnote: '',
+        xsign1: ''
 
 
     });
@@ -127,20 +132,34 @@ const Pogrndirect = () => {
     };
 
     const handleDropdownSelect = (fieldName, value) => {
-        // console.log(value)
+        console.log(value)
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
 
-            xwh: value.xcode,  // Update xwh with selected xcode
+            xwh: value.xcode,
             xlong: value.xlong,
         }));
     };
 
+
+    const handleGenericSelect = (fieldName, value) => {
+        console.log(value)
+           setFormData((prevState) => ({
+               ...prevState,
+               [fieldName]: value,
+
+              
+
+           }));
+    };
+
+    console.log(formData)
+
+
     console.log(directFetch)
     useEffect(() => {
         if (selectedItem) {
-            // console.log(convertDate(selectedItem.xdate))
             setFormData({
                 ...selectedItem,
                 xdate: convertDate(selectedItem.xdate)
@@ -151,7 +170,7 @@ const Pogrndirect = () => {
 
     useEffect(() => {
         if (refreshCallback && formData.xgrnnum) {
-            refreshCallback(); // Trigger the refresh callback from SortableList
+            refreshCallback();
         }
     }, [formData.xgrnnum, refreshCallback]);
 
@@ -192,17 +211,14 @@ const Pogrndirect = () => {
     };
 
 
-    // const handleItemSelect = useCallback((item) => {
-    //     setSelectedItem(item);
-    //     setDirectFetch('Yes');
-    // }, []);
+
 
 
     const handleItemSelect = useCallback((item) => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xgrnnum: item.xgrnnum,xwh:item.xwh,xcus:item.xcus,xref:item.xref,xorg:item.xorg,xlong:item.xlong
+            xgrnnum: item.xgrnnum, xwh: item.xwh, xcus: item.xcus, xref: item.xref, xorg: item.xorg, xlong: item.xlong,xstatusdoc:item.xstatusdoc
         }));
     }, []);
 
@@ -218,7 +234,8 @@ const Pogrndirect = () => {
             xstatus: '',
             xnote: '',
             xlong: '',
-            xorg: ''
+            xorg: '',
+            xsign1: ''
 
         });
         alert('Form cleared.');
@@ -242,7 +259,8 @@ const Pogrndirect = () => {
                     xstatus: '',
                     xnote: '',
                     xlong: '',
-                    xorg: ''
+                    xorg: '',
+                    xsign1: ''
 
                 });
                 setUpdateCount(prevCount => prevCount + 1);
@@ -295,43 +313,40 @@ const Pogrndirect = () => {
 
 
     const handleConfirm = async () => {
-      if (window.confirm('Confirm This GRN?')) {
-        setStatus("Processing...");
+        if (window.confirm('Are You Sure to Confirm This GRN?')) {
+            setStatus("Processing...");
+            handleUpdate();
+            // Prepare the parameters to send in the request body
+            const params = {
+                zid: 100000,
+                user: zemail,
+                position:zemail,
+                wh: formData.xwh,
+                tornum:formData.xgrnnum,
+                request:'GRN Approval'
+            };
 
-        // Prepare the parameters to send in the request body
-        const params = {
-            zid: 100000,
-            zemail: zemail,
-            xgrnnum: formData.xgrnnum,
-            xdate: formData.xdate,  // Make sure this is a valid date format
-            xwh: formData.xwh,
-            len: 8
-        };
+            try {
 
-        try {
+                const response = await axiosInstance.post("/api/pogrnheader/confirmRequest", params);
+                setStatus(response.data);
 
-            const response = await axiosInstance.post("/api/pogrnheader/confirmGRN", params);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Operation completed successfully'
+                });
 
-            // Handle success response
-            setStatus(response.data);
+            } catch (error) {
+                setStatus("Error: " + (error.response?.data || error.message));
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Operation completed successfully'
-            });
-
-        } catch (error) {
-            // Handle error response
-            setStatus("Error: " + (error.response?.data || error.message));
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong. Please try again.'
-            });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong. Please try again.'
+                });
+            }
         }
-    }
     };
 
 
@@ -355,7 +370,7 @@ const Pogrndirect = () => {
                         marginLeft: 1,
                         paddingX: 1,
                         paddingY: 0.5,
-                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        height: '2.5rem',
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
                         },
@@ -570,7 +585,7 @@ const Pogrndirect = () => {
                                         label="Supplier"
                                         size="small"
                                         value={formData.xcus}
-                                        error={!!formErrors.xcus} 
+                                        error={!!formErrors.xcus}
                                         helperText={formErrors.xcus}
                                         InputLabelProps={{
                                             shrink: true,
@@ -667,7 +682,7 @@ const Pogrndirect = () => {
                                     />
 
 
-                                    {/* Mobile */}
+
                                     <TextField
                                         id="xlong"
                                         name="xlong"
@@ -719,7 +734,7 @@ const Pogrndirect = () => {
                                                 color: status === 'Confirmed' ? 'green' : 'red', // Conditional styling
                                             }}
                                         >
-                                            {formData.xstatusgrn}
+                                            {formData.xstatusdoc}
                                         </Typography>
                                     </Box>
 
@@ -786,6 +801,35 @@ const Pogrndirect = () => {
                                             },
                                         }}
                                     />
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2}
+                                >
+
+                                    <GenericDropDown
+                                        variant={variant}
+                                        label="Next Approver"
+                                        api={`api/pdmst/approver/100000`}
+                                        xpkey="xstaff"
+                                        xskey="xname"
+                                        onSelect={(value) => handleGenericSelect("xsign1", value)}
+                                        value={formData.xsign1}
+                                        size="small"
+                                        defaultValue=""
+                                        sx={{
+                                            gridColumn: 'span 2', // Span 2 columns in the grid
+                                        }}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+
+                                            },
+                                        }}
+                                    />
 
 
                                 </Box>
@@ -812,6 +856,7 @@ const Pogrndirect = () => {
                             { field: 'xcus', title: 'Name', width: '25%' },
                             { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
                             { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },
+                            { field: 'xstatusdoc', title: 'GRN Status', width: '10%', align: 'center' },
                         ]}
                         onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
@@ -823,7 +868,7 @@ const Pogrndirect = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"
-                        additionalParams={{ zid: zid, xstatusgrn: 'Open',user:zemail }}
+                        additionalParams={{ zid: zid, user: zemail }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

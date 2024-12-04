@@ -15,6 +15,8 @@ import {
     FormLabel,
     Modal,
     Typography,
+    Checkbox,
+    FormGroup,
 } from '@mui/material';
 import HelmetTitle from '../../utility/HelmetTitle';
 import SideButtons from '../../Shared/SideButtons';
@@ -40,16 +42,11 @@ const Pdmsthrd = () => {
     });
 
     const fieldConfig = [
-        { header: 'ID', field: 'xstaff' },
+        { header: 'ID', field: 'xstaff',visible: false },
         { header: 'Salut', field: 'xsalute' },
         { header: 'Name', field: 'xname' },
         { header: 'Department', field: 'xdeptname' },
         { header: 'Designation', field: 'xdesignation' },
-        // { header: 'Mobile', field: 'xmobile' },
-        // { header: 'Employee Type', field: 'xemptype' },
-        // { header: 'Location', field: 'xlocation' },
-        // { header: 'Marital Status', field: 'xmstat' },
-        // { header: 'NID', field: 'xnid' },
     ];
 
     const { zid, zemail } = useAuth();
@@ -137,6 +134,15 @@ const Pdmsthrd = () => {
         }));
 
         setDropdownOpen(false);
+    };
+
+    const handleCheckboxChange = (event) => {
+        const isChecked = event.target.checked; // Simplified logic
+        setFormData((prevState) => ({
+            ...prevState,
+            zid: zid,
+            zactive: isChecked ? 1 : 0,
+        }));
     };
 
 
@@ -556,8 +562,8 @@ const Pdmsthrd = () => {
                                         id="gender-label"
                                         size="small"
                                         sx={{
-                                            fontSize: '0.8rem', 
-                                            fontWeight:600
+                                            fontSize: '0.8rem',
+                                            fontWeight: 600
                                         }}
                                     >
                                         Gender
@@ -895,6 +901,33 @@ const Pdmsthrd = () => {
                                     sx={{ gridColumn: 'span 2' }}
                                 />
 
+
+                            </Stack>
+                            <Stack
+                                direction={{ xs: 'column', sm: 'row' }}
+                                // spacing={2} 
+                                mb={2}
+                                display="grid"
+                                gap={2}
+                                gridTemplateColumns="repeat(4, 1fr)"
+                            >
+
+                                <FormGroup >
+                                    <FormControlLabel control={<Checkbox
+                                        checked={formData.zactive || false}
+                                        onChange={handleCheckboxChange}
+                                        name="Activate?"
+                                        size='small'
+                                        color="primary"
+                                    />} label="Is Approver?"
+                                     sx={{
+                                        // size:'small',
+                                        '& .MuiFormControlLabel-label': {
+                                            fontSize: '0.875rem',  
+                                            fontWeight: '600', 
+                                        }
+                                    }} />
+                                </FormGroup>
 
                             </Stack>
 

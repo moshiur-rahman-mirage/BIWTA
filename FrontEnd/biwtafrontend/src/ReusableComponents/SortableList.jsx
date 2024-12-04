@@ -110,6 +110,7 @@ const SortableList = ({
             <Box display="flex" justifyContent="space-between" gap={2}>
             <TextField
                     sx={{
+                       
                         height: '30px', // Adjust overall height
                         marginTop: '2px',
                         '& .MuiInputBase-root': {
@@ -163,8 +164,8 @@ const SortableList = ({
                             transform: 'translateY(-75%)',
                             left: '35px',
 
-                            fontSize: '0.8rem', // Adjust font size if necessary
-                            paddingLeft: '4px', // Optional: Add padding for aesthetics
+                            fontSize: '0.8rem', 
+                            paddingLeft: '4px', 
                         }}>
                             Show
                         </InputLabel>
@@ -185,7 +186,7 @@ const SortableList = ({
 
             {!folded && (
                 <>
-                    <Grid container spacing={1} sx={{ borderBottom: '1px solid #ccc', padding: '8px 0' }}>
+                    <Grid container spacing={1} sx={{ padding: '2px 0' }}>
                         {columns.map((col, idx) => (
                             <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left' }}>
                                 <Typography
@@ -193,7 +194,8 @@ const SortableList = ({
                                     sx={{
                                         fontWeight: '600',
                                         cursor: 'pointer',
-                                        fontSize:'14px'
+                                        fontSize:'14px',
+                                        
                                     }}
                                     onClick={() => setSortField(col.field)}
                                 >
@@ -209,27 +211,31 @@ const SortableList = ({
                         <Typography>No items available</Typography>
                     ) : (
                         filteredItems.map((item, index) => (
+                         
                             <Box
                                 key={index}
                                 onClick={() => onItemSelect(item)}
                                 onMouseEnter={() => handleMouseEnter(index)}
                                 onMouseLeave={handleMouseLeave}
                                 sx={{
-                                    backgroundColor: hoveredIndex === index ? '#f0f0f0' : 'transparent',
+                                    backgroundColor: hoveredIndex === index 
+                                        ? '#B1B1B1' 
+                                        : (index % 2 === 0 ? '#f0f0f0' : '#ffffff'),
                                     cursor: 'pointer',
                                     padding: '8px 0',
+                                    
                                 }}
                             >
-                                <Grid container spacing={1}>
+                                <Grid container spacing={1} >
                                     {columns.map((col, idx) => (
-                                        <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left' }}>
-                                            <Typography sx={{ fontSize: bodyFont || '0.875rem' }}>
+                                        <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left'  }}>
+                                            <Typography sx={{ fontSize: bodyFont || '0.875rem'  }}>
                                                 {item[col.field] || 'N/A'}
                                             </Typography>
                                         </Grid>
                                     ))}
                                 </Grid>
-                                {index < filteredItems.length - 1 && <Divider />}
+                                {/* {index < filteredItems.length - 1 && <Divider />} */}
                             </Box>
                         ))
                     )}

@@ -42,19 +42,13 @@ public class CacusController {
 
     @GetMapping("/{zid}/id/{xcus}")
     public ResponseEntity<Cacus> getCacusById(@PathVariable int zid, @PathVariable String xcus) {
-        CacusId id = new CacusId(zid,xcus);
-        id.setZid(zid);
-        id.setXcus(xcus);
-        return cacusService.getCacusById(id)
+        return cacusService.findByZidAndTransactionNumber(zid,"xcus",xcus)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @Autowired
-    private ApplicationContextData appContext;
+
     @PostMapping
     public Cacus createCacus(@RequestBody Cacus cacus) {
-        System.out.println("app context zid");
-        System.out.println(cacus.getZid());
         String generatedKey = primaryKeyService.getGeneratedPrimaryKey(cacus.getZid(), "Party Code", "PAR-",6);
         cacus.setXcus(generatedKey);
         cacus.setZtime(LocalDateTime.now());
@@ -95,7 +89,7 @@ public class CacusController {
         CacusId id = new CacusId(zid,xcus);
         id.setZid(zid);
         id.setXcus(xcus);
-        cacusService.deleteCacus(id);
+        cacusService.deleteByZidAndTransactionNumber(zid,"xcus",xcus);
         return ResponseEntity.noContent().build();
     }
 
@@ -104,7 +98,7 @@ public class CacusController {
             @RequestParam("zid") int zid,
             @RequestParam("text") String searchText
     ) {
-        return cacusService.getBySearchTextAndZid(zid, searchText);
+        return cacusService.searchByZidAndText(zid, searchText);
 
     }
 }

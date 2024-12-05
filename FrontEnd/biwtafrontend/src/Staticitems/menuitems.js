@@ -66,6 +66,7 @@ export const menuitems = [
           { title: "Product Receive", to: "inventory/grn/pogrndirect" },
           { title: "Current Product Stock", to: "inventory/grn/currentstock" },
           { title: "Current Product Stock Batch", to: "inventory/grn/batchstock" },
+          { title: "Product Receive Approval", to: "inventory/grnapproval/pogrnapp" },
         ],
       },
       {

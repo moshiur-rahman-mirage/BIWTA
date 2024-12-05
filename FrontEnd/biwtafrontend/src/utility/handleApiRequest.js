@@ -26,7 +26,7 @@ export const handleApiRequest = async ({
 
         // Make the API request using axiosInstance
         const response = await axiosInstance(config);
-
+        
         // Handle success response
         if (onSuccess) onSuccess(response);
 

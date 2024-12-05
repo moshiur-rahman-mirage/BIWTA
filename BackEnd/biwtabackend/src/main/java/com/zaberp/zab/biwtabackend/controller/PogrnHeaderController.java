@@ -105,20 +105,5 @@ public class PogrnHeaderController {
     }
 
 
-    @Transactional
-    @PatchMapping("/{zid}/{xgrnnum}")
-    public ResponseEntity<String> updatePdsignatory(
-            @PathVariable int zid,
-            @PathVariable String xgrnnum,
-            @RequestBody Map<String, Object> updates) {
-        List<String> excludeColumns = List.of("ztime", "zauserid");
 
-        boolean success = service.updatePogrnheader(zid, xgrnnum, updates, excludeColumns);
-
-        if (success) {
-            return ResponseEntity.ok("Update successful.");
-        } else {
-            return ResponseEntity.badRequest().body("No records were updated. Please check the input.");
-        }
-    }
 }

@@ -27,17 +27,16 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
-    @Service
+@Service
     public class PogrnHeaderService {
 
         @Autowired
         private PogrnHeaderRepository repository;
+
+
 
         @Autowired
         private CustomPogrnheaderRepository customRepository;
@@ -62,6 +61,7 @@ import java.util.Optional;
             pogrnheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
             pogrnheader.setZtime(LocalDateTime.now());
             pogrnheader.setXstatus("Open");
+            pogrnheader.setXstatusdoc("Open");
             pogrnheader.setXstatusgrn("Open");
             return repository.save(pogrnheader);
         }
@@ -135,10 +135,13 @@ import java.util.Optional;
 
 
 
-        public boolean updatePogrnheader(int zid, String xgrnnum, Map<String, Object> updates, List<String> excludeColumns) {
-            int rowsUpdated = customRepository.updateExcludingColumns(zid, xgrnnum, updates, excludeColumns);
-            return rowsUpdated > 0;
-        }
+//        public boolean updatePogrnheader(int zid, String xgrnnum, Map<String, Object> updates, List<String> excludeColumns) {
+//            int rowsUpdated = customRepository.updateExcludingColumns(zid, xgrnnum, updates, excludeColumns);
+//            return rowsUpdated > 0;
+//        }
+
+
+
 
     }
 

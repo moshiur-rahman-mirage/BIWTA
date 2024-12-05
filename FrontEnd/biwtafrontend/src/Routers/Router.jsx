@@ -41,6 +41,7 @@ import Eprescription from "../Pages/Prescription/Eprescription";
 import ProcessName from "../Pages/Xcodes/ProcessName";
 import Imtorheaderdam from "../Pages/Inventory/Transfer/Imtorheaderdam";
 import ApprovalLayer from "../Pages/ApprovalLayer/ApprovalLayer";
+import Pogrnapp from "../Pages/Inventory/grnapproval/Pogrnapp";
 
 
 
@@ -118,6 +119,7 @@ const Router = createBrowserRouter([
             { path: "grn/pogrndirect", element: <Pogrndirect/> },
             { path: "grn/currentstock", element: <Currentstock/> },
             { path: "grn/batchstock", element: <Batchstock/> },
+            { path: "grnapproval/pogrnapp", element: <Pogrnapp/> },
             { path: "transfer/imtorheader", element: <Imtorheader/> },
             { path: "transfer/imtormoreqheader", element: <Imtormoreqheader/> },
             { path: "transfer/imtransfersr", element: <Imtransfersr/> },

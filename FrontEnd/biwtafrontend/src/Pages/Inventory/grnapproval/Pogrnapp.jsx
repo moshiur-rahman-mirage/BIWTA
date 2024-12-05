@@ -23,7 +23,6 @@ import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
 import SortableList from '../../../ReusableComponents/SortableList';
 import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
-import Pogrndetail from './pogrndetail';
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
@@ -31,7 +30,7 @@ import { validateForm } from '../../../ReusableComponents/validateForm';
 import GenericDropDown from '../../../ReusableComponents/GenericDropDown';
 
 
-const Pogrndirect = () => {
+const Pogrnapp = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
     console.log(zid, zemail)
@@ -405,23 +404,6 @@ const Pogrndirect = () => {
                 <div className='col-span-1'>
                 </div>
                 <Button
-                    onClick={handleOpen}
-                    variant='outlined'
-                    sx={{
-                        marginLeft: 1,
-                        paddingX: 1,
-                        paddingY: 0.5,
-                        height: '2.5rem',
-                        '&:hover': {
-                            backgroundColor: '#F59E0B', // Yellow-600
-                        },
-                    }}
-                    size="medium"
-
-                >
-                    Detail
-                </Button>
-                <Button
                     onClick={handleConfirm}
                     variant='outlined'
                     sx={{
@@ -437,7 +419,7 @@ const Pogrndirect = () => {
                     size="medium"
 
                 >
-                    Confirm
+                    Approve
                 </Button>
             </div>
 
@@ -457,35 +439,14 @@ const Pogrndirect = () => {
                         onClear={handleClear}
                         onUpdate={handleUpdate}
                         onDelete={handleDelete}
+                        showAdd={false}
+                        showDelete={false}
+                        showUpdate={false}
                     />
                 </div>
 
 
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    disablePortal
-                    disableEnforceFocus
-                    disableAutoFocus
-                    disableScrollLock
-                >
-                    <Box sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "1300px", // Fixed width
-                        height: "500px", // Fixed height
-                        bgcolor: "background.paper",
-                        border: "2px solid #000",
-                        boxShadow: 24,
-                        borderRadius: "5px",
-                        p: 4,
-                        zIndex: 10,
-                    }}>
-                        <Pogrndetail xgrnnum={formData.xgrnnum} />
-                    </Box>
-                </Modal>
+              
                 {/* Modal */}
 
                 <Box sx={{
@@ -891,7 +852,7 @@ const Pogrndirect = () => {
                         directFetch='Yes'
                         apiUrl={apiBaseUrl}
                         isFolded={false}
-                        caption="Open Product Receive Entry List"
+                        caption="Pending Receive Entry List for Approve"
                         columns={[
                             { field: 'xgrnnum', title: 'GRN Number', width: '25%', },
                             { field: 'xcus', title: 'Name', width: '25%' },
@@ -951,4 +912,4 @@ const Pogrndirect = () => {
     );
 };
 
-export default Pogrndirect;
+export default Pogrnapp;

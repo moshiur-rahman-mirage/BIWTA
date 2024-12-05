@@ -45,26 +45,12 @@ public class CacusService extends CommonServiceImpl<Cacus, CacusId> {
         return new BeanPropertyRowMapper<>(Cacus.class);
     }
 
-    public Optional<Cacus> getCacusById(CacusId id) {
-        return cacusRepository.findById(id);
-    }
-
     @Override
     public Cacus save(Cacus entity) {
         return cacusRepository.save(entity);
     }
 
-    public List<Cacus> getCacusByZidAndXtype(int zid, String xtype) {
-        return cacusRepository.findByZidAndXtype(zid, xtype);
-    }
 
-    public List<Cacus> searchByZidAndText(int zid, String searchText) {
-        return getBySearchTextAndZid(zid, searchText, List.of("xcus", "xorg", "xmadd"));
-    }
-
-    public Page<Cacus> getItemsWithPaginationAndSorting(int zid, int page, int size, String sortBy, boolean ascending) {
-        return findByZidWithPaginationAndSorting(zid, page, size, sortBy, ascending);
-    }
 
 
 }

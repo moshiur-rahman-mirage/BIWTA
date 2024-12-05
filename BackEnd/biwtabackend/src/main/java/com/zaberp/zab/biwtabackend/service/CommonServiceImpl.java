@@ -1,10 +1,18 @@
 package com.zaberp.zab.biwtabackend.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,12 +20,18 @@ import java.util.stream.Collectors;
 
 public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
-//    @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(CommonServiceImpl.class);
+
+
+    //    @Autowired
     protected NamedParameterJdbcTemplate jdbcTemplate;
     protected abstract NamedParameterJdbcTemplate getJdbcTemplate();
 
     @Override
     public abstract JpaRepository<T, ID> getRepository();
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     public CommonServiceImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -73,6 +87,10 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
 
     public List<T> getBySearchTextAndZid(int zid, String searchText, List<String> searchFields) {
+
+        if (searchFields == null || searchFields.isEmpty()) {
+            return Collections.emptyList();
+        }
         // Dynamically construct the SQL query with search fields and zid
         String whereClause = searchFields.stream()
                 .map(field -> field + " LIKE :searchText")
@@ -84,8 +102,16 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
                 "zid", zid,
                 "searchText", "%" + searchText + "%" // Use LIKE with wildcard for searching
         );
-
-        return getJdbcTemplate().query(sql, params, getRowMapper());
+        try {
+            System.out.println("in try");
+            List<T> results = getJdbcTemplate().query(sql, params, getRowMapper());
+            return results.isEmpty() ? Collections.emptyList() : results;
+        } catch (Exception e) {
+            // Log the exception
+            System.out.println("in catch");
+            logger.error("Error executing query: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
 
     protected abstract String getTableName();
@@ -96,4 +122,92 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     public T save(T entity) {
         return getRepository().save(entity);
     }
+
+    @Transactional
+    @Override
+    public int updateTableWithDynamicColumnsAndWhere(
+            String tableName,
+            Map<String, Object> updates,
+            Map<String, Object> whereConditions
+    ) {
+
+        if (updates == null || updates.isEmpty()) {
+            throw new IllegalArgumentException("Updates cannot be null or empty.");
+        }
+
+        StringBuilder queryBuilder = new StringBuilder("UPDATE " + tableName + " p SET ");
+
+        // Build the SET clause
+        boolean isFirstUpdate = true;
+        for (String column : updates.keySet()) {
+            if (!isFirstUpdate) {
+                queryBuilder.append(", ");
+            }
+            queryBuilder.append("p.").append(column).append(" = :").append(column);
+            isFirstUpdate = false;
+        }
+
+        if (isFirstUpdate) {
+            throw new IllegalArgumentException("No valid columns to update.");
+        }
+
+        // Build the WHERE clause
+        queryBuilder.append(" WHERE ");
+        boolean isFirstCondition = true;
+        for (String column : whereConditions.keySet()) {
+            if (!isFirstCondition) {
+                queryBuilder.append(" AND ");
+            }
+            queryBuilder.append("p.").append(column).append(" = :").append(column);
+            isFirstCondition = false;
+        }
+
+
+        Query query = entityManager.createQuery(queryBuilder.toString());
+
+
+        for (Map.Entry<String, Object> entry : updates.entrySet()) {
+
+            try {
+                setParameter(query, entry.getKey(), entry.getValue());
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+        }
+
+
+        for (Map.Entry<String, Object> entry : whereConditions.entrySet()) {
+
+            try {
+                setParameter(query, entry.getKey(), entry.getValue());
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+        }
+
+        try {
+
+            int result = query.executeUpdate();
+
+            return result;
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private void setParameter(Query query, String paramName, Object value) {
+        try {
+
+            query.setParameter(paramName, value);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }

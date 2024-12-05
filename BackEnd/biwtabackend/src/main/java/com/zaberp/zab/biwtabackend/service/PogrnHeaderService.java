@@ -1,30 +1,26 @@
 package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
-import com.zaberp.zab.biwtabackend.id.CaitemId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
-import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
-import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.repository.PogrnHeaderRepository;
 
-import com.zaberp.zab.biwtabackend.repository.custom.CustomPogrnheaderRepository;
+import com.zaberp.zab.biwtabackend.repository.custom.CustomPoGrnHeaderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,10 +32,8 @@ import java.util.*;
         @Autowired
         private PogrnHeaderRepository repository;
 
-
-
         @Autowired
-        private CustomPogrnheaderRepository customRepository;
+        private CustomPoGrnHeaderRepository customPoGrnHeaderRepository;
 
         @Autowired
         private JdbcTemplate jdbcTemplate;
@@ -61,6 +55,7 @@ import java.util.*;
             pogrnheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
             pogrnheader.setZtime(LocalDateTime.now());
             pogrnheader.setXstatus("Open");
+            pogrnheader.setXpreparer(pogrnheader.getZauserid());
             pogrnheader.setXstatusdoc("Open");
             pogrnheader.setXstatusgrn("Open");
             return repository.save(pogrnheader);
@@ -84,11 +79,12 @@ import java.util.*;
             }
         }
 
-        public Page<PogrnheaderXcusdto> findPogrnWithSupplier(int zid, String user, int page, int size, String sortBy, boolean ascending) {
+        public Page<PogrnheaderXcusdto> getPogrnList(int zid, String user, String superior, String status, int page, int size, String sortBy, boolean ascending) {
             Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
             Pageable pageable = PageRequest.of(page, size, sort);
-            return repository.findPogrnWithSupplier(zid,user,pageable);
+            return customPoGrnHeaderRepository.getPogrnList(zid,user,superior,status,pageable);
         }
+
 
         public List<PogrnheaderXcusdto> searchByText(int zid, String searchText) {
             return repository.findGrnWithZidAndSearchText(zid,searchText);
@@ -134,11 +130,42 @@ import java.util.*;
         }
 
 
+    public String approveRequest(int zid, String user, String position, String tornum, int ypd, String status, String aprcs) {
+        System.out.println("here in service");
 
-//        public boolean updatePogrnheader(int zid, String xgrnnum, Map<String, Object> updates, List<String> excludeColumns) {
-//            int rowsUpdated = customRepository.updateExcludingColumns(zid, xgrnnum, updates, excludeColumns);
-//            return rowsUpdated > 0;
-//        }
+        try {
+            SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                    .withProcedureName("zabsp_apvprcs_SME")
+                    .declareParameters(
+                            new SqlParameter("zid", Types.INTEGER),
+                            new SqlParameter("user", Types.VARCHAR),
+                            new SqlParameter("position", Types.VARCHAR),
+                            new SqlParameter("reqnum", Types.VARCHAR),
+                            new SqlParameter("ypd", Types.INTEGER),
+                            new SqlParameter("status", Types.VARCHAR),
+                            new SqlParameter("aprcs", Types.VARCHAR)
+                    );
+
+            SqlParameterSource inParams = new MapSqlParameterSource()
+                    .addValue("zid", zid)
+                    .addValue("user", user)
+                    .addValue("position", position)
+                    .addValue("reqnum", tornum)
+                    .addValue("ypd", ypd)
+                    .addValue("status", status)
+                    .addValue("aprcs", aprcs);
+
+            jdbcCall.execute(inParams);
+
+            return "Procedure executed successfully!";
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
+        }
+
+    }
+
+
 
 
 

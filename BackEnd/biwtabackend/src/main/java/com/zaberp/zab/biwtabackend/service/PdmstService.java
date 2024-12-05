@@ -33,8 +33,10 @@ public class PdmstService {
             throw new IllegalArgumentException("Validation failed: A Employee with the same mobile number already exists.");
         }
         String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-", 5);
-        pdmst.setXstaff(generatedKey);
-        pdmst.setXposition(generatedKey);
+        String rightSubstring = generatedKey.length() >= 5 ? generatedKey.substring(generatedKey.length() - 5) : generatedKey;
+        String newGeneratedKey = "1" + rightSubstring;
+        pdmst.setXstaff(newGeneratedKey);
+        pdmst.setXposition(newGeneratedKey);
         pdmst.setZtime(LocalDateTime.now());
         pdmst.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
 

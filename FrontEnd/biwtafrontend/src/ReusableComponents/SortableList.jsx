@@ -16,7 +16,6 @@ import Caption from '../utility/Caption';
 import axiosInstance from '../Middleware/AxiosInstance';
 
 const SortableList = ({
-    directFetch,
     apiUrl,
     caption,
     columns,
@@ -46,7 +45,7 @@ const SortableList = ({
 
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
-    console.log(apiUrl)
+
     const constructApiUrl = useMemo(() => {
         return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'asc'}`;
     }, [apiUrl, page, pageSize, xsortField, sortOrder]);
@@ -55,8 +54,10 @@ const SortableList = ({
         setLoading(true);
         try {
             const response = await axiosInstance.get(constructApiUrl, { params: additionalParams });
-            console.log(response)
-            console.log(constructApiUrl)
+        //    console.log("--------------------------------------------------------------")
+        //    console.log({ params: additionalParams })
+        //     console.log(constructApiUrl)
+        //     console.log(response)
             setItems(response.data.content || []);
             setFilteredItems(response.data.content || []);
             setxTotalPages(response.data.page.totalPages || 1);

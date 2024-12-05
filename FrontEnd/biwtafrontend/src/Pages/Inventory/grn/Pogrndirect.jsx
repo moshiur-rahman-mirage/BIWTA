@@ -909,7 +909,7 @@ const Pogrndirect = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"
-                        additionalParams={{ zid: zid, user: zemail }}
+                        additionalParams={{ zid: zid, user: zemail,superior:'' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

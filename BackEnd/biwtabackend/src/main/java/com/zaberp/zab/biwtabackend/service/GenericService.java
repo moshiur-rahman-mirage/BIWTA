@@ -9,4 +9,5 @@ public interface GenericService {
             Map<String, Object> updates,
             Map<String, Object> whereConditions
     );
+
 }

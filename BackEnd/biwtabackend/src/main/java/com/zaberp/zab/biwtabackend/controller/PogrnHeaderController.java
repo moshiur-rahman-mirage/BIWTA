@@ -5,7 +5,6 @@ import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
 import com.zaberp.zab.biwtabackend.service.PogrnHeaderService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -33,12 +31,19 @@ public class PogrnHeaderController {
     @GetMapping()
     public Page<PogrnheaderXcusdto> getItems(
             @RequestParam int zid,
-            @RequestParam String user,
+            @RequestParam Optional<String> user,
+            @RequestParam Optional<String> superior,
+            @RequestParam Optional<String> status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "xgrnnum") String sortBy,
             @RequestParam(defaultValue = "true") boolean ascending) {
-        return service.findPogrnWithSupplier(zid,user,page, size, sortBy, ascending);
+
+        String finalSuperior = superior.orElse(""); // Default to empty string if absent
+        String finalStatus = status.orElse("");
+        String allUser= user.orElse("");
+
+        return service.getPogrnList(zid,allUser,finalSuperior,finalStatus,page, size, sortBy, ascending);
     }
 
     @PostMapping
@@ -103,6 +108,37 @@ public class PogrnHeaderController {
 
         return service.confirmRequest(zid, user, position,wh,tornum,request);
     }
+
+
+    @PostMapping("/approveRequest")
+    public String approveRequest(@RequestBody ConfirmGrnDto confirmGrn) {
+        System.out.println(confirmGrn);
+        if (confirmGrn == null) {
+            return "Error: Request body is null";
+        }
+
+        int zid = confirmGrn.getZid();
+        String user = confirmGrn.getUser();
+        String position = confirmGrn.getPosition();
+        String tornum = confirmGrn.getTornum();
+        String status = confirmGrn.getXstatusdoc();
+        String aprcs = confirmGrn.getRequest();
+
+        System.out.println(status);
+
+        if (user == null || position == null || tornum == null || status == null || aprcs == null) {
+            return "Error: Missing required fields";
+        }
+
+        try {
+            System.out.println("in try");
+            String result = service.approveRequest(zid, user, position, tornum, 0, status, aprcs);
+            return result;
+        } catch (Exception e) {
+            return "Error processing request: " + e.getMessage();
+        }
+    }
+
 
 
 

@@ -36,6 +36,7 @@ axiosInstance.interceptors.response.use(
 axiosInstance.getWithParams = async (url, params = {}) => {
   try {
     const response = await axiosInstance.get(url, { params }); // Attach params
+    console.log(response)
     return response.data; // Return the response data directly
   } catch (error) {
     console.error('GET Request failed:', error);

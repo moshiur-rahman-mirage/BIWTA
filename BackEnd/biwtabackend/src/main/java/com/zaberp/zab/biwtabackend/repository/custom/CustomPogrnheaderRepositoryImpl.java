@@ -1,91 +1,69 @@
 package com.zaberp.zab.biwtabackend.repository.custom;
 
+import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-
-
-
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.List;
 
-    @Repository
-    public class CustomPogrnheaderRepositoryImpl implements CustomPogrnheaderRepository {
+@Repository
+public class CustomPogrnheaderRepositoryImpl implements CustomPoGrnHeaderRepository {
 
-        @Autowired
-        private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-        @Override
-        public int updateExcludingColumns(int zid, String xgrnnum, Map<String, Object> updates, List<String> excludeColumns) {
-            StringBuilder queryBuilder = new StringBuilder("UPDATE Pogrnheader p SET ");
-            boolean isFirst = true;
+    @Override
+    public Page<PogrnheaderXcusdto> getPogrnList(int zid, String user, String superior, String status, Pageable pageable) {
+        System.out.println("------------------");
+        System.out.println(zid);
+        System.out.println(user);
+        System.out.println(superior);
+        System.out.println(status);
+        System.out.println("------------------");
+        StringBuilder sql = new StringBuilder("SELECT new com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto(" +
+                "p.zid, p.xgrnnum, p.xdate, s.xcus, s.xorg, p.xwh, x.xlong, p.xstatus, p.xstatusdoc, p.zauserid, pd.xname) " +
+                "FROM Pogrnheader p " +
+                "JOIN Cacus s ON p.zid = s.zid AND p.xcus = s.xcus " +
+                "JOIN Pdmst pd ON p.zid = pd.zid AND p.xpreparer = pd.xstaff " +
+                "JOIN Xcodes x ON p.zid = x.zid AND p.xwh = x.xcode AND x.xtype = 'Branch' " +
+                "WHERE p.zid = :zid");
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
-            for (Map.Entry<String, Object> entry : updates.entrySet()) {
-                if (!excludeColumns.contains(entry.getKey())) {
-                    if (!isFirst) {
-                        queryBuilder.append(", ");
-                    }
-                    queryBuilder.append("p.").append(entry.getKey()).append(" = :").append(entry.getKey());
-                    isFirst = false;
-                }
-            }
-
-
-            if (isFirst) {
-                throw new IllegalArgumentException("No valid columns to update.");
-            }
-
-            queryBuilder.append(" WHERE p.zid = :zid AND p.xgrnnum = :xgrnnum");
-
-            Query query = entityManager.createQuery(queryBuilder.toString());
-            query.setParameter("zid", zid);
-            query.setParameter("xgrnnum", xgrnnum);
-
-            for (Map.Entry<String, Object> entry : updates.entrySet()) {
-                if (!excludeColumns.contains(entry.getKey())) {
-                    Object value = entry.getValue();
-
-
-                    if (value instanceof String) {
-                        String stringValue = (String) value;
-                        try {
-                            LocalDate date = LocalDate.parse(stringValue, dateFormatter);
-                            query.setParameter(entry.getKey(), date);
-                        } catch (Exception e1) {
-                            try {
-                                LocalDateTime dateTime = LocalDateTime.parse(stringValue, dateTimeFormatter);
-                                query.setParameter(entry.getKey(), dateTime);
-                            } catch (Exception e2) {
-                                query.setParameter(entry.getKey(), stringValue);
-                            }
-                        }
-                    } else {
-                        query.setParameter(entry.getKey(), value);
-                    }
-                }
-            }
-
-            return query.executeUpdate();
+        if (user != null && user!="") {
+            sql.append(" AND p.zauserid = :user");
         }
-    }
+        if (superior != null && superior!="") {
+            sql.append(" AND p.xsuperiorsp = :superior");
+        }
+        if (status != null && status!="") {
+            sql.append(" AND p.xstatusdoc = :status");
+        }
+        System.out.println(sql.toString());
+        TypedQuery<PogrnheaderXcusdto> query = entityManager.createQuery(sql.toString(), PogrnheaderXcusdto.class);
+        query.setParameter("zid", zid);
+        if (user != null && user!="") {
+            query.setParameter("user", user);
+        }
+        if (superior != null && superior!="") {
+            query.setParameter("superior", superior);
+        }
+        if (status != null && status!="") {
+            query.setParameter("status", status);
+        }
 
+        System.out.println(query.toString());
+        // Implement pagination manually
+        int totalRecords = query.getResultList().size();
+        int firstResult = (int) pageable.getOffset();
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageable.getPageSize());
+
+        List<PogrnheaderXcusdto> results = query.getResultList();
+
+        return new PageImpl<>(results, pageable, totalRecords);
+    }
+}

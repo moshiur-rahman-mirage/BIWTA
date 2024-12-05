@@ -12,6 +12,7 @@ public class PogrnheaderXcusdto {
     private Date xdate;
     private String xcus;
     private String xorg;
+    private String xname;
     private String xwh;
     private String xlong;
     private String xstatus;
@@ -20,7 +21,7 @@ public class PogrnheaderXcusdto {
 
     // Constructor matching the query projection
     public PogrnheaderXcusdto(int zid, String xgrnnum, Date xdate, String xcus, String xorg, String xwh,
-                              String xlong, String xstatus, String xstatusdoc, String zauserid) {
+                              String xlong, String xstatus, String xstatusdoc, String zauserid,String xname) {
         this.zid = zid;
         this.xgrnnum = xgrnnum;
         this.xdate = xdate;
@@ -31,6 +32,7 @@ public class PogrnheaderXcusdto {
         this.xstatus = xstatus;
         this.xstatusdoc = xstatusdoc;
         this.zauserid = zauserid;
+        this.xname=xname;
     }
 
     public PogrnheaderXcusdto() {
@@ -86,6 +88,14 @@ public class PogrnheaderXcusdto {
 
     public String getXlong() {
         return xlong;
+    }
+
+    public String getXname() {
+        return xname;
+    }
+
+    public void setXname(String xname) {
+        this.xname = xname;
     }
 
     public void setXlong(String xlong) {

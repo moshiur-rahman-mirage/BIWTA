@@ -28,8 +28,14 @@ public class MmprescriptionService {
     }
 
     public Mmprescription save(Mmprescription mmprescription) {
-        String generatedKey=primaryKeyService.getGeneratedPrimaryKey(mmprescription.getZid(),"Inventory Transaction","RX--",6);
-        mmprescription.setXcase(generatedKey);
+
+        Integer maxXrow = mmprescriptionRepository.findMaxXrowByZidAndXtornum(mmprescription.getZid(), mmprescription.getXcase());
+        if (maxXrow == null) {
+            maxXrow = 0;
+        }
+        mmprescription.setXrow(maxXrow + 1);
+
+
         return mmprescriptionRepository.save(mmprescription);
     }
 

@@ -45,7 +45,6 @@ const Pogrnapp = () => {
         xstatus: 'Open',
         xstatusdoc:'',
         xnote: '',
-        xsign1: ''
 
 
     });
@@ -153,7 +152,7 @@ const Pogrnapp = () => {
            }));
     };
 
-    console.log(formData)
+    // console.log(formData)
 
 
     console.log(directFetch)
@@ -297,42 +296,6 @@ const Pogrnapp = () => {
     };
 
 
-    const handleUpdateBeforeConfirm = async () => {
-        const errors = validateForm(formData, ['xwh', 'xcus']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-        setUpdateCount(prevCount => prevCount + 1);
-    
-        const tableName = "Pogrnheader"; 
-        const updates ={ xsign1: formData.xsign1 }; 
-        const whereConditions = { xgrnnum: formData.xgrnnum, zid: zid }; 
-        
-        
-        
-        const data = {
-            tableName,
-            whereConditions, 
-            updates: updates,
-        };
-
-    
-        const endpoint = `api/update`; 
-    
-        await handleApiRequest({
-            endpoint,
-            data,
-            method: 'PUT',
-        });
-    
-        setFormErrors({});
-    };
 
 
     
@@ -352,25 +315,24 @@ const Pogrnapp = () => {
 
 
 
-    const handleConfirm = async () => {
-        if (window.confirm('Are You Sure to Confirm This GRN?')) {
+    const handleApprove = async () => {
+        if (window.confirm('Are You Sure to Approve This GRN?')) {
             setStatus("Processing...");
-            handleUpdateBeforeConfirm();
-            // Prepare the parameters to send in the request body
             const params = {
                 zid: 100000,
                 user: zemail,
                 position:zemail,
-                wh: formData.xwh,
                 tornum:formData.xgrnnum,
+                xstatusdoc:formData.xstatusdoc,
                 request:'GRN Approval'
             };
-
+            
             try {
 
-               const response = await axiosInstance.post("/api/pogrnheader/confirmRequest", params);
+               const response = await axiosInstance.post("/api/pogrnheader/approveRequest", params);
+               console.log(params)
                setStatus(response.data);
-
+               setUpdateCount(prevCount => prevCount + 1);
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -404,7 +366,7 @@ const Pogrnapp = () => {
                 <div className='col-span-1'>
                 </div>
                 <Button
-                    onClick={handleConfirm}
+                    onClick={handleApprove}
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
@@ -867,10 +829,11 @@ const Pogrnapp = () => {
                                 setRefreshTrigger(false);
                             }
                         }}
+                        
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"
-                        additionalParams={{ zid: zid, user: zemail }}
+                        additionalParams={{ zid: zid, superior: zemail }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

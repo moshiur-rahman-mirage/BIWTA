@@ -14,6 +14,16 @@ public class ConfirmGrnDto {
     private String xgrnnum;
     private Date xdate;
     private String xwh;
+
+    public String getXstatusdoc() {
+        return xstatusdoc;
+    }
+
+    public void setXstatusdoc(String xstatusdoc) {
+        this.xstatusdoc = xstatusdoc;
+    }
+
+    private String xstatusdoc;
     private int len;
 
     // Getters and setters

@@ -19,6 +19,8 @@ import GenericList from '../../ReusableComponents/GenericList';
 import { dark } from '@mui/material/styles/createPalette';
 import SearchableList from '../../ReusableComponents/SearchableList';
 import SortableList from '../../ReusableComponents/SortableList';
+import { validateForm } from '../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 const Item = () => {
     // Authentication Context
@@ -50,6 +52,7 @@ const Item = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("Inactive");
     const [refreshCallback, setRefreshCallback] = useState(null);
@@ -61,12 +64,18 @@ const Item = () => {
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
     };
-    // References
+    
     const triggerRef = useRef(null);
 
-    // Configuration
+    
     const variant = 'standard';
-    const apiBaseUrl = `api/products/items/${zid}`;
+    const apiBaseUrl = `api/products/`;
+    const addEndpoint = 'api/products';
+    const updateEndpoint = `api/products/update`;
+    const deleteEndpoint = `api/products/${zid}/transaction`;
+    const mainSideListEndpoint=`api/products/${zid}/paginated`;
+    // const searchEndPoint = `api/products/${zid}/search?searchText=${query}&searchFields=xcus,xorg,xmadd`;
+
     
     const fieldConfig = [
         { header: 'ID', field: 'xitem' },
@@ -139,7 +148,7 @@ const Item = () => {
 
     const handleAdd = async () => {
 
-        const endpoint = 'api/products';
+        const endpoint = addEndpoint;
         const data = {
             ...formData,
             zauserid: zemail,
@@ -147,7 +156,7 @@ const Item = () => {
         };
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xitem) {
-              
+                console.log(response)
                 setFormData((prev) => ({ ...prev, xitem: response.xitem }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
@@ -191,15 +200,19 @@ const Item = () => {
         alert('Form cleared.');
     };
 
+
+
     const handleDelete = async () => {
-     
-        const endpoint = `api/products/${zid}/${formData.xitem}`;
+        const endpoint = deleteEndpoint;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
+            params: {
+                column: 'xitem',
+                transactionNumber: formData.xitem
+            },
             onSuccess: (response) => {
                 setFormData({
-                    zid: zid,
                     zauserid: '',
                     xitem: '',
                     xdesc: '',
@@ -217,33 +230,66 @@ const Item = () => {
                     xroute: '',
                     xbatmg: '',
                     xreordqty: ''
-
                 });
                 setUpdateCount(prevCount => prevCount + 1);
-
             },
         });
     };
 
 
     const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xdesc', 'xgitem']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
         setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/products/${zid}/${formData.xitem}`;
-        const data = {
-            ...formData,
-            zid: zid
+
+        const tableName = "Caitem";
+        const updates = {
+            xitem: '',
+                    xdesc: formData.xdesc,
+                    xunit: formData.xunit,
+                    xunitpur: formData.xunitpur,
+                    xcfpur: formData.xcfpur,
+                    xgitem: formData.xgitem,
+                    xcatitem: formData.xcatitem,
+                    xrate: formData.xrate,
+                    xprodnature: formData.xprodnature,
+                    xgenericname: formData.xgenericname,
+                    xgenericdesc: formData.xgenericdesc,
+                    xdrugtype: formData.xdrugtype,
+                    xstrength: formData.xstrength,
+                    xroute: formData.xroute,
+                    xbatmg: formData.xbatmg,
+                    xreordqty: formData.xreordqty
+            
         };
-     
+        const whereConditions = { xitem: formData.xitem, zid: zid };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
-            // onSuccess: (response) => {
-            //     setErrors({});
-            // },
         });
+
+        setFormErrors({});
     };
+
 
     // Render Loading Page if Necessary
     if (loading) {
@@ -318,7 +364,7 @@ const Item = () => {
                                     onChange={(e) => {
                                         handleChange(e);
                                         const query = e.target.value;
-                                        const apiSearchUrl = `api/products/search?zid=${zid}&text=${query}`;
+                                        const apiSearchUrl = `api/products/${zid}/search?searchText=${query}&searchFields=xitem,xdesc`;
                                         handleSearch(
                                             e.target.value,
                                             apiSearchUrl,
@@ -522,14 +568,11 @@ const Item = () => {
             </Box >
             <Box sx={{
                 gridColumn: 'span 5',
-
-                // border: '1px solid #ccc', // Light gray border
                 borderRadius: '8px', // Optional: Rounded corners
-                // padding: 2,
             }}>
 
                 <SortableList
-                    apiUrl={apiBaseUrl}
+                    apiUrl={mainSideListEndpoint}
                     caption="Item List"
                     columns={[
                         { field: 'xitem', title: 'Item Code', width: '35%', },

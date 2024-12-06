@@ -23,7 +23,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     private static final Logger logger = LoggerFactory.getLogger(CommonServiceImpl.class);
 
 
-    //    @Autowired
+    @Autowired
     protected NamedParameterJdbcTemplate jdbcTemplate;
     protected abstract NamedParameterJdbcTemplate getJdbcTemplate();
 
@@ -32,6 +32,10 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
     @Autowired
     private EntityManager entityManager;
+
+    public CommonServiceImpl(){
+
+    }
 
     @Autowired
     public CommonServiceImpl(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -63,27 +67,24 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
     @Override
     public Page<T> findByZidWithPaginationAndSorting(int zid, int page, int size, String sortBy, boolean ascending) {
-        // Construct the SQL query with a dynamic table name
         String sql = "SELECT * FROM " + getTableName() + " WHERE zid = :zid ORDER BY " + sortBy + (ascending ? " ASC" : " DESC");
 
-        // Pagination using SQL LIMIT and OFFSET
         int offset = page * size;
-        sql += " LIMIT :size OFFSET :offset";
+        sql += " OFFSET :offset ROWS FETCH NEXT :size ROWS ONLY";
 
         Map<String, Object> params = Map.of(
                 "zid", zid,
                 "size", size,
                 "offset", offset
         );
-
         List<T> content = jdbcTemplate.query(sql, params, getRowMapper());
 
-        String countSql = "SELECT COUNT(*) FROM " + getTableName() + " WHERE zid = :zid";
+        String countSql = "SELECT COUNT(1) FROM " + getTableName() + " WHERE zid = :zid";
         int totalCount = jdbcTemplate.queryForObject(countSql, Map.of("zid", zid), Integer.class);
-
         Pageable pageable = PageRequest.of(page, size, Sort.by(ascending ? Sort.Order.asc(sortBy) : Sort.Order.desc(sortBy)));
         return new PageImpl<>(content, pageable, totalCount);
     }
+
 
 
     public List<T> getBySearchTextAndZid(int zid, String searchText, List<String> searchFields) {
@@ -91,7 +92,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
         if (searchFields == null || searchFields.isEmpty()) {
             return Collections.emptyList();
         }
-        // Dynamically construct the SQL query with search fields and zid
+
         String whereClause = searchFields.stream()
                 .map(field -> field + " LIKE :searchText")
                 .collect(Collectors.joining(" OR "));
@@ -100,16 +101,14 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
         Map<String, Object> params = Map.of(
                 "zid", zid,
-                "searchText", "%" + searchText + "%" // Use LIKE with wildcard for searching
+                "searchText", "%" + searchText + "%"
         );
         try {
-            System.out.println("in try");
+
             List<T> results = getJdbcTemplate().query(sql, params, getRowMapper());
+            System.out.println(results);
             return results.isEmpty() ? Collections.emptyList() : results;
         } catch (Exception e) {
-            // Log the exception
-            System.out.println("in catch");
-            logger.error("Error executing query: {}", e.getMessage(), e);
             return Collections.emptyList();
         }
     }

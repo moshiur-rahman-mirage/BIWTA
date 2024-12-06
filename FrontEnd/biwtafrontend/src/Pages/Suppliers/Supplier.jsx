@@ -69,6 +69,13 @@ const Supplier = () => {
     // Configuration
     const variant = 'standard';
     const apiBaseUrl = `api/cacus/${zid}/type/supplier`;
+
+    const addEndpoint = 'api/cacus';
+    const updateEndpoint = `api/cacus/update`;
+    const deleteEndpoint = `api/cacus/${zid}/transaction`;
+    // const searchEndPoint = `api/cacus/${zid}/search?searchText=${query}&searchFields=xcus,xorg,xmadd`;
+
+
     const fieldConfig = [
         { header: 'ID', field: 'xcus' },
         { header: 'Company Name', field: 'xorg' },
@@ -132,7 +139,7 @@ const Supplier = () => {
 
     const handleAdd = async () => {
 
-        const endpoint = 'api/cacus';
+        const endpoint = addEndpoint;
         const data = {
             ...formData,
             zauserid: zemail,
@@ -183,7 +190,7 @@ const Supplier = () => {
     };
 
     const handleDelete = async () => {
-        const endpoint = `api/cacus/${zid}/transaction`;
+        const endpoint = deleteEndpoint;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
@@ -242,12 +249,12 @@ const Supplier = () => {
             xfax: formData.xfax,
             xbin: formData.xbin,
             xstatus: formData.xstatus,
-            xlicense:formData.xlicense,
+            xlicense: formData.xlicense,
             xtin: formData.xtin,
             xircno: formData.xircono,
             xpaymenttype: formData.xpaymenttype,
             xcontact: formData.xcontact
-            
+
         };
         const whereConditions = { xcus: formData.xcus, zid: zid };
 
@@ -258,14 +265,13 @@ const Supplier = () => {
         };
 
 
-        const endpoint = `api/cacus/update`;
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
         });
-
         setFormErrors({});
     };
 

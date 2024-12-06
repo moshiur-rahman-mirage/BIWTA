@@ -42,6 +42,7 @@ public class CacusService extends CommonServiceImpl<Cacus, CacusId> {
 
     @Override
     protected RowMapper<Cacus> getRowMapper() {
+
         return new BeanPropertyRowMapper<>(Cacus.class);
     }
 

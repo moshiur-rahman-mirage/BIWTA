@@ -68,17 +68,12 @@ public abstract class BaseController<T, Id> {
             @RequestParam List<String> searchFields) {
 
 
-        logger.info("Search request received for zid: {}, searchText: {}, searchFields: {}", zid, searchText, searchFields);
-
         List<T> result = getService().getBySearchTextAndZid(zid, searchText, searchFields);
 
-        logger.info("Search result size: {}", result != null ? result.size() : 0);
-
         if (result == null || result.isEmpty()) {
-            System.out.println("Inside");
             return ResponseEntity.ok(Collections.emptyList());
         }else {
-            System.out.println("outside");
+            System.out.println(result);
             return ResponseEntity.ok(result);
         }
     }

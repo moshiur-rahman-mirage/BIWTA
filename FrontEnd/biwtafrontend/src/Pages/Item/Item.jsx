@@ -171,7 +171,6 @@ const Item = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-      
         setSelectedItem(item);
     }, []);
 
@@ -252,7 +251,7 @@ const Item = () => {
 
         const tableName = "Caitem";
         const updates = {
-                    
+
                     xdesc: formData.xdesc,
                     xunit: formData.xunit,
                     xunitpur: formData.xunitpur,

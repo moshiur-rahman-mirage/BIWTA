@@ -177,30 +177,29 @@ const Pdmsthrd = () => {
 
     const handleAdd = async () => {
         const endpoint = addEndpoint;
-    
+
         const data = {
             ...formData,
             ...dropdownValues,
             zauserid: zemail,
-            xposition: formData.xstaff,
             zid: zid,
         };
-    
-     
-           
-            const responseData = await addFunction(data, endpoint, 'POST');
-            if (responseData && responseData.xstaff) {
-                setXstaff(responseData.xstaff); // Update staffId state
-                setFormData((prev) => ({
-                    ...prev,
-                    xstaff: responseData.xstaff,
-                }));
-                alert(`Employee added successfully with Staff ID: ${responseData.xstaff}`);
-            } 
-        
+
+
+
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xstaff) {
+                console.log(response)
+                setFormData((prev) => ({ ...prev, xstaff: response.xstaff }));
+                // setUpdateCount(prevCount => prevCount + 1);
+            } else {
+                // alert('Supplier added successfully.');
+            }
+        });
+
     };
-    
-    
+
+
 
 
 

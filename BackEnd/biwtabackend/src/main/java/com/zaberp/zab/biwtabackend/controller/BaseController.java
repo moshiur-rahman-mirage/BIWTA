@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 public abstract class BaseController<T, Id> {
@@ -41,6 +38,21 @@ public abstract class BaseController<T, Id> {
     }
 
 
+
+    @GetMapping("/{zid}/rows")
+    public ResponseEntity<List<T>> findRows(
+            @PathVariable int zid,
+            @RequestParam String column,
+            @RequestParam String transactionNumber) {
+        List<T> result = getService().findRows(zid, column, transactionNumber);
+        if (result.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+    }
+    
+
     @DeleteMapping("/{zid}/transaction")
     public ResponseEntity<Void> deleteByZidAndTransactionNumber(
             @PathVariable int zid,
@@ -49,6 +61,25 @@ public abstract class BaseController<T, Id> {
         getService().deleteByZidAndTransactionNumber(zid, column, transactionNumber);
         return ResponseEntity.noContent().build();
     }
+
+
+    @RequestMapping(value = "{zid}/detail", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteByConditions(
+            @PathVariable int zid,
+            @RequestParam(required = false) String transactionNumber,
+            @RequestParam(required = false) String xrow) {
+
+        Map<String, Object> conditions = new HashMap<>();
+        if (transactionNumber != null) {
+            conditions.put("transactionNumber", transactionNumber);
+        }
+        if (xrow != null) {
+            conditions.put("xrow", xrow);
+        }
+        getService().deleteByConditions(zid, conditions);
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/{zid}/paginated")
     public ResponseEntity<Page<T>> findByZidWithPaginationAndSorting(

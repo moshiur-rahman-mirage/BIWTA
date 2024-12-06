@@ -21,14 +21,26 @@ import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import { useAuth } from '../../Provider/AuthProvider';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import GenericList from '../../ReusableComponents/GenericList';
+import { addFunction } from '../../ReusableComponents/addFunction';
+import { validateForm } from '../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 const PdDependent = ({ xstaff, xname }) => {
-    const { zid } = useAuth();
+    const { zid,zemail } = useAuth();
     const variant = 'standard'
+
+    const addEndpoint = 'api/dependent';
+    const updateEndpoint = `api/dependent/update`;
+    const deleteEndpoint = `api/dependent/${zid}/detail`;
+    const mainSideListEndpoint = `api/dependent/${zid}/paginated`;
+
+    const [updateCount, setUpdateCount] = useState(0);
     const [isTyping, setIsTyping] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const apiBaseUrl = `api/pddependent/pddependents?zid=${zid}&xstaff=${xstaff}`;
+    const apiBaseUrl = `api/dependent/${zid}/rows`;
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -67,6 +79,10 @@ const PdDependent = ({ xstaff, xname }) => {
         }
     }, [refreshTrigger, handleRefresh]);
 
+    useEffect(() => {
+        setRefreshTrigger(true);
+    }, [updateCount]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -78,55 +94,108 @@ const PdDependent = ({ xstaff, xname }) => {
     };
 
 
+    const handleAdd = async () => {
 
-    const handleAction = async (method) => {
-       
-
-
+        const endpoint = addEndpoint;
         const data = {
+            ...formData,
+            zemail:zemail,
+            xstaff,xstaff,
+            zid: zid
+        };
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xrow) {
+                console.log(response)
+                setFormData((prev) => ({ ...prev, xrow: response.xrow }));
+                setUpdateCount(prevCount => prevCount + 1);
+            } else {
+                // alert('Supplier added successfully.');
+            }
+        });
+    };
 
-            zid: zid,
-            xstaff: xstaff,
-            zauserid: formData.zauserid,
-            xname: formData.xname,
-            xbirthdate: formData.xbirthdate,
+
+
+    const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xdesc', 'xgitem']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+        setUpdateCount(prevCount => prevCount + 1);
+
+        const tableName = "PdDependent";
+        const updates = {
             xgender: formData.xgender,
             xnid: formData.xnid,
             xcontact: formData.xcontact,
             xrelation: formData.xrelation,
+            xbirthdate: formData.xbirthdate,
+            xname: formData.xname,
+            
+            
 
         };
+        const whereConditions = { xstaff: formData.xstaff,xrow:formData.xrow, zid: zid };
 
-   
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
 
-        const endpoint = "/api/pddependent";
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
-            method,
+            method: 'PUT',
+        });
+
+        setFormErrors({});
+    };
+
+
+    const handleDelete = async () => {
+        const endpoint = deleteEndpoint;
+
+
+        const params = {
+            zid: formData.zid,
+            xstaff: formData.xstaff,
+            xrow: formData.xrow,
+        };
+
+
+        await handleApiRequest({
+            endpoint,
+            method: 'DELETE',
+            params: params,
             onSuccess: (response) => {
-            handleRefresh();  
-                setRefreshTrigger(true);
-                if (method === 'DELETE') {
-
-                    setFormData({
-                        zid: zid,
-                        zauserid: '',
-                        xstaff: '',
-                        xgender: '',
-                        xnid: '',
-                        xcontact: '',
-                        xrelation: '',
-                        xbirthdate: '',
-                        xname: '',
-                        xrow: 0
-                    });
-                }
-
+                setFormData({
+                    zauserid: '',
+                    xstaff: '',
+                    xgender: '',
+                    xnid: '',
+                    xcontact: '',
+                    xrelation: '',
+                    xbirthdate: '',
+                    xname: '',
+                    xrow: ''
+                });
+                setUpdateCount(prevCount => prevCount + 1);
             },
         });
     };
+
+
+
 
     const handleOnRefresh = useCallback((refreshFn) => {
         setRefreshCallback(() => refreshFn);
@@ -137,11 +206,9 @@ const PdDependent = ({ xstaff, xname }) => {
         <div className='grid grid-cols-12 gap-5 z-40'>
             <div className="">
                 <SideButtons
-                    onAdd={() => handleAction('POST')}
-                    onUpdate={() => handleAction('PUT')}
-                    onDelete={() => handleAction('DELETE')}
-                //  onClear={handleClear}
-                // onShow={handleShow}
+                    onAdd={handleAdd}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
                 />
             </div>
             <div className='col-span-11 '>
@@ -192,7 +259,7 @@ const PdDependent = ({ xstaff, xname }) => {
                                             sx: {
                                                 fontWeight: 600, // Adjust font size here
                                             },
-    
+
                                         }}
                                         onChange={handleChange}
                                         value={formData.xname}
@@ -215,7 +282,7 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-    
+
                                         }}
                                         onChange={handleChange}
                                         value={formData.xbirthdate}
@@ -247,10 +314,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-    
+
                                         }}
                                         type="Gender"
-                                        apiUrl={apiBaseUrl}
+                                      
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
                                         fontSize="0.9rem" // Smaller font size for dropdown options
@@ -269,7 +336,7 @@ const PdDependent = ({ xstaff, xname }) => {
                                             size="small"
                                             InputLabelProps={{
                                                 shrink: true,
-        
+
                                             }}
                                             type="Relation"
                                             name='xrelation'
@@ -296,10 +363,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-                                            sx:{
-                                                fontWeight:600
+                                            sx: {
+                                                fontWeight: 600
                                             }
-    
+
                                         }}
                                         onChange={handleChange}
                                         value={formData.xnid}
@@ -324,10 +391,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-                                            sx:{
-                                                fontWeight:600
+                                            sx: {
+                                                fontWeight: 600
                                             }
-    
+
                                         }}
                                         fullWidth
                                         name='xcontact'
@@ -362,7 +429,11 @@ const PdDependent = ({ xstaff, xname }) => {
                                         { field: 'xrelation', title: 'Relation', width: '30%' },
                                         { field: 'xcontact', title: 'Contact?', width: '30%', align: 'center' },
                                     ]}
-                                    //  additionalParams={{ zid: zid,xrelation:xrelation }}
+                                    additionalParams={{
+                                        zid: zid, 
+                                        column: 'xstaff',
+                                        transactionNumber:xstaff
+                                    }}
                                     onItemSelect={(item) => console.log('Selected Item:', item)}
                                     onRefresh={handleOnRefresh}
                                     captionFont="3.9rem"

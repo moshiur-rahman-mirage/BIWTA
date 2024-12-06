@@ -1,5 +1,6 @@
 package com.zaberp.zab.biwtabackend.service;
 
+import com.zaberp.zab.biwtabackend.model.Caitem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -9,13 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
@@ -52,6 +48,18 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     }
 
     @Override
+    public List<T> findRows(int zid, String transactionNumberColumn, String transactionNumber) {
+        String sql = "SELECT * FROM " + getTableName() +
+                " WHERE zid = :zid AND " + transactionNumberColumn + " = :transactionNumber";
+
+        Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber);
+
+        return jdbcTemplate.query(sql, params, getRowMapper());
+    }
+
+
+
+    @Override
     public Iterable<T> findByZid(int zid) {
         String sql = "SELECT * FROM " + getTableName() + " WHERE zid = :zid";
         Map<String, Object> params = Map.of("zid", zid);
@@ -64,6 +72,27 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
         Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber);
         jdbcTemplate.update(sql, params);
     }
+
+
+    public void deleteByConditions(int zid, Map<String, Object> additionalConditions) {
+        // Start building the SQL query
+        StringBuilder sql = new StringBuilder("DELETE FROM " + getTableName() + " WHERE zid = :zid");
+        Map<String, Object> params = Map.of("zid", zid);
+
+        // Append additional conditions if provided
+        if (additionalConditions != null && !additionalConditions.isEmpty()) {
+            additionalConditions.forEach((column, value) -> {
+                sql.append(" AND ").append(column).append(" = :").append(column);
+            });
+            params = new HashMap<>(params); // Ensure we can add more parameters
+            params.putAll(additionalConditions);
+        }
+
+        // Execute the query
+        jdbcTemplate.update(sql.toString(), params);
+    }
+
+
 
     @Override
     public Page<T> findByZidWithPaginationAndSorting(int zid, int page, int size, String sortBy, boolean ascending) {

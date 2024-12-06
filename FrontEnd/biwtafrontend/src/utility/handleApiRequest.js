@@ -26,7 +26,7 @@ export const handleApiRequest = async ({
       
         const response = await axiosInstance(config);
         
-       
+       console.log(response)
         if (onSuccess) onSuccess(response);
 
         

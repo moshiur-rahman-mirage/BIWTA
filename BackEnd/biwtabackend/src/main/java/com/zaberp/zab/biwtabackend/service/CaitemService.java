@@ -1,13 +1,9 @@
 package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.CaitemId;
-import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.repository.CaitemRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,14 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CaitemService extends CommonServiceImpl<Caitem, CaitemId> {
-
     private final CaitemRepository caitemRepository;
     private final PrimaryKeyService primaryKeyService;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
 
     @Autowired
     public CaitemService(CaitemRepository caitemRepository,

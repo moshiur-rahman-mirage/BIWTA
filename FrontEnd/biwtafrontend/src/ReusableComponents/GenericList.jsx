@@ -16,23 +16,24 @@ const GenericList = ({
 }) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);  // Add error state
     const [hoveredIndex, setHoveredIndex] = useState(null);
 
     const handleMouseEnter = (index) => setHoveredIndex(index);
     const handleMouseLeave = () => setHoveredIndex(null);
-   
+
     const fetchData = async () => {
-       
         try {
-          
             setLoading(true);
-           
+            setError(null);  // Reset error state on each fetch attempt
             const response = await axiosInstance.get(apiUrl, { params: additionalParams });
-            
-           
-            setItems(response.data);
+            console.log(response.data);  // Log the response for debugging
+
+            // Assuming response.data.data holds the items, adjust if necessary
+            setItems(response.data.data || response.data || []);
         } catch (error) {
             console.error('Error fetching list items:', error);
+            setError('Failed to load items. Please try again later.');  // Set error state
         } finally {
             setLoading(false);
         }
@@ -46,39 +47,39 @@ const GenericList = ({
 
     useEffect(() => {
         fetchData();
-
     }, []);
 
     return (
         <div className={`${xclass} shadow-lg rounded`} style={{ overflowY: 'auto', borderRadius: '4px' }}>
             {/* Caption */}
             <Caption title={caption} />
-            {/* {caption && (
-                <Typography variant="h6" gutterBottom>
-                    {caption}
-                </Typography>
-            )} */}
 
             {/* Table Header */}
-            <Box display="flex" justifyContent="space-between" mt={2} mb={1} borderBottom={1}>
-                {columns.map((col, idx) => (
-                    <Typography
-                        key={idx}
+            {columns && columns.length > 0 && (
+                <Box display="flex" justifyContent="space-between" mt={2} mb={1} borderBottom={1}>
+                    {columns.map((col, idx) => (
+                        <Typography
+                            key={idx}
+                            variant="subtitle1"
+                            style={{ fontWeight: '', width: '20%' }}
+                        >
+                            {col.title}
+                        </Typography>
+                    ))}
+                </Box>
+            )}
 
-                        variant="subtitle1" style={{ fontWeight: '', width: '20%' }}
-                    >
-                        {col.title}
-                    </Typography>
-                ))}
-            </Box>
-
-            {/* Table Content */}
+            {/* Loading/Error/Content */}
             {loading ? (
                 <p>Loading...</p>
+            ) : error ? (
+                <p>{error}</p>  // Display error message if fetching fails
             ) : items.length === 0 ? (
                 <p>No items available</p>
             ) : (
                 <Box>
+
+
                     {items.map((item, index) => (
                         <div
                             key={index}
@@ -96,20 +97,18 @@ const GenericList = ({
                                     <Box
                                         key={idx}
                                         flex={col.flex || '1'}
-                                        // style={{ width: col.width || 'auto',fontSize:captionFont }}
                                         sx={{
                                             width: col.width || 'auto',
-                                            fontSize: captionFont || '0.875rem', // Ensure captionFont is defined
+                                            fontSize: captionFont || '0.875rem',
                                         }}
-
                                     >
                                         <Typography
                                             sx={{ fontSize: bodyFont }}
-                                            
                                             variant="subtitle1"
                                             align={col.align || 'left'}
                                         >
-                                            {item[col.field] || 'N/A'}
+                                          
+                                            {item && item[col.field] !== undefined ? item[col.field] : 'N/A'}
                                         </Typography>
                                     </Box>
                                 ))}
@@ -117,6 +116,7 @@ const GenericList = ({
                             {index < items.length - 1 && <Divider />}
                         </div>
                     ))}
+               
                 </Box>
             )}
         </div>

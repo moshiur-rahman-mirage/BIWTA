@@ -33,7 +33,6 @@ public class PdmstController extends BaseController<Pdmst,PdmstId>{
         }
     }
 
-
     @GetMapping("approver/{zid}")
     public List<Pdmst> findbyZidAndZactive(
             @PathVariable int zid

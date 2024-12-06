@@ -5,13 +5,13 @@ export const addFunction=async(
 ) =>{
    
     try {
-       
+        console.log(endpoint)
         await handleApiRequest({
             endpoint,
             data,
             method: method,
             onSuccess: (response) => {
-                if (onSuccess) onSuccess(response.data); // Pass the response data to the callback
+                if (onSuccess) onSuccess(response.data);
             },
         });
     } catch (error) {

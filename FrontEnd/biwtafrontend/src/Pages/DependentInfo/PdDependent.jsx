@@ -26,18 +26,18 @@ import { validateForm } from '../../ReusableComponents/validateForm';
 import Swal from 'sweetalert2';
 
 const PdDependent = ({ xstaff, xname }) => {
-    const { zid,zemail } = useAuth();
+    const { zid, zemail } = useAuth();
     const variant = 'standard'
 
     const addEndpoint = 'api/dependent';
     const updateEndpoint = `api/dependent/update`;
-    const deleteEndpoint = `api/dependent/${zid}/detail`;
+    const deleteEndpoint = `api/dependent/delete/details`;
     const mainSideListEndpoint = `api/dependent/${zid}/paginated`;
 
     const [updateCount, setUpdateCount] = useState(0);
     const [isTyping, setIsTyping] = useState(false);
     const [formErrors, setFormErrors] = useState({});
-
+    const [selectedItem, setSelectedItem] = useState(null);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
     const apiBaseUrl = `api/dependent/${zid}/rows`;
@@ -64,6 +64,19 @@ const PdDependent = ({ xstaff, xname }) => {
         }));
     };
 
+
+    const handleItemSelect = useCallback((item) => {
+        setSelectedItem(item);
+    }, []);
+
+    useEffect(() => {
+        if (selectedItem) {
+
+            setFormData({
+                ...selectedItem
+            });
+        }
+    }, [selectedItem]);
 
     const handleRefresh = useCallback(() => {
         if (refreshCallback) {
@@ -99,8 +112,8 @@ const PdDependent = ({ xstaff, xname }) => {
         const endpoint = addEndpoint;
         const data = {
             ...formData,
-            zemail:zemail,
-            xstaff,xstaff,
+            zemail: zemail,
+            xstaff, xstaff,
             zid: zid
         };
         addFunction(data, endpoint, 'POST', (response) => {
@@ -137,11 +150,11 @@ const PdDependent = ({ xstaff, xname }) => {
             xrelation: formData.xrelation,
             xbirthdate: formData.xbirthdate,
             xname: formData.xname,
-            
-            
+
+
 
         };
-        const whereConditions = { xstaff: formData.xstaff,xrow:formData.xrow, zid: zid };
+        const whereConditions = { xstaff: formData.xstaff, xrow: formData.xrow, zid: zid };
 
         const data = {
             tableName,
@@ -164,36 +177,42 @@ const PdDependent = ({ xstaff, xname }) => {
 
     const handleDelete = async () => {
         const endpoint = deleteEndpoint;
-
-
         const params = {
-            zid: formData.zid,
-            xstaff: formData.xstaff,
-            xrow: formData.xrow,
+            zid: zid,
+            column: 'xstaff',
+            transactionNumber: formData.xstaff,
+            row: formData.xrow
         };
-
-
-        await handleApiRequest({
-            endpoint,
-            method: 'DELETE',
-            params: params,
-            onSuccess: (response) => {
-                setFormData({
-                    zauserid: '',
-                    xstaff: '',
-                    xgender: '',
-                    xnid: '',
-                    xcontact: '',
-                    xrelation: '',
-                    xbirthdate: '',
-                    xname: '',
-                    xrow: ''
-                });
-                setUpdateCount(prevCount => prevCount + 1);
-            },
-        });
+    
+        try {
+            
+            const response = await handleApiRequest({
+                endpoint,
+                method: 'DELETE',
+                params: params,
+            });
+    
+           
+            setFormData({
+                zauserid: '',
+                xstaff: '',
+                xgender: '',
+                xnid: '',
+                xcontact: '',
+                xrelation: '',
+                xbirthdate: '',
+                xname: '',
+                xrow: ''  // Ensure xrow is reset properly
+            });
+            setUpdateCount(prevCount => prevCount + 1);  
+    
+        } catch (error) {
+          
+            console.error("Delete failed:", error);
+          
+        }
     };
-
+    
 
 
 
@@ -317,7 +336,7 @@ const PdDependent = ({ xstaff, xname }) => {
 
                                         }}
                                         type="Gender"
-                                      
+
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
                                         fontSize="0.9rem" // Smaller font size for dropdown options
@@ -425,16 +444,17 @@ const PdDependent = ({ xstaff, xname }) => {
                                     apiUrl={apiBaseUrl}
                                     caption="Dependents List"
                                     columns={[
+                                        { field: 'xrow', title: 'Row', width: '40%' },
                                         { field: 'xname', title: 'Name', width: '40%' },
                                         { field: 'xrelation', title: 'Relation', width: '30%' },
                                         { field: 'xcontact', title: 'Contact?', width: '30%', align: 'center' },
                                     ]}
                                     additionalParams={{
-                                        zid: zid, 
+                                        zid: zid,
                                         column: 'xstaff',
-                                        transactionNumber:xstaff
+                                        transactionNumber: xstaff
                                     }}
-                                    onItemSelect={(item) => console.log('Selected Item:', item)}
+                                    onItemSelect={handleItemSelect}
                                     onRefresh={handleOnRefresh}
                                     captionFont="3.9rem"
                                     bodyFont=".9rem"

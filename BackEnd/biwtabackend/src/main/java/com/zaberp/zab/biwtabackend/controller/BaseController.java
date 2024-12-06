@@ -62,21 +62,15 @@ public abstract class BaseController<T, Id> {
     }
 
 
-    @RequestMapping(value = "{zid}/detail", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteByConditions(
-            @PathVariable int zid,
-            @RequestParam(required = false) String transactionNumber,
-            @RequestParam(required = false) String xrow) {
-
-        Map<String, Object> conditions = new HashMap<>();
-        if (transactionNumber != null) {
-            conditions.put("transactionNumber", transactionNumber);
-        }
-        if (xrow != null) {
-            conditions.put("xrow", xrow);
-        }
-        getService().deleteByConditions(zid, conditions);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/delete/details")
+    public ResponseEntity<Void> deleteByConditions(
+            @RequestParam int zid,
+            @RequestParam String column,
+            @RequestParam String transactionNumber,
+            @RequestParam int row
+    ) {
+        getService().deleteByConditions(zid, column, transactionNumber,row);
+        return ResponseEntity.noContent().build();
     }
 
 

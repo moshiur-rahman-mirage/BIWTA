@@ -184,4 +184,9 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
         Pageable pageable = PageRequest.of(page, size, sort);
         return repository.findImtorWithZidAndStatus(zid,xtrn,pageable);
     }
+
+    public List<ImtorDto> searchByText(int zid,String action, String searchText) {
+        return repository.findImtorWithZidAndSearchText(zid,action,searchText);
+    }
+
 }

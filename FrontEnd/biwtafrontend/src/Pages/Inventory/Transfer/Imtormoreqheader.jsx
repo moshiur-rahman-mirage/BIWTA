@@ -61,7 +61,7 @@ const Imtormoreqheader = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
-    const apiListUrl = `api/imtordetails?action=requisition/${zid}/${formData.xtornum}`
+    const apiListUrl = `api/imtordetail?action=requisition/${zid}/${formData.xtornum}`
 
 
     // Handle dropdown value change
@@ -757,7 +757,7 @@ const Imtormoreqheader = () => {
                     />
                     <SortableList
 
-                        apiUrl={`api/imtordetails/${zid}/${formData.xtornum}`}
+                        apiUrl={`api/imtordetail/${zid}/${formData.xtornum}`}
                         isFolded={false}
                         caption="Store Requisition Detail List"
                         columns={[

@@ -73,6 +73,16 @@ public class ImtorheaderController extends BaseController<Imtorheader,Imtorheade
         return service.findImtorWithZidAndStatus(zid,xtrn,page, size, sortBy, ascending);
     }
 
+
+    @GetMapping("/search")
+    public List<ImtorDto> search(
+            @RequestParam("zid") int zid,
+            @RequestParam(value = "action", required = false, defaultValue = "") String action,
+            @RequestParam("text") String searchText
+    ) {
+        return service.searchByText(zid, action, searchText);
+    }
+
     @PostMapping("/confirmsr")
     public String confirmSR(@RequestBody ConfirmImtorDto imtor){
         int zid = imtor.getZid();

@@ -79,22 +79,30 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     }
 
 
-    public void deleteByConditions(int zid, Map<String, Object> additionalConditions) {
-        // Start building the SQL query
-        StringBuilder sql = new StringBuilder("DELETE FROM " + getTableName() + " WHERE zid = :zid");
-        Map<String, Object> params = Map.of("zid", zid);
+//    public void deleteByConditions(int zid, Map<String, Object> additionalConditions) {
+//        System.out.println("delete by conditions");
+//        StringBuilder sql = new StringBuilder("DELETE FROM " + getTableName() + " WHERE zid = :zid");
+//        Map<String, Object> params = Map.of("zid", zid);
+//
+//        // Append additional conditions if provided
+//        if (additionalConditions != null && !additionalConditions.isEmpty()) {
+//            additionalConditions.forEach((column, value) -> {
+//                sql.append(" AND ").append(column).append(" = :").append(column);
+//            });
+//            params = new HashMap<>(params); // Ensure we can add more parameters
+//            params.putAll(additionalConditions);
+//        }
+//
+//        System.out.println(sql.toString());
+//        jdbcTemplate.update(sql.toString(), params);
+//    }
 
-        // Append additional conditions if provided
-        if (additionalConditions != null && !additionalConditions.isEmpty()) {
-            additionalConditions.forEach((column, value) -> {
-                sql.append(" AND ").append(column).append(" = :").append(column);
-            });
-            params = new HashMap<>(params); // Ensure we can add more parameters
-            params.putAll(additionalConditions);
-        }
 
-        // Execute the query
-        jdbcTemplate.update(sql.toString(), params);
+    @Override
+    public void deleteByConditions(int zid,String column,String transactionNumber,int row) {
+        String sql = "DELETE FROM " + getTableName() + " WHERE zid = :zid AND " + column + " = :transactionNumber and xrow = :row ";
+        Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber,"row",row);
+        jdbcTemplate.update(sql, params);
     }
 
     @Override

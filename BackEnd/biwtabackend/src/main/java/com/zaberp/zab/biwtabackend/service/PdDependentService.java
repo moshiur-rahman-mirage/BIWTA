@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,9 +30,9 @@ public class PdDependentService extends CommonServiceImpl<PdDependent, PdDepende
 
     @Override
     public PdDependentRepository getRepository() {
+
         return repository;
     }
-
 
 
     @Override

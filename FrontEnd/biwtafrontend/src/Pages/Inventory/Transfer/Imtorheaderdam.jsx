@@ -58,7 +58,7 @@ const Imtorheaderdam = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
-    const apiListUrl = `api/imtordetails/requisition/${zid}/${formData.xtornum}`
+    const apiListUrl = `api/imtordetail/requisition/${zid}/${formData.xtornum}`
 
 
     // Handle dropdown value change
@@ -695,7 +695,7 @@ const Imtorheaderdam = () => {
                     />
                     <SortableList
 
-                        apiUrl={`api/imtordetails/${zid}/${formData.xtornum}`}
+                        apiUrl={`api/imtordetail/${zid}/${formData.xtornum}`}
                         isFolded={false}
                         caption="Damage Entry Detail List"
                         columns={[

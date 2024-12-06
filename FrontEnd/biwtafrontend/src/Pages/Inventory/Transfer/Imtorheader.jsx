@@ -63,7 +63,7 @@ const Imtorheader = () => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
 
-    const apiListUrl = `api/imtordetails?action=requisition/${zid}/${formData.xtornum}`
+    const apiListUrl = `api/imtordetail?action=requisition/${zid}/${formData.xtornum}`
 
     const query = ''
     const apiSearchUrl = `api/imtorheader/${zid}/search?searchText=${query}&searchFields=xstaff,xname,xmobile`
@@ -789,7 +789,7 @@ const Imtorheader = () => {
                         page={1}
                     />
                     <SortableList
-                        apiUrl={`api/imtordetails/${zid}/${formData.xtornum}`}
+                        apiUrl={`api/imtordetail/${zid}/${formData.xtornum}`}
                         isFolded={false}
                         caption="Store Requisition Detail List"
                         columns={[

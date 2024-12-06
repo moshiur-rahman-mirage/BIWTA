@@ -30,6 +30,8 @@ import axiosInstance from '../../Middleware/AxiosInstance';
 import DynamicDropdown from '../../ReusableComponents/DynamicDropdown';
 import { handleSearch } from '../../ReusableComponents/handleSearch';
 import { addFunction } from '../../ReusableComponents/addFunction';
+import { validateForm } from '../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 
 const Pdmsthrd = () => {
@@ -42,7 +44,7 @@ const Pdmsthrd = () => {
     });
 
     const fieldConfig = [
-        { header: 'ID', field: 'xstaff',visible: false },
+        { header: 'ID', field: 'xstaff', visible: false },
         { header: 'Salut', field: 'xsalute' },
         { header: 'Name', field: 'xname' },
         { header: 'Department', field: 'xdeptname' },
@@ -51,6 +53,7 @@ const Pdmsthrd = () => {
 
     const { zid, zemail } = useAuth();
     const [searchResults, setSearchResults] = useState([]);
+
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [isTyping, setIsTyping] = useState(false); // To handle typing state
     const [selectedCode, setSelectedCode] = useState(''); // To store selected code
@@ -63,7 +66,7 @@ const Pdmsthrd = () => {
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState('Male');
     const [xstaff, setXstaff] = useState("");
-
+    const [formErrors, setFormErrors] = useState({});
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const triggerRef = useRef(null);
     const apiBaseUrl = "api/pdmst";
@@ -101,8 +104,12 @@ const Pdmsthrd = () => {
 
     });
 
-
-    const apiEndpoint = `/api/pdmst/searchtext?zid=100000&searchText={query}`;
+    const query = ''
+    const apiSearchUrl = `api/employee/${zid}/search?searchText=${query}&searchFields=xstaff,xname,xmobile`
+    const addEndpoint = 'api/employee';
+    const updateEndpoint = `api/employee/update`;
+    const deleteEndpoint = `api/employee/${zid}/transaction`;
+    const mainSideListEndpoint = `api/employee/${zid}/paginated`;
 
     useEffect(() => {
         if (zid && zemail) {
@@ -169,8 +176,8 @@ const Pdmsthrd = () => {
 
 
     const handleAdd = async () => {
-        const endpoint = 'api/pdmst';
-
+        const endpoint = addEndpoint;
+    
         const data = {
             ...formData,
             ...dropdownValues,
@@ -178,46 +185,92 @@ const Pdmsthrd = () => {
             xposition: formData.xstaff,
             zid: zid,
         };
-
-        addFunction(data, endpoint, 'POST', (responseData) => {
+    
+     
+           
+            const responseData = await addFunction(data, endpoint, 'POST');
             if (responseData && responseData.xstaff) {
                 setXstaff(responseData.xstaff); // Update staffId state
                 setFormData((prev) => ({
                     ...prev,
                     xstaff: responseData.xstaff,
                 }));
-                // alert(`Employee added successfully with Staff ID: ${responseData.xstaff}`);
-            } else {
-                alert('Employee added successfully, but no staff ID was returned.');
-            }
-        });
-    }
+                alert(`Employee added successfully with Staff ID: ${responseData.xstaff}`);
+            } 
+        
+    };
+    
+    
+
+
+
 
     const handleUpdate = async () => {
-        const endpoint = `api/pdmst?zid=${zid}&xstaff=${formData.xstaff}`;
-        const data = {
-            ...formData,
-            zid: zid
+        const errors = validateForm(formData, ['xmobile']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+        const tableName = "Pdmst";
+        const updates = {
+
+
+            xname: formData.xname,
+            xfstname: formData.xfstname,
+            xbirthdate: formData.xbirthdate,
+            xsalute: formData.xsalute,
+            xlastname: formData.xlastname,
+            xdeptname: formData.xdeptname,
+            xdesignation: formData.xdesignation,
+            // xposition: formData.xposition,
+            xmname: formData.xmname,
+            xsex: formData.xsex,
+            xnid: formData.xnid,
+            xreligion: formData.xreligion,
+            xmobile: formData.xmobile,
+            xemail: formData.xemail,
+            xjobtitle: formData.xjobtitle,
+            xlocation: formData.xlocation,
+            xregino: formData.xregino,
+            xprofdegree: formData.xprofdegree
+
         };
+        const whereConditions = { xstaff: formData.xstaff, zid: zid };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
-            onSuccess: (response) => {
-                setErrors({});
-            },
         });
+
+        setFormErrors({});
     };
 
 
     const handleDelete = async () => {
-        const endpoint = `api/pdmst?zid=${zid}&xstaff=${formData.xstaff}`;
+        const endpoint = deleteEndpoint;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
+            params: {
+                column: 'xstaff',
+                transactionNumber: formData.xstaff
+            },
             onSuccess: (response) => {
-                setErrors({});
                 setFormData({
                     xstaff: '',
                     xfstname: '',
@@ -282,18 +335,6 @@ const Pdmsthrd = () => {
 
 
 
-    // const handleDropdownSelect = (key, value) => {
-    //     setDropdownValues((prev) => {
-    //         const updatedDropdown = { ...prev, [key]: value };
-    //         // Update Full Name in formData
-    //         setFormData((prevForm) => ({
-    //             ...prevForm,
-    //             xname: `${updatedDropdown.xsalute || ''} ${prevForm.xfstname || ''} ${prevForm.xmname || ''} ${prevForm.xlastname || ''}`.trim(),
-    //         }));
-    //         return updatedDropdown;
-    //     });
-    // };
-
 
     const handleDropdownSelect = (fieldName, value) => {
         setFormData((prevState) => ({
@@ -316,7 +357,6 @@ const Pdmsthrd = () => {
                     onUpdate={handleUpdate}
                     onDelete={handleDelete}
                     onClear={handleClear}
-                // onShow={handleShow}
                 />
             </div>
             <div className='col-span-11 shadow-lg'>
@@ -325,10 +365,9 @@ const Pdmsthrd = () => {
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
-                        paddingX: 2, // equivalent to Tailwind's px-2
-                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
-                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        paddingX: 2,
+                        paddingY: 0.5,
+                        height: '2.5rem',
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
                         },
@@ -411,7 +450,7 @@ const Pdmsthrd = () => {
                                     InputLabelProps={{
                                         shrink: true,
                                         sx: {
-                                            fontWeight: 600, // Adjust font size here
+                                            fontWeight: 600,
                                         },
 
                                     }}
@@ -419,10 +458,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     fullWidth
                                     onChange={(e) => {
-                                        handleChange(e); // Handle form field value updates
+                                        handleChange(e);
+                                        const apiSearchUrl = `api/employee/${zid}/search?searchText=${e.target.value}&searchFields=xstaff,xname,xmobile`
                                         handleSearch(
                                             e.target.value,
-                                            apiEndpoint,
+                                            apiSearchUrl,
                                             fieldConfig,
                                             setSearchResults,
                                             setDropdownOpen,
@@ -777,7 +817,11 @@ const Pdmsthrd = () => {
                                     name='xmobile'
                                     onChange={handleChange}
                                     value={formData.xmobile}
-                                    variant={variant} fullWidth required />
+                                    variant={variant} fullWidth required
+                                    error={!!formErrors.xmobile}
+                                    helperText={formErrors.xmobile}
+                                />
+
                                 <TextField label="Email"
                                     size="small"
                                     InputLabelProps={{
@@ -920,13 +964,13 @@ const Pdmsthrd = () => {
                                         size='small'
                                         color="primary"
                                     />} label="Is Approver?"
-                                     sx={{
-                                        // size:'small',
-                                        '& .MuiFormControlLabel-label': {
-                                            fontSize: '0.875rem',  
-                                            fontWeight: '600', 
-                                        }
-                                    }} />
+                                        sx={{
+                                            // size:'small',
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: '0.875rem',
+                                                fontWeight: '600',
+                                            }
+                                        }} />
                                 </FormGroup>
 
                             </Stack>

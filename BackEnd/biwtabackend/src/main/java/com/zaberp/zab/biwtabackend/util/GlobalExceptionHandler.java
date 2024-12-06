@@ -1,5 +1,6 @@
 package com.zaberp.zab.biwtabackend.util;
 
+import com.zaberp.zab.biwtabackend.model.ApiError;
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,11 @@ public class GlobalExceptionHandler {
                 .body("An unexpected error occurred. Please try again.");
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiError apiError = new ApiError(ex.getMessage());
+        return ResponseEntity.badRequest().body(apiError);
+    }
 
 
 }

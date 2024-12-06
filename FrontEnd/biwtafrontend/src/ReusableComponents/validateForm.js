@@ -19,6 +19,11 @@ export const validateForm = (formData,fieldsToValidate = []) => {
                     errors.xwh = 'Store is required.';
                 }
                 break;
+                case 'xmobile':
+                    if (!formData.xmobile) {
+                        errors.xmobile = 'Mobile Number is required.';
+                    }
+                    break;
 
                 case 'xfwh':
                     if (!formData.xfwh) {

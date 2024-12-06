@@ -194,7 +194,7 @@ const Item = () => {
             xstrength: '',
             xroute: '',
             xbatmg: '',
-            xreordqty: ''
+            // xreordqty: ''
 
         });
         alert('Form cleared.');
@@ -252,7 +252,7 @@ const Item = () => {
 
         const tableName = "Caitem";
         const updates = {
-            xitem: '',
+                    
                     xdesc: formData.xdesc,
                     xunit: formData.xunit,
                     xunitpur: formData.xunitpur,
@@ -267,7 +267,7 @@ const Item = () => {
                     xstrength: formData.xstrength,
                     xroute: formData.xroute,
                     xbatmg: formData.xbatmg,
-                    xreordqty: formData.xreordqty
+                    // xreordqty: formData.xreordqty
             
         };
         const whereConditions = { xitem: formData.xitem, zid: zid };

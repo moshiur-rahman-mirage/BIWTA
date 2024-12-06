@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.*;
@@ -48,13 +49,17 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     }
 
     @Override
-    public List<T> findRows(int zid, String transactionNumberColumn, String transactionNumber) {
+    public List<T> findRowsOfTransaction(int zid, String transactionNumberColumn, String transactionNumber) {
         String sql = "SELECT * FROM " + getTableName() +
                 " WHERE zid = :zid AND " + transactionNumberColumn + " = :transactionNumber";
 
         Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber);
 
         return jdbcTemplate.query(sql, params, getRowMapper());
+    }
+
+    public Page<T> findByZidAndTrnnumWithPaginationAndSorting(int zid,String trnnum, int page, int size, String sortBy, boolean ascending){
+        return null;
     }
 
 
@@ -92,8 +97,6 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
         jdbcTemplate.update(sql.toString(), params);
     }
 
-
-
     @Override
     public Page<T> findByZidWithPaginationAndSorting(int zid, int page, int size, String sortBy, boolean ascending) {
         String sql = "SELECT * FROM " + getTableName() + " WHERE zid = :zid ORDER BY " + sortBy + (ascending ? " ASC" : " DESC");
@@ -114,6 +117,47 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
         return new PageImpl<>(content, pageable, totalCount);
     }
 
+
+    @Override
+    public Page<T> findByZidAndOtherWithPaginationAndSorting(
+            int zid,
+            String columnName,
+            String columnValue,
+            int page,
+            int size,
+            String sortBy,
+            boolean ascending
+    ) {
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM " + getTableName() + " WHERE zid = :zid");
+        if (columnName != null && columnValue != null) {
+            sql.append(" AND ").append(columnName).append(" = :").append(columnName);
+        }
+
+        sql.append(" ORDER BY ").append(sortBy).append(ascending ? " ASC" : " DESC");
+        int offset = page * size;
+        sql.append(" OFFSET :offset ROWS FETCH NEXT :size ROWS ONLY");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("zid", zid);
+        if (columnName != null && columnValue != null) {
+            params.put(columnName, columnValue);
+        }
+        params.put("size", size);
+        params.put("offset", offset);
+
+        List<T> content = jdbcTemplate.query(sql.toString(), params, getRowMapper());
+
+        StringBuilder countSql = new StringBuilder("SELECT COUNT(1) FROM " + getTableName() + " WHERE zid = :zid");
+        if (columnName != null && columnValue != null) {
+            countSql.append(" AND ").append(columnName).append(" = :").append(columnName);
+        }
+
+        int totalCount = jdbcTemplate.queryForObject(countSql.toString(), params, Integer.class);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(ascending ? Sort.Order.asc(sortBy) : Sort.Order.desc(sortBy)));
+
+        return new PageImpl<>(content, pageable, totalCount);
+    }
 
 
     public List<T> getBySearchTextAndZid(int zid, String searchText, List<String> searchFields) {
@@ -143,7 +187,6 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     }
 
     protected abstract String getTableName();
-
     protected abstract org.springframework.jdbc.core.RowMapper<T> getRowMapper();
 
     @Override
@@ -237,5 +280,8 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
             throw e;
         }
     }
+
+
+
 
 }

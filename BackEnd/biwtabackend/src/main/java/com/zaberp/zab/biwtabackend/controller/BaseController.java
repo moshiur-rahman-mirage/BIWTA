@@ -1,11 +1,10 @@
 package com.zaberp.zab.biwtabackend.controller;
 
+import com.zaberp.zab.biwtabackend.dto.RequestBodyDto;
 import com.zaberp.zab.biwtabackend.service.CommonService;
-import com.zaberp.zab.biwtabackend.service.CommonServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,14 +43,14 @@ public abstract class BaseController<T, Id> {
             @PathVariable int zid,
             @RequestParam String column,
             @RequestParam String transactionNumber) {
-        List<T> result = getService().findRows(zid, column, transactionNumber);
+        List<T> result = getService().findRowsOfTransaction(zid, column, transactionNumber);
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(result);
         }
     }
-    
+
 
     @DeleteMapping("/{zid}/transaction")
     public ResponseEntity<Void> deleteByZidAndTransactionNumber(
@@ -91,6 +90,23 @@ public abstract class BaseController<T, Id> {
         Page<T> result = getService().findByZidWithPaginationAndSorting(zid, page, size, sortBy, ascending);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/findByZidAndOther/{columnName}/{columnValue}")
+    public ResponseEntity<Page<T>> getRecords(
+            @PathVariable("columnName") String columnName, // Path variable for 'columnName'
+            @PathVariable("columnValue") String columnValue, // Path variable for 'columnValue'
+            @RequestBody RequestBodyDto requestBody // Request body for pagination and sorting
+    ) {
+
+        Page<T> result = getService().findByZidAndOtherWithPaginationAndSorting(
+                requestBody.getZid(), columnName, columnValue, requestBody.getPage(), requestBody.getSize(),
+                requestBody.getSortBy(), requestBody.isAscending()
+        );
+//        System.out.println(result.stream().toArray());
+        // Return the result wrapped in a ResponseEntity
+        return ResponseEntity.ok(result);
+    }
+
 
     @GetMapping("/{zid}/search")
     public ResponseEntity<List<T>> getBySearchTextAndZid(

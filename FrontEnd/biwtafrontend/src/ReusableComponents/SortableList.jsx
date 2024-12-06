@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import Caption from '../utility/Caption';
 import axiosInstance from '../Middleware/AxiosInstance';
+import { useAuth } from '../Provider/AuthProvider';
 
 const SortableList = ({
     apiUrl,
@@ -32,6 +33,7 @@ const SortableList = ({
     isModal = false,
 }) => {
     const [items, setItems] = useState([]);
+    const { zid } = useAuth();
     const [filteredItems, setFilteredItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -54,10 +56,6 @@ const SortableList = ({
         setLoading(true);
         try {
             const response = await axiosInstance.get(constructApiUrl, { params: additionalParams });
-        //    console.log("--------------------------------------------------------------")
-        //    console.log({ params: additionalParams })
-        //     console.log(constructApiUrl)
-        //     console.log(response)
             setItems(response.data.content || []);
             setFilteredItems(response.data.content || []);
             setxTotalPages(response.data.page.totalPages || 1);
@@ -67,6 +65,57 @@ const SortableList = ({
             setLoading(false);
         }
     };
+
+
+
+
+
+    // const constructApiRequestBody = useMemo(() => {
+    //     return {
+    //         zid:zid,
+    //         page: page - 1,
+    //         size: pageSize,
+    //         sortBy: xsortField,
+    //         ascending: sortOrder === 'asc',
+    //     };
+    // }, [page, pageSize, xsortField, sortOrder]);
+
+    // const fetchData = async () => {
+    //     // console.log(JSON.stringify(constructApiRequestBody))
+    //     setLoading(true);
+    //     try {
+    //         console.log(apiUrl)
+    //         const response = await axiosInstance.postWithBody(apiUrl, constructApiRequestBody, {
+                
+    //             headers: {
+    //                 'Content-Type': 'application/json', // Ensure the body is in JSON format
+    //             },
+    //         });
+    //         console.log(response)
+    //         console.log(response.page.totalPages)
+    //         // const data = await response.json(); 
+    //         // console.log(data); 
+
+    //         const finalData = response.content
+
+    //         setItems(finalData || []);
+    //         setFilteredItems(finalData || []);
+    //         setxTotalPages(response.page.totalPages || 1);
+    //     } catch (error) {
+    //         console.error('Error fetching list items:', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+
+
+
+
+
+
+
+
 
     useEffect(() => {
         if (onRefresh) {

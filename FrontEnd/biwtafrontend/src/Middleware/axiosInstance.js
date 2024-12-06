@@ -44,5 +44,17 @@ axiosInstance.getWithParams = async (url, params = {}) => {
   }
 };
 
+axiosInstance.postWithBody = async (url, body = {}) => {
+  try {
+    console.log("Post is called")
+    const response = await axiosInstance.post(url, body); // Attach body to POST request
+    // console.log(response);
+    return response.data; // Return the response data directly
+  } catch (error) {
+    console.error('POST Request failed:', error);
+    throw error; // Re-throw error for the calling function to handle
+  }
+};
+
 // Export the Axios instance
 export default axiosInstance;

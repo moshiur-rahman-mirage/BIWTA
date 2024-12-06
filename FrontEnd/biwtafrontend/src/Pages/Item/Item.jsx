@@ -573,6 +573,7 @@ const Item = () => {
                 <SortableList
                     apiUrl={mainSideListEndpoint}
                     caption="Item List"
+                    sortField="xitem"
                     columns={[
                         { field: 'xitem', title: 'Item Code', width: '35%', },
                         { field: 'xdesc', title: 'Name', width: '45%' },

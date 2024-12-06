@@ -1,8 +1,8 @@
 package com.zaberp.zab.biwtabackend.service;
 
-
 import com.zaberp.zab.biwtabackend.dto.ImtorDto;
 import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
+import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
 import com.zaberp.zab.biwtabackend.repository.ImtorheaderRepository;
 import jakarta.transaction.Transactional;
@@ -12,11 +12,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -24,71 +28,148 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class ImtorheaderService {
+public class ImtorheaderService extends CommonServiceImpl<Imtorheader, ImtorheaderId> {
 
-    @Autowired
-    private ImtorheaderRepository repository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
+    private final ImtorheaderRepository repository;
     private final PrimaryKeyService primaryKeyService;
 
-    public ImtorheaderService(PrimaryKeyService primaryKeyService) {
+
+    @Autowired
+    public ImtorheaderService(ImtorheaderRepository repository, NamedParameterJdbcTemplate jdbcTemplate, PrimaryKeyService primaryKeyService) {
+        super(jdbcTemplate);
+        this.repository = repository;
         this.primaryKeyService = primaryKeyService;
     }
 
 
-    public Optional<Imtorheader> getByZidAndXtornum(int zid, String xtornum) {
-        return repository.findByZidAndXtornum(zid, xtornum);
-    }
 
+    public Imtorheader createTransaction(Imtorheader imtorheader, String action) {
+        String transactionPrefix = determineTransactionPrefix(action);
+        String tempStatus = determineTempStatus(action);
 
-    public boolean updateImtorheader(int zid, String xtornum, Map<String, Object> updates, List<String> excludeColumns) {
-        int rowsUpdated = repository.updateExcludingColumns(zid, xtornum, updates, excludeColumns);
-        return rowsUpdated > 0;
-    }
-
-
-    public Imtorheader createTransaction(Imtorheader imtorheader,String action) {
-        String trn="";
-        String tempStatus="";
-        String xtrn = "";
-        if ("damage".equalsIgnoreCase(action)){
-            trn = "DAM-";
-            tempStatus="Open";
-
-        }
-        else if ("Requisition".equalsIgnoreCase(action)){
-            trn = "SR--";
-            tempStatus="Approved";
-
-        }
-        String generatedKey=primaryKeyService.getGeneratedPrimaryKey(imtorheader.getZid(),"Transfer Transaction",trn,6);
+        // Generate primary key and set values
+        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(
+                imtorheader.getZid(), "Transfer Transaction", transactionPrefix, 6
+        );
         imtorheader.setXtornum(generatedKey);
         imtorheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
         imtorheader.setZtime(LocalDateTime.now());
         imtorheader.setXstatustor(tempStatus);
-        imtorheader.setXtrn(trn);
+        imtorheader.setXtrn(transactionPrefix);
+
         return repository.save(imtorheader);
     }
 
-    public Imtorheader updateByZidAndXtornum(Imtorheader imtorheader) {
-        return repository.save(imtorheader);
+
+
+    public Page<ImtorDto> findImtorWithFilters(int zid, String xstatus, String xtrn, String user, int page, int size, String sortBy, boolean ascending) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return repository.findImtorWithZidAndStatusAndUser(zid, xstatus, xtrn, user, pageable);
     }
 
-    public void deleteByZidAndXtornum(int zid, String xtornum) {
 
-        repository.deleteByZidAndXtornum(zid, xtornum);
-    }
 
-    @Transactional
-    public void deleteImtor(ImtorheaderId id) {
+    public String confirmImtor(int zid, String user, String position, String xtornum, Date xdate, String xwh, String xtwh, String xstatustor, String screen, int len) {
         try {
-            repository.deleteById(id);
-        } catch (DataIntegrityViolationException ex) {
-            throw new DataIntegrityViolationException("Cannot delete item due to foreign key constraints: " + ex.getMessage(), ex);
+            String sql = """
+                        EXEC zabsp_confirmTO 
+                        @zid = :zid, 
+                        @user = :user, 
+                        @position = :position, 
+                        @tornum = :xtornum, 
+                        @date = :xdate, 
+                        @fwh = :xwh, 
+                        @twh = :xtwh, 
+                        @statustor = :xstatustor, 
+                        @screen = :screen, 
+                        @trnlength = :len
+                    """;
+
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("zid", zid);
+            parameters.addValue("user", user);
+            parameters.addValue("position", position);
+            parameters.addValue("xtornum", xtornum);
+            parameters.addValue("xdate", new java.sql.Date(xdate.getTime()));
+            parameters.addValue("xwh", xwh);
+            parameters.addValue("xtwh", xtwh);
+            parameters.addValue("xstatustor", xstatustor);
+            parameters.addValue("screen", screen);
+            parameters.addValue("len", len);
+
+            // Execute the query
+            jdbcTemplate.update(sql, parameters);
+
+            return "Procedure executed successfully!";
+        } catch (Exception e) {
+            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
         }
+
+    }
+    public String checkSR(int zid, String user, String xtornum, Date xdate, String xfwh, String xstatustor) {
+        try {
+            String sql = """
+            EXEC zabsp_IM_CheckMORequisition 
+                @zid = :zid, 
+                @user = :user, 
+                @tornum = :xtornum, 
+                @date = :xdate, 
+                @wh = :xfwh, 
+                @statustor = :xstatustor 
+                """;
+            MapSqlParameterSource parmeters = new MapSqlParameterSource();
+            parmeters.addValue("zid",zid);
+            parmeters.addValue("user",user);
+            parmeters.addValue("xtornum",xtornum);
+            parmeters.addValue("xdate",new java.sql.Date(xdate.getTime()));
+            parmeters.addValue("xfwh",xfwh);
+            parmeters.addValue("xstatustor",xstatustor);
+
+
+            jdbcTemplate.update(sql, parmeters);
+            return "Procedure executed successfully!";
+        } catch (Exception e) {
+            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
+        }
+    }
+
+
+    private String determineTransactionPrefix(String action) {
+        return switch (action.toLowerCase()) {
+            case "damage" -> "DAM-";
+            case "requisition" -> "SR--";
+            default -> throw new IllegalArgumentException("Unsupported action: " + action);
+        };
+    }
+
+    private String determineTempStatus(String action) {
+        return "damage".equalsIgnoreCase(action) ? "Open" : "Approved";
+    }
+
+
+    @Override
+    public JpaRepository<Imtorheader, ImtorheaderId> getRepository() {
+        return repository;
+    }
+
+    @Override
+    public Page<Imtorheader> findByZidAndTrnnumWithPaginationAndSorting(int zid, String trnnum, int page, int size, String sortBy, boolean ascending) {
+        return null;
+    }
+
+    @Override
+    protected NamedParameterJdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    @Override
+    protected String getTableName() {
+        return "Imtorheader";
+    }
+
+    @Override
+    protected RowMapper<Imtorheader> getRowMapper() {
+        return new BeanPropertyRowMapper<>(Imtorheader.class);
     }
 
     public Page<ImtorDto> findImtorWithZidAndStatusAndUser(int zid, String xstatus,String xtrn, String user, int page, int size, String sortBy, boolean ascending) {
@@ -103,60 +184,4 @@ public class ImtorheaderService {
         Pageable pageable = PageRequest.of(page, size, sort);
         return repository.findImtorWithZidAndStatus(zid,xtrn,pageable);
     }
-
-    public List<ImtorDto> searchByText(int zid,String action, String searchText) {
-        return repository.findImtorWithZidAndSearchText(zid,action,searchText);
-    }
-
-
-    public List<ImtorDto> searchByText(int zid, String searchText) {
-        return repository.findImtorWithZidAndText(zid,searchText);
-    }
-
-
-
-    public String confirmImtor(int zid, String user,String position,String xtornum, Date xdate, String xwh,String xtwh,String xstatustor,String screen, int len) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Format date for readability
-        System.out.println("Parameters being passed:");
-        System.out.println("zid: " + zid);
-        System.out.println("user: " + user);
-        System.out.println("position: " + position);
-        System.out.println("xtornum: " + xtornum);
-        System.out.println("xdate: " + sdf.format(xdate));
-        System.out.println("xwh: " + xwh);
-        System.out.println("xtwh: " + xtwh);
-        System.out.println("xstatustor: " + xstatustor);
-        System.out.println("screen: " + screen);
-        System.out.println("len: " + len);
-        try {
-            String sql = "EXEC zabsp_confirmTO @zid = ?, @user = ?,@position=?, @tornum = ?, @date = ?, @fwh = ?,@twh=?,@statustor=?,@screen=?, @trnlength = ?";
-
-            jdbcTemplate.update(sql, zid, user,position, xtornum, new java.sql.Date(xdate.getTime()), xwh,xtwh,xstatustor,"Transfer", len);
-
-            return "Procedure executed successfully!";
-        } catch (Exception e) {
-            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
-        }
-    }
-
-
-    public String checkSR(int zid, String user,String xtornum, Date xdate, String xfwh,String xstatustor) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println("Parameters being passed:");
-        System.out.println("zid: " + zid);
-        System.out.println("user: " + user);
-        System.out.println("xtornum: " + xtornum);
-        System.out.println("xdate: " + sdf.format(xdate));
-        System.out.println("xstatustor: " + xstatustor);
-        try {
-            String sql = "EXEC zabsp_IM_CheckMORequisition @zid = ?, @user = ?, @tornum = ?, @date = ?, @wh = ?,@statustor=?";
-
-            jdbcTemplate.update(sql, zid, user, xtornum, new java.sql.Date(xdate.getTime()), xfwh,xstatustor);
-
-            return "Procedure executed successfully!";
-        } catch (Exception e) {
-            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
-        }
-    }
 }
-

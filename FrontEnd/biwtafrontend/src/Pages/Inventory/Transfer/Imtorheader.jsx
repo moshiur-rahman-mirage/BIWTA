@@ -62,7 +62,17 @@ const Imtorheader = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
+
     const apiListUrl = `api/imtordetails?action=requisition/${zid}/${formData.xtornum}`
+
+    const query = ''
+    const apiSearchUrl = `api/imtorheader/${zid}/search?searchText=${query}&searchFields=xstaff,xname,xmobile`
+    const addEndpoint = 'api/imtorheader';
+    const updateEndpoint = `api/imtorheader/update`;
+    const deleteEndpoint = `api/imtorheader/${zid}/transaction`;
+    const mainSideListEndpoint = `api/imtorheader/${zid}/paginated`;
+
+    // const endpoint = 'api/imtorheader/findByZidAndOther/xtrn/SR--';
 
 
     // Handle dropdown value change
@@ -204,7 +214,6 @@ const Imtorheader = () => {
     };
 
 
-
     const handleItemSelect = useCallback((item) => {
         console.log(item)
         setFormData((prev) => ({
@@ -231,11 +240,14 @@ const Imtorheader = () => {
     };
 
     const handleDelete = async () => {
-        // console.log(formData)
-        const endpoint = `api/imtorheader/${zid}/${formData.xtornum}`;
+        const endpoint = deleteEndpoint;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
+            params: {
+                column: 'xtornum',
+                transactionNumber: formData.xtornum
+            },
             onSuccess: (response) => {
                 setFormData({
                     zid: zid,
@@ -244,11 +256,12 @@ const Imtorheader = () => {
                     xdate: new Date().toISOString().split('T')[0],
                     xfwh: xwh,
                     xfwhdesc: '',
+                    xtwh: '',
+                    xtwhdesc: '',
                     xnote: '',
                     xlong: ''
 
                 });
-                setUpdateCount(prevCount => prevCount + 1);
 
             },
         });
@@ -266,18 +279,33 @@ const Imtorheader = () => {
             });
             return;
         }
-        setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/imtorheader/${zid}/${formData.xtornum}`;
-        const data = {
-            ...formData,
-            zid: zid
+
+        const tableName = "Imtorheader";
+        const updates = {
+
+            xdate: formData.xdate,
+            xfwh: formData.xwh,
+            xtwh: formData.xtwh,
+            xnote: formData.xnote,
+            xlong: formData.xlong
+
         };
+        const whereConditions = { xstaff: formData.xstaff, zid: zid };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
-            method: 'PATCH',
+            method: 'PUT',
         });
+
         setFormErrors({});
     };
 
@@ -368,7 +396,7 @@ const Imtorheader = () => {
                         marginLeft: 1,
                         paddingX: 2, // equivalent to Tailwind's px-2
                         paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                      
+
                         height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
@@ -734,7 +762,7 @@ const Imtorheader = () => {
 
                     <SortableList
                         directFetch='Yes'
-                        apiUrl={apiBaseUrl}
+                        apiUrl={`api/imtorheader`}
                         isFolded={false}
                         caption="Store Requisition List"
                         columns={[
@@ -753,7 +781,7 @@ const Imtorheader = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xtornum"
-                        additionalParams={{ zid: zid, xstatustor: 'Approved', user: zemail,xtrn:'SR--' }}
+                        additionalParams={{ zid: zid, xstatustor: 'Approved', user: zemail, xtrn: 'SR--' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"
@@ -761,9 +789,6 @@ const Imtorheader = () => {
                         page={1}
                     />
                     <SortableList
-
-
-
                         apiUrl={`api/imtordetails/${zid}/${formData.xtornum}`}
                         isFolded={false}
                         caption="Store Requisition Detail List"
@@ -789,7 +814,6 @@ const Imtorheader = () => {
                         bodyFont=".7rem"
                         mt={2}
                         page={1}
-                    // isModal
                     />
                 </Box>
             </div >

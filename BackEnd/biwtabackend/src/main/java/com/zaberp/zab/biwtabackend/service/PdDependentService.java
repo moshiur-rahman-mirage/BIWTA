@@ -6,6 +6,7 @@ import com.zaberp.zab.biwtabackend.model.PdDependent;
 import com.zaberp.zab.biwtabackend.repository.PdDependentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -30,6 +31,8 @@ public class PdDependentService extends CommonServiceImpl<PdDependent, PdDepende
     public PdDependentRepository getRepository() {
         return repository;
     }
+
+
 
     @Override
     protected String getTableName() {

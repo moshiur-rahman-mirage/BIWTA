@@ -54,6 +54,8 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
         imtorheader.setXtornum(generatedKey);
         imtorheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
         imtorheader.setZtime(LocalDateTime.now());
+        imtorheader.setXstatussr("Open");
+        imtorheader.setXtypesr("Transfer");
         imtorheader.setXstatustor(tempStatus);
         imtorheader.setXpreparer(imtorheader.getZauserid());
         imtorheader.setXtrn(transactionPrefix);
@@ -72,16 +74,16 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
     public String confirmImtor(int zid, String user, String position, String xtornum, Date xdate, String xwh, String xtwh, String xstatustor, String screen, int len) {
         try {
             String sql = """
-                        EXEC zabsp_confirmTO 
+                        EXEC zabsp_Admin_confirmSR 
                         @zid = :zid, 
                         @user = :user, 
-                        @position = :position, 
+                      
                         @tornum = :xtornum, 
-                        @date = :xdate, 
+                        @datecom = :xdate, 
                         @fwh = :xwh, 
                         @twh = :xtwh, 
-                        @statustor = :xstatustor, 
-                        @screen = :screen, 
+                        @status = :xstatustor, 
+                     
                         @trnlength = :len
                     """;
 

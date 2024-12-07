@@ -29,6 +29,12 @@ public class Imtorheader extends BaseEntity {
     @Column(name = "ztime")
     private LocalDateTime ztime;
 
+    @Column(name = "xstatussr")
+    private String xstatussr;
+
+    @Column(name = "xtypesr")
+    private String xtypesr;
+
     @Column(name = "zutime")
     private LocalDateTime zutime;
 

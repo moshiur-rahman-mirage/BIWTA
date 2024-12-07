@@ -47,8 +47,8 @@ public class PdmstService extends CommonServiceImpl<Pdmst, PdmstId> {
         if (existsByZidAndXmobile(pdmst.getZid(), pdmst.getXmobile())) {
             throw new IllegalArgumentException("Validation failed: A Employee with the same mobile number already exists.");
         }
-        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-", 5);
-        pdmst.setXstaff("1" + generatedKey.substring(Math.max(0, generatedKey.length() - 5)));
+        String generatedKey = primaryKeyService.getGeneratedPrimaryKey(pdmst.getZid(), "Staff ID", "EID-", 4);
+        pdmst.setXstaff("1" + generatedKey.substring(Math.max(0, generatedKey.length() - 4)));
         pdmst.setXposition(pdmst.getXstaff());
         pdmst.setZtime(LocalDateTime.now());
         pdmst.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());

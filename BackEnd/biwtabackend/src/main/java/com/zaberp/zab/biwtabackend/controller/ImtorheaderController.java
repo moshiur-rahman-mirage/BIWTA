@@ -124,6 +124,16 @@ public class ImtorheaderController extends BaseController<Imtorheader,Imtorheade
         String xtwh=imtor.getXtwh();
         String xstatustor=imtor.getXstatustor();
         int xlen=imtor.getLen();
+        System.out.println("Zid: " + zid);
+        System.out.println("Zemail: " + zemail);
+        System.out.println("Xposition: " + xposition);
+        System.out.println("Xtornum: " + xtornum);
+        System.out.println("Xdate: " + xdate);
+        System.out.println("Xwh: " + xwh);
+        System.out.println("Xtwh: " + xtwh);
+        System.out.println("Xstatustor: " + xstatustor);
+        System.out.println("Xlen: " + xlen);
+
         return service.confirmImtor(zid, zemail,xposition,xtornum,xdate,xwh,xtwh,xstatustor,"Transfer",xlen);
     }
 

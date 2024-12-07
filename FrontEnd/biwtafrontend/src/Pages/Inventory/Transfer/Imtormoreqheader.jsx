@@ -86,7 +86,7 @@ const Imtormoreqheader = () => {
 
 
     const handleSortChange = (field) => {
-       
+
         setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
         setSortField(field);
     };
@@ -196,13 +196,16 @@ const Imtormoreqheader = () => {
     const handleConfirm = async () => {
         if (window.confirm('Issue Item?')) {
             setStatus("Processing...");
+            const xlen=8;
             const params = {
                 zid: 100000,
                 zemail: zemail,
                 xtornum: formData.xtornum,
                 xdate: formData.xdate,
                 xfwh: formData.xfwh,
-                len: 8
+                xwh: formData.xtwh,
+                xstatustor: formData.xstatustor,
+                xlen: xlen 
             };
 
             try {
@@ -267,27 +270,27 @@ const Imtormoreqheader = () => {
 
     const reloadFormData = async () => {
         try {
-            
+
             if (!zid || !formData?.xtornum) {
                 console.error("Missing required parameters: zid or xtornum");
                 return;
             }
             const requestBody = {
-                selectedFields: [ "xstatustor"], 
+                selectedFields: ["xstatustor"],
                 whereConditions: {
                     zid: zid,
                     xtornum: formData.xtornum
                 }
             };
-    
-           
+
+
             const response = await axiosInstance.post("/api/imtorheader/fetch", requestBody);
             console.log("API Response:", response);
-    
-           
+
+
             if (response?.data) {
                 setFormData((prevFormData) => ({
-                    ...prevFormData, 
+                    ...prevFormData,
                     ...response.data[0],
                 }));
             } else {
@@ -680,7 +683,7 @@ const Imtormoreqheader = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xtornum"
-                        additionalParams={{ zid: zid,xstatustor:'Approved', xtrn: 'SR--' }}
+                        additionalParams={{ zid: zid, xstatustor: 'Approved', xtrn: 'SR--' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

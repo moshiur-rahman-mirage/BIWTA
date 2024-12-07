@@ -24,6 +24,7 @@ import DynamicDropdown from '../../../ReusableComponents/DynamicDropdown';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import { validateForm } from '../../../ReusableComponents/validateForm';
 import Swal from 'sweetalert2';
+import { addFunction } from '../../../ReusableComponents/addFunction';
 
 
 const Imtordetail = ({ xtornum = '' }) => {
@@ -34,13 +35,21 @@ const Imtordetail = ({ xtornum = '' }) => {
     const [isTyping, setIsTyping] = useState(false);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const apiBaseUrl = `api/imtordetails?zid=${zid}&xtornum=${xtornum}`;
+    const apiBaseUrl = `api/imtordetail?zid=${zid}&xtornum=${xtornum}`;
+
+    const addEndpoint = 'api/imtordetail';
+    const updateEndpoint = `api/imtordetail/update`;
+    const deleteEndpoint = `api/imtordetail/delete/details`;
+    const mainSideListEndpoint = `api/imtordetail/${zid}/paginated`;
+
+    const [updateCount, setUpdateCount] = useState(0);
+
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [itemDropdownOpen, setItemDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [rect, setBoundingRect] = useState(null)
-    const apiListUrl = `api/imtordetails/${zid}/${xtornum}`
+    const apiListUrl = `api/imtordetail/${zid}/${xtornum}`
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -50,7 +59,7 @@ const Imtordetail = ({ xtornum = '' }) => {
         xprepqty: '',
         xbatch: '',
         xlong: '',
-        xunit:''
+        xunit: ''
 
 
     });
@@ -91,11 +100,24 @@ const Imtordetail = ({ xtornum = '' }) => {
         }
     }, [refreshCallback]);
 
-    useEffect(() => {
 
+
+    useEffect(() => {
+        if (refreshCallback && formData.xtornum) {
+            refreshCallback(); // Trigger the refresh callback from SortableList
+        }
+    }, [formData.xtornum, refreshCallback]);
+
+
+    useEffect(() => {
+        setRefreshTrigger(true);
+    }, [updateCount]);
+
+    useEffect(() => {
+        console.log("33")
         if (refreshTrigger) {
             handleRefresh();
-            setRefreshTrigger(false); // Reset trigger
+            setRefreshTrigger(false); 
         }
     }, [refreshTrigger, handleRefresh]);
 
@@ -120,9 +142,10 @@ const Imtordetail = ({ xtornum = '' }) => {
 
 
 
+
+
+
     const handleAction = async (method) => {
-
-
 
         const data = {
 
@@ -150,7 +173,7 @@ const Imtordetail = ({ xtornum = '' }) => {
         }
 
 
-        const endpoint = "/api/imtordetails";
+        const endpoint = "/api/imtordetail";
 
         await handleApiRequest({
             endpoint,
@@ -225,14 +248,126 @@ const Imtordetail = ({ xtornum = '' }) => {
 
 
 
+    const handleAdd = async () => {
+        const errors = validateForm(formData, ['xitem','xprepqty']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+        const endpoint = 'api/imtordetail';
+        const data = {
+            ...formData,
+            zid: zid,
+            xtornum:xtornum
+        };
+
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xrow) {
+
+                setFormData((prev) => ({ ...prev, xrow: response.xrow }));
+                setUpdateCount(prevCount => prevCount + 1);
+                setFormErrors({});
+            } else {
+                // alert('Supplier added successfully.');
+            }
+        });
+    };
+
+
+    const handleDelete = async () => {
+        const endpoint = deleteEndpoint;
+
+
+        const params = {
+            zid:zid,
+            column: 'xtornum',
+            transactionNumber: formData.xtornum,
+            row:formData.xrow
+        };
+
+
+        await handleApiRequest({
+            endpoint,
+            method: 'DELETE',
+            params: params,
+            onSuccess: (response) => {
+                setFormData({
+                    zauserid: '',
+                    xtornum: '',
+                    xrow: '',
+                    xitem: '',
+                    xprepqty: '',
+                    xbatch: '',
+                    xlong: '',
+                    xlineamt: '',
+                    xunit: ''
+                });
+                setUpdateCount(prevCount => prevCount + 1);
+            },
+        });
+    };
+
+
+
+
+    const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xitem']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+        const tableName = "Imtordetail";
+        const updates = {
+
+            xitem: formData.xitem,
+            xprepqty: formData.xprepqty,
+            xbatch: formData.xbatch,
+            xlong: formData.xlong,
+            xlineamt: formData.xlineamt,
+            xunit: formData.xunit
+
+        };
+        const whereConditions = { xtornum: formData.xtornum, zid: zid, xrow: formData.xrow };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+        const endpoint = updateEndpoint;
+
+        await handleApiRequest({
+            endpoint,
+            data,
+            method: 'PUT',
+        });
+
+        setFormErrors({});
+    };
+
+
+
 
     return (
         <div className='grid grid-cols-12 gap-5 z-40'>
             <div className="">
                 <SideButtons
-                    onAdd={() => handleAction('POST')}
-                    onUpdate={() => handleAction('PUT')}
-                    onDelete={() => handleAction('DELETE')}
+                    onAdd={handleAdd}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
                     onClear={handleClear}
                 // onShow={handleShow}
                 />
@@ -351,7 +486,7 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         name="xitem"
                                         required
                                         label="Item Code"
-                                        error={!!formErrors.xitem} 
+                                        error={!!formErrors.xitem}
                                         helperText={formErrors.xitem}
                                         InputLabelProps={{
                                             shrink: true,
@@ -366,7 +501,7 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/products/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `api/products/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -431,9 +566,10 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         variant={variant}
                                         size="small"
                                         fullWidth
+                                        id="xprepqty"
                                         name='xprepqty'
                                         onChange={handleChange}
-                                        error={!!formErrors.xprepqty} 
+                                        error={!!formErrors.xprepqty}
                                         helperText={formErrors.xprepqty}
                                         value={formData.xprepqty}
                                         required
@@ -501,11 +637,11 @@ const Imtordetail = ({ xtornum = '' }) => {
 
                                     caption="Requisition Detail List"
                                     columns={[
-                                        { field: 'xrow', title: 'Serial', width: '5%',align: 'left' },
-                                        { field: 'xitem', title: 'Item', width: '10%',align: 'left' },
+                                        { field: 'xrow', title: 'Serial', width: '5%', align: 'left' },
+                                        { field: 'xitem', title: 'Item', width: '10%', align: 'left' },
                                         { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
                                         { field: 'xprepqty', title: 'Required Quantity', width: '65%', align: 'left' },
-                                        
+
                                     ]}
                                     onItemSelect={handleItemSelect}
                                     onRefresh={(refresh) => {

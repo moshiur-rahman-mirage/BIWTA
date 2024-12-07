@@ -26,6 +26,7 @@ import { validateForm } from '../../ReusableComponents/validateForm';
 import { addFunction } from '../../ReusableComponents/addFunction';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import { handleSearch } from '../../ReusableComponents/handleSearch';
+import axiosInstance from '../../Middleware/AxiosInstance';
 const ApprovalLayer = () => {
 
     const variant = 'standard'
@@ -42,6 +43,7 @@ const ApprovalLayer = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const baseUrl = axiosInstance;
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -62,6 +64,15 @@ const ApprovalLayer = () => {
 
     };
 
+
+    const handleItemSelect = useCallback((item) => {
+        // console.log(item)
+        setFormData((prev) => ({
+            ...prev,
+            xrow: item.xrow, xtypetrn: item.xtypetrn, xnofsignatory: item.xnofsignatory, xyesno: item.xyesno
+        }));
+    }, []);
+
     useEffect(() => {
         setRefreshTrigger(true);
     }, [updateCount]);
@@ -69,12 +80,10 @@ const ApprovalLayer = () => {
 
 
     const handleDropdownSelect = (fieldName, value) => {
-        console.log(fieldName, value);
+        // console.log(fieldName, value);
 
         setFormData((prevState) => {
             const updatedState = { ...prevState, [fieldName]: value };
-
-
             return updatedState;
         });
     };
@@ -113,7 +122,6 @@ const ApprovalLayer = () => {
 
 
     const handleChange = (e) => {
-        // console.log(e.target)
         const { name, value } = e.target;
         setFormData((prev) => {
             if (prev[name] !== value) {
@@ -135,7 +143,7 @@ const ApprovalLayer = () => {
             });
             return;
         }
-        setUpdateCount(prevCount => prevCount + 1);
+       
         const endpoint = `api/pdsignatoryrpt/${zid}/${formData.xrow}`;
         const data = {
             ...formData,
@@ -148,6 +156,42 @@ const ApprovalLayer = () => {
             method: 'PATCH',
         });
         setFormErrors({});
+        setUpdateCount(prevCount => prevCount + 1);
+    };
+
+    const handleDelete = async () => {
+        // console.log(formData)
+        const endpoint = `api/pdsignatoryrpt/${zid}/${formData.xtypetrn}`;
+        await handleApiRequest({
+            endpoint,
+            method: 'DELETE',
+            onSuccess: (response) => {
+                setFormData({
+                    zid: zid,
+                    xrow: '',
+                    xtypetrn: '',
+                    xnofsignatory: '',
+                    xyesno: 'Yes'
+
+                });
+                setUpdateCount(prevCount => prevCount + 1);
+
+            },
+        });
+    };
+
+
+    const handleClear = async () => {
+        // console.log(formData)
+       
+                setFormData({
+                    zid: zid,
+                    xrow: '',
+                    xtypetrn: '',
+                    xnofsignatory: '',
+                    xyesno: 'Yes'
+
+                })
     };
 
 
@@ -161,8 +205,8 @@ const ApprovalLayer = () => {
                 <SideButtons
                     onAdd={handleAdd}
                     onUpdate={handleUpdate}
-                    onDelete={''}
-                    onClear={''}
+                    onDelete={handleDelete}
+                    onClear={handleClear}
                 />
             </div>
             <div className='col-span-11 '>
@@ -224,7 +268,7 @@ const ApprovalLayer = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/pdsignatoryrpt/${formData.zid}/${formData.xtypetrn}`;
+                                            const apiSearchUrl = `api/pdsignatoryrpt/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -239,20 +283,11 @@ const ApprovalLayer = () => {
                                         sx={{
                                             gridColumn: 'span 1',
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
                                                 fontSize: '.9rem'
                                             },
                                         }}
                                         value={formData.xrow}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -357,10 +392,11 @@ const ApprovalLayer = () => {
                                 >
 
                                     <div className='col-span-2 text-red-400'>
-                                0 => No Approval
-                                1 => 1 Layer Approval
-                                2 => 2 Layer Approval
+                                        0 =&gt; No Approval,
 
+                                        1 =&gt; 1 Layer Approval,
+
+                                        2 =&gt; 2 Layer Approval
                                     </div>
 
 
@@ -398,26 +434,25 @@ const ApprovalLayer = () => {
                             }}>
 
                                 <SortableList
-                                    // apiUrl={apiListUrl}
-
+                                    apiUrl={`api/pdsignatoryrpt/signatory/${formData.zid}`}
                                     caption="Approver Layers "
                                     columns={[
                                         { field: 'xrow', title: 'Serial', width: '5%', },
-                                        { field: 'xitem', title: 'Item', width: '10%' },
-                                        { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
-                                        { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
-                                        { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
+                                        { field: 'xtypetrn', title: 'Approval Type', width: '65%', align: 'center' },
+                                        { field: 'xnofsignatory', title: 'Signatory Number', width: '65%', align: 'center' },
+                                        { field: 'xyesno', title: 'Approval Mandatory?', width: '65%', align: 'center' }
+
                                     ]}
-                                    // onItemSelect={handleItemSelect}
-                                    // onRefresh={(refresh) => {
-                                    //     if (refreshTrigger) {
-                                    //         refresh();
-                                    //         setRefreshTrigger(false);
-                                    //     }
-                                    // }}
+                                    onItemSelect={handleItemSelect}
+                                    onRefresh={(refresh) => {
+                                        if (refreshTrigger) {
+                                            refresh();
+                                            setRefreshTrigger(false);
+                                        }
+                                    }}
                                     pageSize={10}
                                     // onSortChange={handleSortChange}
-                                    sortField="xgrnnum"
+                                    sortField="xrow"
                                     additionalParams={{}}
                                     captionFont=".9rem"
                                     xclass="py-4 pl-2"

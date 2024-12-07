@@ -16,6 +16,10 @@ public class ImtorDto {
     String xitem;
     String xitemname;
 
+    String xname;
+    String zauserid;
+
+
     public ImtorDto(){
 
     }
@@ -27,6 +31,17 @@ public class ImtorDto {
         this.xfwh = xfwh;
         this.xfwhdesc = xfwhdesc;
         this.xstatustor = xstatustor;
+    }
+
+
+    public ImtorDto(int zid, String xtornum, Date xdate, String xfwh, String xfwhdesc, String xstatustor, String xname) {
+        this.zid = zid;
+        this.xtornum = xtornum;
+        this.xdate = xdate;
+        this.xfwh = xfwh;
+        this.xfwhdesc = xfwhdesc;
+        this.xstatustor = xstatustor;
+        this.xname = xname;
     }
 
     public ImtorDto(int zid, String xtornum, Date xdate, String xfwh, String xfwhdesc, String xtwh, String xtwhdesc, String xstatustor, String xlong) {
@@ -41,7 +56,7 @@ public class ImtorDto {
         this.xlong = xlong;
     }
 
-
+// p.zid, p.xtornum, p.xdate, p.xfwh, x.xlong, p.xstatustor, pd.xname
     public int getZid() {
         return zid;
     }

@@ -8,6 +8,7 @@ import com.zaberp.zab.biwtabackend.model.Pdmst;
 import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.id.XcodesId;
 import com.zaberp.zab.biwtabackend.model.Xusers;
+import com.zaberp.zab.biwtabackend.service.CommonService;
 import com.zaberp.zab.biwtabackend.service.PdDependentService;
 import com.zaberp.zab.biwtabackend.service.PdmstService;
 import com.zaberp.zab.biwtabackend.service.XcodesService;
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pddependent")
-public class PdDependentController {
+@RequestMapping("/api/dependent")
+public class PdDependentController extends BaseController<PdDependent,PdDependentId>{
 
     private final PdDependentService service;
 
@@ -31,110 +32,29 @@ public class PdDependentController {
     @PostMapping
     public ResponseEntity<?> createPdDependent(@RequestBody PdDependent pdDependent) {
         // Ensure that the composite key is set
-        if (pdDependent.getZid() == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: Composite key (zid, xstaff) is missing.");
-        }
-
-        // Validate zid
-        if (pdDependent.getZid() == 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: 'zid' is mandatory.");
-        }
-
-        // Validate xstaff
-        if (pdDependent.getXstaff() == null || pdDependent.getXstaff().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Validation failed: Employee ID (xstaff) is missing.");
-        }
-
-        // Get the max xrow for the given zid and xstaff
+//        if (pdDependent.getZid() == 0) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body("Validation failed: Composite key (zid, xstaff) is missing.");
+//        }
+//        if (pdDependent.getZid() == 0) {
+//            return ResponseEntity.status(HttpStatus.MULTI_STATUS)
+//                    .body("Validation failed: 'zid' is mandatory.");
+//        }
+//        if (pdDependent.getXstaff() == null || pdDependent.getXstaff().isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Validation failed: Employee ID (xstaff) is missing.");
+//        }
         Integer maxXrow = service.getMaxXrowByZidAndXstaff(pdDependent.getZid(), pdDependent.getXstaff());
-
-        // Set xrow to maxXrow + 1 for the new record
+        System.out.println(maxXrow);
         pdDependent.setXrow(maxXrow + 1);
-
-        // Save the entity
         PdDependent savedPdDependent = service.save(pdDependent);
 
         return ResponseEntity.ok(savedPdDependent);
     }
 
-
-    @PutMapping
-    public ResponseEntity<?> updatePdDependent(
-            @RequestParam Integer zid,
-            @RequestParam String xstaff,
-            @RequestParam int xrow,
-            @RequestBody PdDependent updatedPdDependent) {
-
-
-        if (updatedPdDependent.getXrelation() == null || updatedPdDependent.getXrelation().isBlank()) {
-            return ResponseEntity.badRequest()
-                    .body("Validation failed: Relation field is required.");
-        }
-
-        // Create the composite key for PdDependent
-        PdDependentId id = new PdDependentId(zid, xstaff, xrow);
-
-        // Find the existing record by its composite key
-        return service.findById(id)
-                .map(existingPdDependent -> {
-
-                    updatedPdDependent.setZtime(existingPdDependent.getZtime()); // Retain existing ztime
-                    updatedPdDependent.setZutime(LocalDateTime.now()); // Set the updated time
-                    updatedPdDependent.setZauserid(existingPdDependent.getZauserid()); // Retain other necessary fields
-
-                    // Save the updated entity and return the response
-                    return ResponseEntity.ok(service.save(updatedPdDependent));
-                })
-                .orElse(ResponseEntity.notFound().build()); // Return not found if the entity doesn't exist
+    @Override
+    protected CommonService<PdDependent, PdDependentId> getService() {
+        return service;
     }
-
-
-    @DeleteMapping
-    public ResponseEntity<Void> deletePdDependent(
-            @RequestParam int zid,
-            @RequestParam String xstaff,@RequestParam int xrow) {
-        PdDependentId id = new PdDependentId(zid, xstaff,xrow);
-
-        if (service.findById(id).isPresent()) {
-            service.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
-    @GetMapping("/search")
-    public List<PdDependent> searchPdDependent(
-
-            @RequestParam Integer zid,
-            @RequestParam(required = false) String xstaff,
-            @RequestParam(required = false) String xrelation
-
-    ) {
-        return service.findPdDependent(zid,xstaff,xrelation);
-    }
-
-
-    @GetMapping("/searchtext")
-    public List<PdDependent> search(
-            @RequestParam("zid") Integer zid,
-            @RequestParam("searchText") String searchText
-    ) {
-        return service.searchByText(zid, searchText);
-    }
-
-
-    @GetMapping("/pddependents") public ResponseEntity<List<PdDependent>>
-    getPdDependents( @RequestParam("zid") int zid, @RequestParam("xstaff") String xstaff) {
-        List<PdDependent> pdDependents = service.findByZidAndXstaff(zid, xstaff);
-        return ResponseEntity.ok(pdDependents);
-    }
-
-
-
 }
 

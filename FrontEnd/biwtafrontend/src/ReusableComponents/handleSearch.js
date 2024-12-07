@@ -28,6 +28,7 @@ export const handleSearch = async (
 
     try {
         const results = await fetchSearchResults(query, apiEndpoint, fieldConfig);
+        // console.log(results)
         setSearchResults(results);
         setListOpen(true);
 

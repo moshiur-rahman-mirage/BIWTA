@@ -6,6 +6,7 @@ import com.zaberp.zab.biwtabackend.model.Caitem;
 import com.zaberp.zab.biwtabackend.model.PdDependent;
 import com.zaberp.zab.biwtabackend.model.Xcodes;
 import com.zaberp.zab.biwtabackend.service.CaitemService;
+import com.zaberp.zab.biwtabackend.service.CommonService;
 import com.zaberp.zab.biwtabackend.service.PrimaryKeyService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
-public class CaitemController {
+public class CaitemController extends BaseController<Caitem,CaitemId>{
 
     private final CaitemService caitemService;
     private final PrimaryKeyService primaryKeyService;
@@ -30,65 +31,15 @@ public class CaitemController {
         this.primaryKeyService = primaryKeyService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Caitem>> getAllItems() {
-        List<Caitem> items = caitemService.getAllItems();
-        return ResponseEntity.ok(items);
-    }
-
-
-
-
-
-    @GetMapping("/{zid}/{xitem}")
-    public ResponseEntity<Caitem> getItemById(
-            @PathVariable int zid,
-            @PathVariable String xitem) {
-        CaitemId id = new CaitemId(zid, xitem);
-        return caitemService.getItemById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
     @PostMapping
     public ResponseEntity<Caitem> createItem(@RequestBody Caitem caitem) {
         Caitem createdItem = caitemService.createItem(caitem);
         return ResponseEntity.ok(createdItem);
     }
 
-
-    @PutMapping("/{zid}/{xitem}")
-    public ResponseEntity<Caitem> updateItem(
-            @PathVariable int zid,
-            @PathVariable String xitem,
-            @RequestBody Caitem caitem) {
-        if (zid != caitem.getZid() || !xitem.equals(caitem.getXitem())) {
-            return ResponseEntity.badRequest().build();
-        }
-        caitem.setZutime(LocalDateTime.now());
-        caitem.setZuuserid(SecurityContextHolder.getContext().getAuthentication().getName());
-        Caitem updatedItem = caitemService.updateItem(caitem);
-        return ResponseEntity.ok(updatedItem);
-    }
-
-    @DeleteMapping("/{zid}/{xitem}")
-    public ResponseEntity<Void> deleteItem(
-            @PathVariable int zid,
-            @PathVariable String xitem) {
-        CaitemId id = new CaitemId(zid, xitem);
-        caitemService.deleteItem(id);
-        return ResponseEntity.noContent().build();
-    }
-
-
-    @GetMapping("/items/{zid}")
-    public Page<Caitem> getItems(
-            @PathVariable int zid,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "xitem") String sortBy,
-            @RequestParam(defaultValue = "true") boolean ascending) {
-        return caitemService.getItemsWithPaginationAndSorting(zid,page, size, sortBy, ascending);
+    @Override
+    protected CommonService<Caitem, CaitemId> getService() {
+        return caitemService;
     }
 
 
@@ -100,6 +51,4 @@ public class CaitemController {
         return caitemService.searchByText(zid, searchText);
 
     }
-
-
 }

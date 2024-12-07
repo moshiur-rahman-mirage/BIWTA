@@ -12,15 +12,16 @@ public class PogrnheaderXcusdto {
     private Date xdate;
     private String xcus;
     private String xorg;
+    private String xname;
     private String xwh;
     private String xlong;
     private String xstatus;
-    private String xstatusgrn;
+    private String xstatusdoc;
     private String zauserid;
 
     // Constructor matching the query projection
     public PogrnheaderXcusdto(int zid, String xgrnnum, Date xdate, String xcus, String xorg, String xwh,
-                              String xlong, String xstatus, String xstatusgrn, String zauserid) {
+                              String xlong, String xstatus, String xstatusdoc, String zauserid,String xname) {
         this.zid = zid;
         this.xgrnnum = xgrnnum;
         this.xdate = xdate;
@@ -29,8 +30,9 @@ public class PogrnheaderXcusdto {
         this.xwh = xwh;
         this.xlong = xlong;
         this.xstatus = xstatus;
-        this.xstatusgrn = xstatusgrn;
+        this.xstatusdoc = xstatusdoc;
         this.zauserid = zauserid;
+        this.xname=xname;
     }
 
     public PogrnheaderXcusdto() {
@@ -88,6 +90,14 @@ public class PogrnheaderXcusdto {
         return xlong;
     }
 
+    public String getXname() {
+        return xname;
+    }
+
+    public void setXname(String xname) {
+        this.xname = xname;
+    }
+
     public void setXlong(String xlong) {
         this.xlong = xlong;
     }
@@ -100,12 +110,12 @@ public class PogrnheaderXcusdto {
         this.xstatus = xstatus;
     }
 
-    public String getXstatusgrn() {
-        return xstatusgrn;
+    public String getXstatusdoc() {
+        return xstatusdoc;
     }
 
-    public void setXstatusgrn(String xstatusgrn) {
-        this.xstatusgrn = xstatusgrn;
+    public void setXstatusdoc(String xstatusdoc) {
+        this.xstatusdoc = xstatusdoc;
     }
 
     public String getZauserid() {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, CircularProgress, FormHelperText } from '@mui/material';
 import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
@@ -9,10 +9,13 @@ const XcodesDropDown = ({
     label,
     type,
     onSelect,
+    fontWeight,
     withXlong,
     defaultValue = '',
-    fontSize = '0.875rem', // Default font size for options
-    captionSize = '0.875rem', // Default font size for the label
+    helperText,
+    error,
+    fontSize = '0.875rem', 
+    captionSize = '0.875rem',
 }) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); // Store options fetched from API
@@ -64,7 +67,7 @@ const XcodesDropDown = ({
               shrink
                 sx={{
                     fontSize: '1rem',
-                    fontWeight: 600,
+                    fontWeight: {fontWeight},
                 }}
             >
                 {label}
@@ -103,6 +106,9 @@ const XcodesDropDown = ({
                     ))}
                 </Select>
             )}
+            {error && helperText && <FormHelperText sx={{ color: 'red' }}>
+                {helperText}
+            </FormHelperText>}
         </FormControl>
     );
 };

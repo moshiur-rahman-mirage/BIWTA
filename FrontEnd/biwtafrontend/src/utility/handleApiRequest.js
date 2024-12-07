@@ -15,49 +15,48 @@ export const handleApiRequest = async ({
     try {
       
         const config = {
-            method: method.toUpperCase(), // Ensure the method is uppercase
+            method: method.toUpperCase(),
             url: endpoint,
             headers,
-            params, // Only for GET, DELETE
-            data, // Only for POST, PUT, PATCH
+            params, 
+            data, 
         };
 
       
-
-        // Make the API request using axiosInstance
+      
         const response = await axiosInstance(config);
-
-        // Handle success response
+        
+       console.log(response)
         if (onSuccess) onSuccess(response);
 
-        // Display success SweetAlert with custom z-index
+        
         Swal.fire({
             icon: 'success',
             title: 'Success!',
             text: 'Operation completed successfully',
-            // Set z-index here to ensure it appears above other modals
+           
         });
         
     } catch (error) {
-        // Handle error
+       
         if (error.response && error.response.status === 400) {
-            const errorMessages = error.response.data;
-
+            const errorMessages = error.response.data.message;
+            console.log(errorMessages.message)
             if (typeof errorMessages === 'object') {
               
-                let formattedErrors = '';
-                for (const field in errorMessages) {
+                // let formattedErrors = '';
+                // for (const field in errorMessages) {
                     
-                    formattedErrors += `${field}: ${errorMessages[field].join(', ')}<br>`;
-                }
-                if (onValidationError) onValidationError(formattedErrors);
+                //     formattedErrors += `${field}: ${errorMessages[field]}<br>`;
+                // }
+                // if (onValidationError) onValidationError(formattedErrors);
                 
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Errors',
-                    html: formattedErrors,
+                    html: errorMessages,
                     confirmButtonText: 'Okay',
-                     // Set z-index here to ensure it appears above other modals
+                   
                 });
             } else {
                 Swal.fire({
@@ -65,7 +64,7 @@ export const handleApiRequest = async ({
                     title: 'Validation Errors',
                     text: errorMessages,
                     confirmButtonText: 'Okay',
-                     // Set z-index here to ensure it appears above other modals
+                    
                 });
             }
         } else {
@@ -77,7 +76,7 @@ export const handleApiRequest = async ({
                     title: 'Network Error',
                     text: 'The request took too long to respond. Please try again later.',
                     confirmButtonText: 'Okay',
-                     // Set z-index here to ensure it appears above other modals
+                    
                 });
             } else if (error.response && error.response.status >= 500) {
                 Swal.fire({
@@ -85,7 +84,7 @@ export const handleApiRequest = async ({
                     title: 'Server Error',
                     text: 'There was an issue with the server. Please try again later.',
                     confirmButtonText: 'Okay',
-                     // Set z-index here to ensure it appears above other modals
+                    
                 });
             } else {
                 Swal.fire({
@@ -93,7 +92,7 @@ export const handleApiRequest = async ({
                     title: error.code || 'Error',
                     html: errorMessages,
                     confirmButtonText: 'Okay',
-                     // Set z-index here to ensure it appears above other modals
+                    
                 });
             }
 

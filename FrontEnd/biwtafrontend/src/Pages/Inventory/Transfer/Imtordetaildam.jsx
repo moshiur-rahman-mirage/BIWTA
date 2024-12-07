@@ -34,13 +34,13 @@ const Imtordetaildam = ({ xtornum = '' }) => {
     const [isTyping, setIsTyping] = useState(false);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const apiBaseUrl = `api/imtordetails?zid=${zid}&xtornum=${xtornum}`;
+    const apiBaseUrl = `api/imtordetail?zid=${zid}&xtornum=${xtornum}`;
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [itemDropdownOpen, setItemDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [rect, setBoundingRect] = useState(null)
-    const apiListUrl = `api/imtordetails/${zid}/${xtornum}`
+    const apiListUrl = `api/imtordetail/${zid}/${xtornum}`
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -150,7 +150,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
         }
 
 
-        const endpoint = "/api/imtordetails";
+        const endpoint = "/api/imtordetail";
 
         await handleApiRequest({
             endpoint,
@@ -366,7 +366,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `http://localhost:8080/api/products/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `api/products/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,

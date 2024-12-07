@@ -29,6 +29,7 @@ public interface PdmstRepository extends JpaRepository<Pdmst, PdmstId>, JpaSpeci
 
     boolean existsByZidAndXmobile(Integer zid, String xmobile);
 
+    List <Pdmst> findByZidAndZactive(int zid,String zactive);
 
     Pdmst findByZidAndXposition(int zid, String xposition);
 }

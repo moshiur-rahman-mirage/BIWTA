@@ -22,6 +22,8 @@ import LoadingPage from '../Loading/Loading';
 import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import GenericList from '../../ReusableComponents/GenericList';
 import { dark } from '@mui/material/styles/createPalette';
+import { validateForm } from '../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 const Supplier = () => {
     // Authentication Context
@@ -51,6 +53,7 @@ const Supplier = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("Inactive");
     const [refreshCallback, setRefreshCallback] = useState(null);
@@ -65,7 +68,14 @@ const Supplier = () => {
 
     // Configuration
     const variant = 'standard';
-    const apiBaseUrl = `http://localhost:8080/api/cacus/${zid}/type/supplier`;
+    const apiBaseUrl = `api/cacus/${zid}/type/supplier`;
+
+    const addEndpoint = 'api/cacus';
+    const updateEndpoint = `api/cacus/update`;
+    const deleteEndpoint = `api/cacus/${zid}/transaction`;
+    // const searchEndPoint = `api/cacus/${zid}/search?searchText=${query}&searchFields=xcus,xorg,xmadd`;
+
+
     const fieldConfig = [
         { header: 'ID', field: 'xcus' },
         { header: 'Company Name', field: 'xorg' },
@@ -112,7 +122,7 @@ const Supplier = () => {
 
     useEffect(() => {
         if (selectedItem) {
-          
+
             setFormData({
                 ...selectedItem
             });
@@ -129,7 +139,7 @@ const Supplier = () => {
 
     const handleAdd = async () => {
 
-        const endpoint = 'api/cacus';
+        const endpoint = addEndpoint;
         const data = {
             ...formData,
             zauserid: zemail,
@@ -151,10 +161,10 @@ const Supplier = () => {
     }, []);
 
 
-    
+
 
     const handleItemSelect = useCallback((item) => {
-      
+
         setSelectedItem(item);
     }, []);
 
@@ -180,10 +190,14 @@ const Supplier = () => {
     };
 
     const handleDelete = async () => {
-        const endpoint = `api/cacus/${zid}/${formData.xcus}`;
+        const endpoint = deleteEndpoint;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
+            params: {
+                column: 'xcus',
+                transactionNumber: formData.xcus
+            },
             onSuccess: (response) => {
                 setFormData({
                     xcus: '',
@@ -201,33 +215,69 @@ const Supplier = () => {
                     xpaymenttype: '',
                     xcontact: '',
                     xtype: xtype,
-
                 });
                 setUpdateCount(prevCount => prevCount + 1);
-
             },
         });
     };
 
 
+
+
+
+
     const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xorg', 'xmadd']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
         setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/cacus?zid=${zid}&xcus=${formData.xcus}`;
-        const data = {
-            ...formData,
-            zid: zid
+
+        const tableName = "Cacus";
+        const updates = {
+            xorg: formData.xorg,
+            xmadd: formData.xmadd,
+            xemail: formData.xemail,
+            xphone: formData.xphone,
+            xmobile: formData.xmobile,
+            xfax: formData.xfax,
+            xbin: formData.xbin,
+            xstatus: formData.xstatus,
+            xlicense: formData.xlicense,
+            xtin: formData.xtin,
+            xircno: formData.xircono,
+            xpaymenttype: formData.xpaymenttype,
+            xcontact: formData.xcontact
+
         };
-     
+        const whereConditions = { xcus: formData.xcus, zid: zid };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
-            // onSuccess: (response) => {
-            //     setErrors({});
-            // },
         });
+        setFormErrors({});
     };
+
+
+
+
 
     // Render Loading Page if Necessary
     if (loading) {
@@ -299,11 +349,12 @@ const Supplier = () => {
                                     value={formData.xcus}
                                     variant={variant}
                                     fullWidth
-                                    
+
                                     onChange={(e) => {
                                         handleChange(e);
                                         const query = e.target.value;
-                                        const apiSearchUrl = `http://localhost:8080/api/cacus/search?zid=${zid}&text=${query}`;
+                                        const apiSearchUrl = `api/cacus/${zid}/search?searchText=${query}&searchFields=xcus,xorg,xmadd`;
+
                                         handleSearch(
                                             e.target.value,
                                             apiSearchUrl,
@@ -539,7 +590,7 @@ const Supplier = () => {
                     onRefresh={(refresh) => {
                         if (refreshTrigger) {
                             refresh();
-                            setRefreshTrigger(false); // Reset trigger after refreshing
+                            setRefreshTrigger(false);
                         }
                     }}
                     captionFont="3.9rem"

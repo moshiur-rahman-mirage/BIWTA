@@ -33,6 +33,7 @@ export const menuitems = [
           { title: "Job Title", to: "administrations/codes/jobtitle" },
           { title: "Employee Type", to: "administrations/codes/emptype" },
           { title: "Product Group", to: "administrations/codes/itemgroup" },
+          { title: "Product Category", to: "administrations/codes/itemcat" },
           { title: "Payment Type", to: "administrations/codes/paymenttype" },
         ],
       },
@@ -66,6 +67,7 @@ export const menuitems = [
           { title: "Product Receive", to: "inventory/grn/pogrndirect" },
           { title: "Current Product Stock", to: "inventory/grn/currentstock" },
           { title: "Current Product Stock Batch", to: "inventory/grn/batchstock" },
+          { title: "Product Receive Approval", to: "inventory/grnapproval/pogrnapp" },
         ],
       },
       {
@@ -73,6 +75,7 @@ export const menuitems = [
         to: "inventory/transfer",
         submenu: [
           { title: "Store Requisition", to: "inventory/transfer/imtorheader" },
+          { title: "Store Requisition Approval", to: "inventory/transfer/imtorheaderapp" },
           { title: "Issue From Store", to: "inventory/transfer/imtormoreqheader" },
           { title: "Receive From Store", to: "inventory/transfer/imtransfersr" },
           { title: "Product Damage", to: "inventory/transfer/imtorheaderdam" },

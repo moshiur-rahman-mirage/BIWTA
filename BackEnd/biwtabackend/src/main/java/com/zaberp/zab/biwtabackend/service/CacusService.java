@@ -1,50 +1,53 @@
 package com.zaberp.zab.biwtabackend.service;
 
-
 import com.zaberp.zab.biwtabackend.id.CacusId;
 import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.repository.CacusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
-public class CacusService {
+public class CacusService extends CommonServiceImpl<Cacus, CacusId> {
 
-
+    private final CacusRepository cacusRepository;
 
     @Autowired
-    private CacusRepository cacusRepository;
-
-
-
-
-    public List<Cacus> getAllCacus() {
-        return cacusRepository.findAll();
+    public CacusService(NamedParameterJdbcTemplate jdbcTemplate, CacusRepository cacusRepository) {
+        super(jdbcTemplate);
+        this.cacusRepository = cacusRepository;
     }
 
-    public Optional<Cacus> getCacusById(CacusId id) {
-        return cacusRepository.findById(id);
+    @Override
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return namedParameterJdbcTemplate;
     }
 
-    public Cacus save(Cacus cacus) {
-        System.out.println("why");
-        System.out.println(cacus.getZid());
-        return cacusRepository.save(cacus);
+    @Override
+    public JpaRepository<Cacus, CacusId> getRepository() {
+        return cacusRepository;
     }
 
-    public void deleteCacus(CacusId id) {
-        cacusRepository.deleteById(id);
+    @Override
+    protected String getTableName() {
+        return "Cacus";
     }
 
-    public List<Cacus> getCacusByZidAndXtype(int zid, String xtype) {
-        return cacusRepository.findByZidAndXtype(zid, xtype);
+    @Override
+    protected RowMapper<Cacus> getRowMapper() {
+
+        return new BeanPropertyRowMapper<>(Cacus.class);
     }
 
-    public List<Cacus> getBySearchTextAndZid(int zid,String search){
-        return cacusRepository.findBySearchTextAndZid(zid,search);
+    @Override
+    public Cacus save(Cacus entity) {
+        return cacusRepository.save(entity);
     }
+
+
+
+
 }
-

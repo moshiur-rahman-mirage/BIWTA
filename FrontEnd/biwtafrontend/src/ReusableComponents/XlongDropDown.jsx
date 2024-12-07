@@ -10,6 +10,7 @@ const XlongDropDown = ({
     type,
     onSelect,
     withXlong,
+    fontWeight,
     defaultValue = '',
     fontSize = '0.9rem', // Default font size for options
     captionSize = '0.875rem', // Default font size for the label
@@ -17,11 +18,11 @@ const XlongDropDown = ({
     helperText,
 }) => {
     const { zid } = useAuth();
-    const [options, setOptions] = useState([]); // Store options fetched from API
-    const [loading, setLoading] = useState(false); // Show loading indicator
-    const [selectedValue, setSelectedValue] = useState(defaultValue); // Track selected value
+    const [options, setOptions] = useState([]);
+    const [loading, setLoading] = useState(false); 
+    const [selectedValue, setSelectedValue] = useState(defaultValue);
 
-    // Fetch options dynamically based on type
+
     useEffect(() => {
         const fetchOptions = async () => {
             setLoading(true);
@@ -33,25 +34,23 @@ const XlongDropDown = ({
             } catch (error) {
                 console.error(`Error fetching ${type} options:`, error);
             } finally {
-                setLoading(false); // Hide loading indicator
+                setLoading(false); 
             }
         };
 
-        if (type) fetchOptions(); // Fetch only if type is provided
-    }, [type, zid]); // Add zid and type as dependencies
+        if (type) fetchOptions(); 
+    }, [type, zid]); 
 
-    // Update selected value when `value` prop changes
+
     useEffect(() => {
         if (value !== undefined) {
-            setSelectedValue(value); // Ensure the `value` prop is applied correctly
+            setSelectedValue(value); 
         }
     }, [value]);
 
     // Handle selection change
     const handleChange = (event) => {
-        // const newValue = event.target.value;
-        // setSelectedValue(newValue); // Update selected value
-        // if (onSelect) onSelect(newValue); // Call parent callback
+    
         const selectedXcode = event.target.value;
         const selectedOption = options.find(option => option.xcode === selectedXcode);
         setSelectedValue(selectedXcode); // Update selected value
@@ -66,7 +65,7 @@ const XlongDropDown = ({
             shrink
                 sx={{
                     fontSize: '1rem',
-                    fontWeight: 600,
+                    fontWeight: {fontWeight},
 
                 }}
             >
@@ -77,7 +76,7 @@ const XlongDropDown = ({
                 <CircularProgress size={24} sx={{ margin: 'auto' }} />
             ) : (
                 <Select
-                    value={selectedValue || ''} // Use selectedValue for the dropdown value
+                    value={selectedValue || ''} 
                     onChange={handleChange}
                     label={label}
                     // displayEmpty

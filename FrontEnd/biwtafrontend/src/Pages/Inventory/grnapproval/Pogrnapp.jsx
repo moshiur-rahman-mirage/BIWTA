@@ -23,7 +23,6 @@ import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import LoadingPage from '../../Loading/Loading';
 import SortableList from '../../../ReusableComponents/SortableList';
 import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
-import Pogrndetail from './pogrndetail';
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
@@ -31,10 +30,10 @@ import { validateForm } from '../../../ReusableComponents/validateForm';
 import GenericDropDown from '../../../ReusableComponents/GenericDropDown';
 
 
-const Pogrndirect = () => {
+const Pogrnapp = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
-    // console.log(zid, zemail)
+    console.log(zid, zemail)
     const [formData, setFormData] = useState({
         zid: zid,
         xgrnnum: '',
@@ -46,7 +45,6 @@ const Pogrndirect = () => {
         xstatus: 'Open',
         xstatusdoc:'',
         xnote: '',
-        xsign1: ''
 
 
     });
@@ -132,7 +130,7 @@ const Pogrndirect = () => {
     };
 
     const handleDropdownSelect = (fieldName, value) => {
-        // console.log(value)
+        console.log(value)
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
@@ -154,7 +152,7 @@ const Pogrndirect = () => {
            }));
     };
 
-    console.log(formData)
+    // console.log(formData)
 
 
     console.log(directFetch)
@@ -298,42 +296,6 @@ const Pogrndirect = () => {
     };
 
 
-    const handleUpdateBeforeConfirm = async () => {
-        const errors = validateForm(formData, ['xwh', 'xcus']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-        setUpdateCount(prevCount => prevCount + 1);
-    
-        const tableName = "Pogrnheader"; 
-        const updates ={ xsign1: formData.xsign1 }; 
-        const whereConditions = { xgrnnum: formData.xgrnnum, zid: zid }; 
-        
-        
-        
-        const data = {
-            tableName,
-            whereConditions, 
-            updates: updates,
-        };
-
-    
-        const endpoint = `api/pogrnheader/update`; 
-    
-        await handleApiRequest({
-            endpoint,
-            data,
-            method: 'PUT',
-        });
-    
-        setFormErrors({});
-    };
 
 
     
@@ -353,25 +315,24 @@ const Pogrndirect = () => {
 
 
 
-    const handleConfirm = async () => {
-        if (window.confirm('Are You Sure to Confirm This GRN?')) {
+    const handleApprove = async () => {
+        if (window.confirm('Are You Sure to Approve This GRN?')) {
             setStatus("Processing...");
-            handleUpdateBeforeConfirm();
-          
             const params = {
                 zid: 100000,
                 user: zemail,
                 position:zemail,
-                wh: formData.xwh,
                 tornum:formData.xgrnnum,
+                xstatusdoc:formData.xstatusdoc,
                 request:'GRN Approval'
             };
-
+            
             try {
 
-               const response = await axiosInstance.post("/api/pogrnheader/confirmRequest", params);
+               const response = await axiosInstance.post("/api/pogrnheader/approveRequest", params);
+               console.log(params)
                setStatus(response.data);
-
+               setUpdateCount(prevCount => prevCount + 1);
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -405,24 +366,7 @@ const Pogrndirect = () => {
                 <div className='col-span-1'>
                 </div>
                 <Button
-                    onClick={handleOpen}
-                    variant='outlined'
-                    sx={{
-                        marginLeft: 1,
-                        paddingX: 1,
-                        paddingY: 0.5,
-                        height: '2.5rem',
-                        '&:hover': {
-                            backgroundColor: '#F59E0B', // Yellow-600
-                        },
-                    }}
-                    size="medium"
-
-                >
-                    Detail
-                </Button>
-                <Button
-                    onClick={handleConfirm}
+                    onClick={handleApprove}
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
@@ -437,7 +381,7 @@ const Pogrndirect = () => {
                     size="medium"
 
                 >
-                    Confirm
+                    Approve
                 </Button>
             </div>
 
@@ -457,35 +401,14 @@ const Pogrndirect = () => {
                         onClear={handleClear}
                         onUpdate={handleUpdate}
                         onDelete={handleDelete}
+                        showAdd={false}
+                        showDelete={false}
+                        showUpdate={false}
                     />
                 </div>
 
 
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    disablePortal
-                    disableEnforceFocus
-                    disableAutoFocus
-                    disableScrollLock
-                >
-                    <Box sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "1300px", // Fixed width
-                        height: "500px", // Fixed height
-                        bgcolor: "background.paper",
-                        border: "2px solid #000",
-                        boxShadow: 24,
-                        borderRadius: "5px",
-                        p: 4,
-                        zIndex: 10,
-                    }}>
-                        <Pogrndetail xgrnnum={formData.xgrnnum} />
-                    </Box>
-                </Modal>
+              
                 {/* Modal */}
 
                 <Box sx={{
@@ -499,7 +422,7 @@ const Pogrndirect = () => {
 
                     <div className="shadow-lg rounded">
                         <div className="w-full  py-2 pt-0 mx-auto ">
-                            <Caption title="Product Receive Entry" />
+                            <Caption title="Product Receive Approval" />
                             <Box
                                 component="form"
                                 sx={{
@@ -647,7 +570,7 @@ const Pogrndirect = () => {
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSupUrl = `api/cacus/${zid}/search?searchText=${query}&searchFields=xcus,xorg,xmobile`
+                                            const apiSupUrl = `api/cacus/search?zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSupUrl,
@@ -891,7 +814,7 @@ const Pogrndirect = () => {
                         directFetch='Yes'
                         apiUrl={apiBaseUrl}
                         isFolded={false}
-                        caption="Open Product Receive Entry List"
+                        caption="Pending Receive Entry List for Approve"
                         columns={[
                             { field: 'xgrnnum', title: 'GRN Number', width: '25%', },
                             { field: 'xcus', title: 'Name', width: '25%' },
@@ -906,10 +829,11 @@ const Pogrndirect = () => {
                                 setRefreshTrigger(false);
                             }
                         }}
+                        
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"
-                        additionalParams={{ zid: zid, user: zemail,superior:'' }}
+                        additionalParams={{ zid: zid, superior: zemail }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"
@@ -951,4 +875,4 @@ const Pogrndirect = () => {
     );
 };
 
-export default Pogrndirect;
+export default Pogrnapp;

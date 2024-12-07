@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import Caption from '../utility/Caption';
 import axiosInstance from '../Middleware/AxiosInstance';
+import { useAuth } from '../Provider/AuthProvider';
 
 const SortableList = ({
-    directFetch,
     apiUrl,
     caption,
     columns,
@@ -33,6 +33,7 @@ const SortableList = ({
     isModal = false,
 }) => {
     const [items, setItems] = useState([]);
+    const { zid } = useAuth();
     const [filteredItems, setFilteredItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -48,15 +49,13 @@ const SortableList = ({
     const handleMouseLeave = () => setHoveredIndex(null);
 
     const constructApiUrl = useMemo(() => {
-        return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'asc'}`;
+        return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'desc'}`;
     }, [apiUrl, page, pageSize, xsortField, sortOrder]);
 
     const fetchData = async () => {
         setLoading(true);
         try {
             const response = await axiosInstance.get(constructApiUrl, { params: additionalParams });
-            console.log(response)
-            console.log(constructApiUrl)
             setItems(response.data.content || []);
             setFilteredItems(response.data.content || []);
             setxTotalPages(response.data.page.totalPages || 1);
@@ -66,6 +65,7 @@ const SortableList = ({
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         if (onRefresh) {
@@ -110,22 +110,23 @@ const SortableList = ({
             <Box display="flex" justifyContent="space-between" gap={2}>
             <TextField
                     sx={{
-                        height: '30px', // Adjust overall height
+                       
+                        height: '30px',
                         marginTop: '2px',
                         '& .MuiInputBase-root': {
                             height: '100%',
                             display: 'flex',
-                            alignItems: 'center', // Ensures the input content (including placeholder) is vertically centered
+                            alignItems: 'center', 
                         },
                         '& .MuiInputBase-input': {
-                            padding: '0', // Remove unnecessary padding
-                            height: '100%', // Ensure the input spans the full height
-                            lineHeight: '30px', // Match the line height to the TextField height
+                            padding: '0',
+                            height: '100%', 
+                            lineHeight: '30px', 
                             paddingLeft: '5px'
                         },
                         '& .MuiInputBase-input::placeholder': {
-                            color: 'gray', // Adjust placeholder color
-                            fontSize: '0.85rem', // Adjust placeholder font size
+                            color: 'gray', 
+                            fontSize: '0.85rem', 
                             verticalAlign: 'middle',
                             paddingLeft: '5px'
                         },
@@ -143,28 +144,28 @@ const SortableList = ({
 
 
                     <FormControl size="small" sx={{
-                        minWidth: 102, // Increase width by 2px (100 -> 102)
+                        minWidth: 102, 
                         height: '40px',
                         marginTop: '2px',
                         position: 'relative',
                         '& .MuiInputBase-root': {
-                            height: '30px', // Ensure the Select input matches the parent height
-                            lineHeight: '30px', // Align the text vertically
+                            height: '30px',
+                            lineHeight: '30px', 
                         },
                         '& .MuiSelect-select': {
-                            padding: '0 8px', // Adjust padding for consistent appearance
+                            padding: '0 8px', 
                             display: 'flex',
-                            alignItems: 'center', // Vertically center the dropdown content
+                            alignItems: 'center',
                         },
                     }}>
                         <InputLabel sx={{
                             position: 'absolute',
-                            top: '50%', // Vertically center
+                            top: '50%', 
                             transform: 'translateY(-75%)',
                             left: '35px',
 
-                            fontSize: '0.8rem', // Adjust font size if necessary
-                            paddingLeft: '4px', // Optional: Add padding for aesthetics
+                            fontSize: '0.8rem', 
+                            paddingLeft: '4px', 
                         }}>
                             Show
                         </InputLabel>
@@ -185,7 +186,7 @@ const SortableList = ({
 
             {!folded && (
                 <>
-                    <Grid container spacing={1} sx={{ borderBottom: '1px solid #ccc', padding: '8px 0' }}>
+                    <Grid container spacing={1} sx={{ padding: '2px 0' }}>
                         {columns.map((col, idx) => (
                             <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left' }}>
                                 <Typography
@@ -193,7 +194,8 @@ const SortableList = ({
                                     sx={{
                                         fontWeight: '600',
                                         cursor: 'pointer',
-                                        fontSize:'14px'
+                                        fontSize:'14px',
+                                        
                                     }}
                                     onClick={() => setSortField(col.field)}
                                 >
@@ -209,27 +211,31 @@ const SortableList = ({
                         <Typography>No items available</Typography>
                     ) : (
                         filteredItems.map((item, index) => (
+                         
                             <Box
                                 key={index}
                                 onClick={() => onItemSelect(item)}
                                 onMouseEnter={() => handleMouseEnter(index)}
                                 onMouseLeave={handleMouseLeave}
                                 sx={{
-                                    backgroundColor: hoveredIndex === index ? '#f0f0f0' : 'transparent',
+                                    backgroundColor: hoveredIndex === index 
+                                        ? '#B1B1B1' 
+                                        : (index % 2 === 0 ? '#f0f0f0' : '#ffffff'),
                                     cursor: 'pointer',
                                     padding: '8px 0',
+                                    
                                 }}
                             >
-                                <Grid container spacing={1}>
+                                <Grid container spacing={1} >
                                     {columns.map((col, idx) => (
-                                        <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left' }}>
-                                            <Typography sx={{ fontSize: bodyFont || '0.875rem' }}>
+                                        <Grid item xs={12 / columns.length} key={idx} style={{ textAlign: col.align || 'left'  }}>
+                                            <Typography sx={{ fontSize: bodyFont || '0.875rem'  }}>
                                                 {item[col.field] || 'N/A'}
                                             </Typography>
                                         </Grid>
                                     ))}
                                 </Grid>
-                                {index < filteredItems.length - 1 && <Divider />}
+                                {/* {index < filteredItems.length - 1 && <Divider />} */}
                             </Box>
                         ))
                     )}

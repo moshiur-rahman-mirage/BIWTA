@@ -15,6 +15,8 @@ import {
     FormLabel,
     Modal,
     Typography,
+    Checkbox,
+    FormGroup,
 } from '@mui/material';
 import HelmetTitle from '../../utility/HelmetTitle';
 import SideButtons from '../../Shared/SideButtons';
@@ -28,6 +30,8 @@ import axiosInstance from '../../Middleware/AxiosInstance';
 import DynamicDropdown from '../../ReusableComponents/DynamicDropdown';
 import { handleSearch } from '../../ReusableComponents/handleSearch';
 import { addFunction } from '../../ReusableComponents/addFunction';
+import { validateForm } from '../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 
 const Pdmsthrd = () => {
@@ -40,20 +44,16 @@ const Pdmsthrd = () => {
     });
 
     const fieldConfig = [
-        { header: 'ID', field: 'xstaff' },
+        { header: 'ID', field: 'xstaff', visible: false },
         { header: 'Salut', field: 'xsalute' },
         { header: 'Name', field: 'xname' },
         { header: 'Department', field: 'xdeptname' },
         { header: 'Designation', field: 'xdesignation' },
-        // { header: 'Mobile', field: 'xmobile' },
-        // { header: 'Employee Type', field: 'xemptype' },
-        // { header: 'Location', field: 'xlocation' },
-        // { header: 'Marital Status', field: 'xmstat' },
-        // { header: 'NID', field: 'xnid' },
     ];
 
     const { zid, zemail } = useAuth();
     const [searchResults, setSearchResults] = useState([]);
+
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [isTyping, setIsTyping] = useState(false); // To handle typing state
     const [selectedCode, setSelectedCode] = useState(''); // To store selected code
@@ -66,10 +66,10 @@ const Pdmsthrd = () => {
     const [errors, setErrors] = useState({});
     const [gender, setGender] = useState('Male');
     const [xstaff, setXstaff] = useState("");
-
+    const [formErrors, setFormErrors] = useState({});
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const triggerRef = useRef(null);
-    const apiBaseUrl = "http://localhost:8080/api/pdmst";
+    const apiBaseUrl = "api/employee";
     const variant = 'standard'
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
@@ -104,8 +104,12 @@ const Pdmsthrd = () => {
 
     });
 
-
-    const apiEndpoint = `/api/pdmst/searchtext?zid=100000&searchText={query}`;
+    const query = ''
+    const apiSearchUrl = `api/employee/${zid}/search?searchText=${query}&searchFields=xstaff,xname,xmobile`
+    const addEndpoint = 'api/employee';
+    const updateEndpoint = `api/employee/update`;
+    const deleteEndpoint = `api/employee/${zid}/transaction`;
+    const mainSideListEndpoint = `api/employee/${zid}/paginated`;
 
     useEffect(() => {
         if (zid && zemail) {
@@ -139,6 +143,15 @@ const Pdmsthrd = () => {
         setDropdownOpen(false);
     };
 
+    const handleCheckboxChange = (event) => {
+        const isChecked = event.target.checked; // Simplified logic
+        setFormData((prevState) => ({
+            ...prevState,
+            zid: zid,
+            zactive: isChecked ? 1 : 0,
+        }));
+    };
+
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -163,55 +176,100 @@ const Pdmsthrd = () => {
 
 
     const handleAdd = async () => {
-        const endpoint = 'api/pdmst';
+        const endpoint = addEndpoint;
 
         const data = {
             ...formData,
             ...dropdownValues,
             zauserid: zemail,
-            xposition: formData.xstaff,
             zid: zid,
         };
 
-        addFunction(data, endpoint, 'POST', (responseData) => {
-            if (responseData && responseData.xstaff) {
-                setXstaff(responseData.xstaff); // Update staffId state
-                setFormData((prev) => ({
-                    ...prev,
-                    xstaff: responseData.xstaff,
-                }));
-                // alert(`Employee added successfully with Staff ID: ${responseData.xstaff}`);
+
+
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xstaff) {
+                console.log(response)
+                setFormData((prev) => ({ ...prev, xstaff: response.xstaff }));
+                // setUpdateCount(prevCount => prevCount + 1);
             } else {
-                alert('Employee added successfully, but no staff ID was returned.');
+                // alert('Supplier added successfully.');
             }
         });
-    }
+
+    };
+
+
+
+
+
 
     const handleUpdate = async () => {
-        const endpoint = `api/pdmst?zid=${zid}&xstaff=${formData.xstaff}`;
-        const data = {
-            ...formData,
-            zid: zid
+        const errors = validateForm(formData, ['xmobile']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+        const tableName = "Pdmst";
+        const updates = {
+
+
+            xname: formData.xname,
+            xfstname: formData.xfstname,
+            xbirthdate: formData.xbirthdate,
+            xsalute: formData.xsalute,
+            xlastname: formData.xlastname,
+            xdeptname: formData.xdeptname,
+            xdesignation: formData.xdesignation,
+            // xposition: formData.xposition,
+            xmname: formData.xmname,
+            xsex: formData.xsex,
+            xnid: formData.xnid,
+            xreligion: formData.xreligion,
+            xmobile: formData.xmobile,
+            xemail: formData.xemail,
+            xjobtitle: formData.xjobtitle,
+            xlocation: formData.xlocation,
+            xregino: formData.xregino,
+            xprofdegree: formData.xprofdegree
+
         };
+        const whereConditions = { xstaff: formData.xstaff, zid: zid };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
-            onSuccess: (response) => {
-                setErrors({});
-            },
         });
+
+        setFormErrors({});
     };
 
 
     const handleDelete = async () => {
-        const endpoint = `api/pdmst?zid=${zid}&xstaff=${formData.xstaff}`;
+        const endpoint = deleteEndpoint;
         await handleApiRequest({
             endpoint,
             method: 'DELETE',
+            params: {
+                column: 'xstaff',
+                transactionNumber: formData.xstaff
+            },
             onSuccess: (response) => {
-                setErrors({});
                 setFormData({
                     xstaff: '',
                     xfstname: '',
@@ -276,18 +334,6 @@ const Pdmsthrd = () => {
 
 
 
-    // const handleDropdownSelect = (key, value) => {
-    //     setDropdownValues((prev) => {
-    //         const updatedDropdown = { ...prev, [key]: value };
-    //         // Update Full Name in formData
-    //         setFormData((prevForm) => ({
-    //             ...prevForm,
-    //             xname: `${updatedDropdown.xsalute || ''} ${prevForm.xfstname || ''} ${prevForm.xmname || ''} ${prevForm.xlastname || ''}`.trim(),
-    //         }));
-    //         return updatedDropdown;
-    //     });
-    // };
-
 
     const handleDropdownSelect = (fieldName, value) => {
         setFormData((prevState) => ({
@@ -310,7 +356,6 @@ const Pdmsthrd = () => {
                     onUpdate={handleUpdate}
                     onDelete={handleDelete}
                     onClear={handleClear}
-                // onShow={handleShow}
                 />
             </div>
             <div className='col-span-11 shadow-lg'>
@@ -319,10 +364,9 @@ const Pdmsthrd = () => {
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
-                        paddingX: 2, // equivalent to Tailwind's px-2
-                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
-                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        paddingX: 2,
+                        paddingY: 0.5,
+                        height: '2.5rem',
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
                         },
@@ -405,7 +449,7 @@ const Pdmsthrd = () => {
                                     InputLabelProps={{
                                         shrink: true,
                                         sx: {
-                                            fontWeight: 600, // Adjust font size here
+                                            fontWeight: 600,
                                         },
 
                                     }}
@@ -413,10 +457,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     fullWidth
                                     onChange={(e) => {
-                                        handleChange(e); // Handle form field value updates
+                                        handleChange(e);
+                                        const apiSearchUrl = `api/employee/${zid}/search?searchText=${e.target.value}&searchFields=xstaff,xname,xmobile`
                                         handleSearch(
                                             e.target.value,
-                                            apiEndpoint,
+                                            apiSearchUrl,
                                             fieldConfig,
                                             setSearchResults,
                                             setDropdownOpen,
@@ -556,8 +601,8 @@ const Pdmsthrd = () => {
                                         id="gender-label"
                                         size="small"
                                         sx={{
-                                            fontSize: '0.8rem', 
-                                            fontWeight:600
+                                            fontSize: '0.8rem',
+                                            fontWeight: 600
                                         }}
                                     >
                                         Gender
@@ -650,12 +695,9 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
-
                                     }}
                                     name="xdesignation"
+                                    fontWeight={600}
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdesignation", value)}
@@ -677,12 +719,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     name='xdeptname'
                                     label="Department"
+                                    fontWeight={600}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     type="Department"
@@ -697,12 +738,11 @@ const Pdmsthrd = () => {
                                     name="xreligion"
                                     variant={variant}
                                     label="Religion"
+                                    fontWeight={600}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600,
-                                        },
+                                        
                                     }}
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
@@ -734,12 +774,11 @@ const Pdmsthrd = () => {
                                     name="xmstat"
                                     variant={variant}
                                     label="Marital Status"
+                                    fontWeight={600}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     type="Marital Status"
@@ -771,7 +810,11 @@ const Pdmsthrd = () => {
                                     name='xmobile'
                                     onChange={handleChange}
                                     value={formData.xmobile}
-                                    variant={variant} fullWidth required />
+                                    variant={variant} fullWidth required
+                                    error={!!formErrors.xmobile}
+                                    helperText={formErrors.xmobile}
+                                />
+
                                 <TextField label="Email"
                                     size="small"
                                     InputLabelProps={{
@@ -793,11 +836,10 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
+                                    fontWeight={600}
                                     type="Job Title"
                                     onSelect={(value) => handleDropdownSelect("xjobtitle", value)}
                                     value={formData.xjobtitle}
@@ -814,12 +856,11 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     type="Job Location"
+                                    fontWeight={600}
                                     onSelect={(value) => handleDropdownSelect("xlocation", value)}
                                     value={formData.xlocation}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
@@ -843,12 +884,11 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     name="xemptype"
+                                    fontWeight={600}
                                     type="Employee Type"
                                     onSelect={(value) => handleDropdownSelect("xemptype", value)}
                                     value={formData.xemptype}
@@ -865,11 +905,10 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
+                                    fontWeight={600}
                                     // InputLabelProps={{ shrink: true }}
                                     variant={variant}
                                     fullWidth
@@ -880,11 +919,10 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
+                                    fontWeight={600}
                                     id="xprofdegree"
                                     name="xprofdegree"
                                     onChange={handleChange}
@@ -895,6 +933,33 @@ const Pdmsthrd = () => {
                                     sx={{ gridColumn: 'span 2' }}
                                 />
 
+
+                            </Stack>
+                            <Stack
+                                direction={{ xs: 'column', sm: 'row' }}
+                                // spacing={2} 
+                                mb={2}
+                                display="grid"
+                                gap={2}
+                                gridTemplateColumns="repeat(4, 1fr)"
+                            >
+
+                                <FormGroup >
+                                    <FormControlLabel control={<Checkbox
+                                        checked={formData.zactive || false}
+                                        onChange={handleCheckboxChange}
+                                        name="Activate?"
+                                        size='small'
+                                        color="primary"
+                                    />} label="Is Approver?"
+                                        sx={{
+                                            // size:'small',
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: '0.875rem',
+                                                fontWeight: '600',
+                                            }
+                                        }} />
+                                </FormGroup>
 
                             </Stack>
 

@@ -151,7 +151,7 @@ const Store = () => {
 
 
     const handleAdd = async () => {
-        const endpoint = 'http://localhost:8080/api/xcodes';
+        const endpoint = 'api/xcodes';
         const data = {
             ...formData,
             zid: zid,
@@ -181,7 +181,7 @@ const Store = () => {
 
 
     const handleUpdate = async () => {
-        const endpoint = `http://localhost:8080/api/xcodes?zid=${zid}&xtype=Branch&xcode=${formData.xcode}`;
+        const endpoint = `api/xcodes?zid=${zid}&xtype=Branch&xcode=${formData.xcode}`;
         const data = {
             ...formData,
             zid: zid,

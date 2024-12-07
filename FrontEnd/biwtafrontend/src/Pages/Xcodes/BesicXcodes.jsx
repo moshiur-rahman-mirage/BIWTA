@@ -105,9 +105,7 @@ const BesicXcodes = ({ title, xtype }) => {
             return;
         }
         try {
-            // const response = await axios.get(
-            //     `searchtext?zid=${zid}&xtype=${xtype}&searchText=${query}`
-            // );
+           
           
             const response = await axiosInstance.get(`api/xcodes/search?zid=${zid}&xtype=${xtype}&searchText=${query}`)
            

@@ -21,14 +21,26 @@ import XcodesDropDown from '../../ReusableComponents/XcodesDropDown';
 import { useAuth } from '../../Provider/AuthProvider';
 import { handleApiRequest } from '../../utility/handleApiRequest';
 import GenericList from '../../ReusableComponents/GenericList';
+import { addFunction } from '../../ReusableComponents/addFunction';
+import { validateForm } from '../../ReusableComponents/validateForm';
+import Swal from 'sweetalert2';
 
 const PdDependent = ({ xstaff, xname }) => {
-    const { zid } = useAuth();
+    const { zid, zemail } = useAuth();
     const variant = 'standard'
+
+    const addEndpoint = 'api/dependent';
+    const updateEndpoint = `api/dependent/update`;
+    const deleteEndpoint = `api/dependent/delete/details`;
+    const mainSideListEndpoint = `api/dependent/${zid}/paginated`;
+
+    const [updateCount, setUpdateCount] = useState(0);
     const [isTyping, setIsTyping] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+    const [selectedItem, setSelectedItem] = useState(null);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const apiBaseUrl = `api/pddependent/pddependents?zid=${zid}&xstaff=${xstaff}`;
+    const apiBaseUrl = `api/dependent/${zid}/rows`;
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
@@ -53,6 +65,19 @@ const PdDependent = ({ xstaff, xname }) => {
     };
 
 
+    const handleItemSelect = useCallback((item) => {
+        setSelectedItem(item);
+    }, []);
+
+    useEffect(() => {
+        if (selectedItem) {
+
+            setFormData({
+                ...selectedItem
+            });
+        }
+    }, [selectedItem]);
+
     const handleRefresh = useCallback(() => {
         if (refreshCallback) {
             refreshCallback(); // Call the fetch function from the child
@@ -67,6 +92,10 @@ const PdDependent = ({ xstaff, xname }) => {
         }
     }, [refreshTrigger, handleRefresh]);
 
+    useEffect(() => {
+        setRefreshTrigger(true);
+    }, [updateCount]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -78,55 +107,126 @@ const PdDependent = ({ xstaff, xname }) => {
     };
 
 
+    const handleAdd = async () => {
 
-    const handleAction = async (method) => {
-       
+        const errors = validateForm(formData, ['xname','xrelation','xgender']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
 
-
+        const endpoint = addEndpoint;
         const data = {
+            ...formData,
+            zemail: zemail,
+            xstaff, xstaff,
+            zid: zid
+        };
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xrow) {
+                console.log(response)
+                setFormData((prev) => ({ ...prev, xrow: response.xrow }));
+                setUpdateCount(prevCount => prevCount + 1);
+                setFormErrors({});
+            } else {
+                // alert('Supplier added successfully.');
+            }
+        });
+    };
 
-            zid: zid,
-            xstaff: xstaff,
-            zauserid: formData.zauserid,
-            xname: formData.xname,
-            xbirthdate: formData.xbirthdate,
+
+
+    const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xdesc', 'xgitem']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+        setUpdateCount(prevCount => prevCount + 1);
+
+        const tableName = "PdDependent";
+        const updates = {
             xgender: formData.xgender,
             xnid: formData.xnid,
             xcontact: formData.xcontact,
             xrelation: formData.xrelation,
+            xbirthdate: formData.xbirthdate,
+            xname: formData.xname,
+
+
 
         };
+        const whereConditions = { xstaff: formData.xstaff, xrow: formData.xrow, zid: zid };
 
-   
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
 
-        const endpoint = "/api/pddependent";
+
+        const endpoint = updateEndpoint;
 
         await handleApiRequest({
             endpoint,
             data,
-            method,
-            onSuccess: (response) => {
-            handleRefresh();  
-                setRefreshTrigger(true);
-                if (method === 'DELETE') {
-
-                    setFormData({
-                        zid: zid,
-                        zauserid: '',
-                        xstaff: '',
-                        xgender: '',
-                        xnid: '',
-                        xcontact: '',
-                        xrelation: '',
-                        xbirthdate: '',
-                        xname: '',
-                        xrow: 0
-                    });
-                }
-
-            },
+            method: 'PUT',
         });
+
+        setFormErrors({});
     };
+
+
+    const handleDelete = async () => {
+        const endpoint = deleteEndpoint;
+        const params = {
+            zid: zid,
+            column: 'xstaff',
+            transactionNumber: formData.xstaff,
+            row: formData.xrow
+        };
+    
+        try {
+            
+            const response = await handleApiRequest({
+                endpoint,
+                method: 'DELETE',
+                params: params,
+            });
+    
+           
+            setFormData({
+                zauserid: '',
+                xstaff: '',
+                xgender: '',
+                xnid: '',
+                xcontact: '',
+                xrelation: '',
+                xbirthdate: '',
+                xname: '',
+                xrow: ''  // Ensure xrow is reset properly
+            });
+            setUpdateCount(prevCount => prevCount + 1);  
+    
+        } catch (error) {
+          
+            console.error("Delete failed:", error);
+          
+        }
+    };
+    
+
+
 
     const handleOnRefresh = useCallback((refreshFn) => {
         setRefreshCallback(() => refreshFn);
@@ -137,11 +237,9 @@ const PdDependent = ({ xstaff, xname }) => {
         <div className='grid grid-cols-12 gap-5 z-40'>
             <div className="">
                 <SideButtons
-                    onAdd={() => handleAction('POST')}
-                    onUpdate={() => handleAction('PUT')}
-                    onDelete={() => handleAction('DELETE')}
-                //  onClear={handleClear}
-                // onShow={handleShow}
+                    onAdd={handleAdd}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
                 />
             </div>
             <div className='col-span-11 '>
@@ -186,13 +284,15 @@ const PdDependent = ({ xstaff, xname }) => {
                                         label="Family member Name"
                                         name='xname'
                                         variant={variant}
+                                        error={!!formErrors.xname}  
+                                        helperText={formErrors.xname}
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
                                                 fontWeight: 600, // Adjust font size here
                                             },
-    
+
                                         }}
                                         onChange={handleChange}
                                         value={formData.xname}
@@ -215,7 +315,7 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-    
+
                                         }}
                                         onChange={handleChange}
                                         value={formData.xbirthdate}
@@ -240,21 +340,23 @@ const PdDependent = ({ xstaff, xname }) => {
                                     mb={2} // margin-bottom
                                 >
                                     <XcodesDropDown
-                                        id='xsex'
-                                        name='xsex'
+                                        id='xgender'
+                                        name='xgender'
                                         variant={variant}
                                         label="Gender"
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-    
+
                                         }}
                                         type="Gender"
-                                        apiUrl={apiBaseUrl}
+
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
-                                        fontSize="0.9rem" // Smaller font size for dropdown options
+                                        fontSize="0.9rem" 
                                         captionSize="0.9rem"
+                                        error={!!formErrors.xgender}  
+                                        helperText={formErrors.xgender}
 
 
                                     />
@@ -269,13 +371,15 @@ const PdDependent = ({ xstaff, xname }) => {
                                             size="small"
                                             InputLabelProps={{
                                                 shrink: true,
-        
+
                                             }}
                                             type="Relation"
                                             name='xrelation'
                                             onSelect={(value) => handleDropdownSelect("xrelation", value)}
                                             value={formData.xrelation}
                                             defaultValue=""
+                                            error={!!formErrors.xrelation}  
+                                            helperText={formErrors.xrelation}
                                         />
 
                                     </Stack>
@@ -296,10 +400,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-                                            sx:{
-                                                fontWeight:600
+                                            sx: {
+                                                fontWeight: 600
                                             }
-    
+
                                         }}
                                         onChange={handleChange}
                                         value={formData.xnid}
@@ -324,10 +428,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-                                            sx:{
-                                                fontWeight:600
+                                            sx: {
+                                                fontWeight: 600
                                             }
-    
+
                                         }}
                                         fullWidth
                                         name='xcontact'
@@ -358,12 +462,17 @@ const PdDependent = ({ xstaff, xname }) => {
                                     apiUrl={apiBaseUrl}
                                     caption="Dependents List"
                                     columns={[
+                                       
                                         { field: 'xname', title: 'Name', width: '40%' },
                                         { field: 'xrelation', title: 'Relation', width: '30%' },
                                         { field: 'xcontact', title: 'Contact?', width: '30%', align: 'center' },
                                     ]}
-                                    //  additionalParams={{ zid: zid,xrelation:xrelation }}
-                                    onItemSelect={(item) => console.log('Selected Item:', item)}
+                                    additionalParams={{
+                                        zid: zid,
+                                        column: 'xstaff',
+                                        transactionNumber: xstaff
+                                    }}
+                                    onItemSelect={handleItemSelect}
                                     onRefresh={handleOnRefresh}
                                     captionFont="3.9rem"
                                     bodyFont=".9rem"

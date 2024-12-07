@@ -57,7 +57,7 @@ const User = () => {
     const variant = 'standard';
     const apiBaseUrl = `api/xusers/search?zid=${zid}&searchtext={query}`;
     const apiSearchUrl = apiBaseUrl
-    const apiStaffUrl = `/api/pdmst/searchtext?zid=${zid}&searchText={query}`;
+    const apiStaffUrl = `/api/employee/searchtext?zid=${zid}&searchText={query}`;
     const fieldConfig = [
         { header: 'Login ID', field: 'zemail' },
         { header: 'Store', field: 'xwh' },

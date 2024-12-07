@@ -4,13 +4,11 @@ package com.zaberp.zab.biwtabackend.service;
 import com.zaberp.zab.biwtabackend.dto.ImtordetailDto;
 import com.zaberp.zab.biwtabackend.id.ImtordetailId;
 import com.zaberp.zab.biwtabackend.model.Imtordetail;
-import com.zaberp.zab.biwtabackend.model.PdDependent;
 import com.zaberp.zab.biwtabackend.repository.ImtordetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,8 +22,8 @@ public class ImtordetailService extends CommonServiceImpl<Imtordetail,Imtordetai
     private ImtordetailRepository repository;
 
     @Override
-    protected NamedParameterJdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return namedParameterJdbcTemplate;
     }
 
     @Override

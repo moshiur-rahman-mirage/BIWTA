@@ -1,12 +1,8 @@
 package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.PdmstId;
-import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Pdmst;
 import com.zaberp.zab.biwtabackend.repository.PdmstRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PdmstService extends CommonServiceImpl<Pdmst, PdmstId> {
@@ -29,8 +24,8 @@ public class PdmstService extends CommonServiceImpl<Pdmst, PdmstId> {
     }
 
     @Override
-    protected NamedParameterJdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return namedParameterJdbcTemplate;
     }
 
     @Override

@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
 import { validateForm } from '../../../ReusableComponents/validateForm';
 import SortableList from '../../../ReusableComponents/SortableList';
 import Imtordetail from './Imtordetail';
+import GenericDropDown from '../../../ReusableComponents/GenericDropDown';
 
 
 const Imtorheader = () => {
@@ -153,6 +154,11 @@ const Imtorheader = () => {
                 updatedState.xtwhdesc = value.xlong;
             }
 
+            if (fieldName === 'xsign1') {
+                updatedState.xsign1 = value;
+
+            }
+
             return updatedState;
         });
     };
@@ -200,7 +206,7 @@ const Imtorheader = () => {
             zauserid: zemail,
             zid: zid
         };
-       
+
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xtornum) {
 
@@ -640,7 +646,7 @@ const Imtorheader = () => {
                                         onSelect={(value) => handleDropdownSelect("xtwh", value)}
                                         value={formData.xtwh}
                                         defaultValue=""
-                                        error={!!formErrors.xtwh}  
+                                        error={!!formErrors.xtwh}
                                         helperText={formErrors.xtwh}
                                         withXlong="false"
                                         InputLabelProps={{
@@ -744,6 +750,37 @@ const Imtorheader = () => {
 
 
                                 </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2}
+                                >
+
+                                    <GenericDropDown
+                                        variant={variant}
+                                        label="Next Approver"
+                                        api={`api/pdmst/approver/100000`}
+                                        xpkey="xstaff"
+                                        xskey="xname"
+                                        onSelect={(value) => handleDropdownSelect("xsign1", value)}
+                                        value={formData.xsign1}
+                                        size="small"
+                                        defaultValue=""
+                                        sx={{
+                                            gridColumn: 'span 2', // Span 2 columns in the grid
+                                        }}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+
+                                            },
+                                        }}
+                                    />
+
+
+                                </Box>
 
                             </Box>
                         </div>
@@ -813,6 +850,7 @@ const Imtorheader = () => {
                         page={1}
                     />
                 </Box>
+
             </div >
         </div>
     );

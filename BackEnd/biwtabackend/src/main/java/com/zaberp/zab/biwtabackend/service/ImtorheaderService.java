@@ -2,19 +2,15 @@ package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.dto.ImtorDto;
 import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
-import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
 import com.zaberp.zab.biwtabackend.repository.ImtorheaderRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,8 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class ImtorheaderService extends CommonServiceImpl<Imtorheader, ImtorheaderId> {
@@ -96,7 +90,7 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
             parameters.addValue("len", len);
 
             // Execute the query
-            jdbcTemplate.update(sql, parameters);
+            namedParameterJdbcTemplate.update(sql, parameters);
 
             return "Procedure executed successfully!";
         } catch (Exception e) {
@@ -124,7 +118,7 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
             parmeters.addValue("xstatustor",xstatustor);
 
 
-            jdbcTemplate.update(sql, parmeters);
+            namedParameterJdbcTemplate.update(sql, parmeters);
             return "Procedure executed successfully!";
         } catch (Exception e) {
             throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
@@ -157,8 +151,8 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
     }
 
     @Override
-    protected NamedParameterJdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return namedParameterJdbcTemplate;
     }
 
     @Override

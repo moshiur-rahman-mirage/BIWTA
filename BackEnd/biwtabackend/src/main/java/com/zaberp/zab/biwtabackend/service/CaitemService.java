@@ -46,7 +46,7 @@ public class CaitemService extends CommonServiceImpl<Caitem, CaitemId> {
     }
 
     @Override
-    protected NamedParameterJdbcTemplate getJdbcTemplate() {
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
         return jdbcTemplate;
     }
 

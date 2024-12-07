@@ -112,63 +112,6 @@ import java.util.*;
 
 
 
-        public String confirmRequest(int zid, String user, String position,String wh,String tornum,String request) {
-            System.out.println("Executing procedure with params:");
-            System.out.println("zid: " + zid + ", user: " + user + ", tornum: " + tornum + ", wh: " + wh+", position "+position );
-
-            try {
-                // Prepare the SQL query
-                String sql = "EXEC zabsp_Confirmed_Request_SAS @zid = ?, @user = ?, @position=?,@wh=?,@tornum=?,@request=?";
-
-                // Execute the query with parameter binding
-                jdbcTemplate.update(sql, zid, user, position, wh, tornum,request);
-
-                return "Procedure executed successfully!";
-            } catch (Exception e) {
-                throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
-            }
-        }
-
-
-    public String approveRequest(int zid, String user, String position, String tornum, int ypd, String status, String aprcs) {
-        System.out.println("here in service");
-
-        try {
-            SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-                    .withProcedureName("zabsp_apvprcs_SME")
-                    .declareParameters(
-                            new SqlParameter("zid", Types.INTEGER),
-                            new SqlParameter("user", Types.VARCHAR),
-                            new SqlParameter("position", Types.VARCHAR),
-                            new SqlParameter("reqnum", Types.VARCHAR),
-                            new SqlParameter("ypd", Types.INTEGER),
-                            new SqlParameter("status", Types.VARCHAR),
-                            new SqlParameter("aprcs", Types.VARCHAR)
-                    );
-
-            SqlParameterSource inParams = new MapSqlParameterSource()
-                    .addValue("zid", zid)
-                    .addValue("user", user)
-                    .addValue("position", position)
-                    .addValue("reqnum", tornum)
-                    .addValue("ypd", ypd)
-                    .addValue("status", status)
-                    .addValue("aprcs", aprcs);
-
-            jdbcCall.execute(inParams);
-
-            return "Procedure executed successfully!";
-        } catch (Exception e) {
-            System.out.println(e);
-            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
-        }
-
-    }
-
-
-
-
-
 
     }
 

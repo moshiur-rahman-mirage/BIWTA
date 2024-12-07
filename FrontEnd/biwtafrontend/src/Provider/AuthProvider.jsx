@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     const fetchUserData = async (token) => {
         try {
             const response = await axios.get(
-                `api/pdmst/search?zid=${authState.zid}&xstaff=${authState.zemail}`,
+                `api/employee/search?zid=${authState.zid}&xstaff=${authState.zemail}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

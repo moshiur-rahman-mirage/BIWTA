@@ -66,7 +66,7 @@ const ApprovalLayer = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-        console.log(item)
+        // console.log(item)
         setFormData((prev) => ({
             ...prev,
             xrow: item.xrow, xtypetrn: item.xtypetrn, xnofsignatory: item.xnofsignatory, xyesno: item.xyesno
@@ -80,7 +80,7 @@ const ApprovalLayer = () => {
 
 
     const handleDropdownSelect = (fieldName, value) => {
-        console.log(fieldName, value);
+        // console.log(fieldName, value);
 
         setFormData((prevState) => {
             const updatedState = { ...prevState, [fieldName]: value };

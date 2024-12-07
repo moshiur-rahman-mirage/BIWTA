@@ -26,7 +26,7 @@ const GenericDropDown = ({
                 const response = await axiosInstance.get(api);
                 const data = response.data || [];
                 console.log(data)
-                setOptions(data); // Store the API response
+                setOptions(data); 
             } catch (error) {
                 console.error(`Error fetching data:`, error);
             } finally {

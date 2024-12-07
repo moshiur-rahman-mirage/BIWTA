@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log(config)
+    // console.log(config)
     const token = localStorage.getItem('token'); // Retrieve token from localStorage
     if (token) {
       config.headers.Authorization = `Bearer ${token}`; // Attach the token
@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
 axiosInstance.getWithParams = async (url, params = {}) => {
   try {
     const response = await axiosInstance.get(url, { params }); // Attach params
-    console.log(response)
+    // console.log(response)
     return response.data; // Return the response data directly
   } catch (error) {
     console.error('GET Request failed:', error);
@@ -46,9 +46,9 @@ axiosInstance.getWithParams = async (url, params = {}) => {
 
 axiosInstance.postWithBody = async (url, body = {}) => {
   try {
-    console.log("Post is called")
+    // console.log("Post is called")
     const response = await axiosInstance.post(url, body); // Attach body to POST request
-    // console.log(response);
+   
     return response.data; // Return the response data directly
   } catch (error) {
     console.error('POST Request failed:', error);

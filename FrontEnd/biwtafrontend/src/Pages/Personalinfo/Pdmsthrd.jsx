@@ -69,7 +69,7 @@ const Pdmsthrd = () => {
     const [formErrors, setFormErrors] = useState({});
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const triggerRef = useRef(null);
-    const apiBaseUrl = "api/pdmst";
+    const apiBaseUrl = "api/employee";
     const variant = 'standard'
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);

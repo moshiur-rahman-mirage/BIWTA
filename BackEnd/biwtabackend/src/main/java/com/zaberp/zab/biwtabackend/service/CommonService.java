@@ -15,9 +15,10 @@ public interface CommonService<T,Id> {
     Iterable<T> findByZid(int zid);
     public List<T> findRowsOfTransaction(int zid, String transactionNumberColumn, String transactionNumber);
     JpaRepository<T, Id> getRepository();
+    public String approveRequest(int zid, String user, String position, String tornum, int ypd, String status, String aprcs);
     public void deleteByConditions(int zid,String column,String transactionNumber,int row);
     public void deleteByZidAndTransactionNumber(int zid,String column,String transactionNumber);
-
+    public String confirmRequest(int zid, String user, String position,String wh,String tornum,String request);
     public Page<T> findByZidWithPaginationAndSorting(int zid, int page, int size, String sortBy, boolean ascending);
     public Page<T> findByZidAndTrnnumWithPaginationAndSorting(int zid,String trnnum, int page, int size, String sortBy, boolean ascending);
     public Page<T> findByZidAndOtherWithPaginationAndSorting(int zid,String columnName,String columnValue, int page, int size, String sortBy, boolean ascending);

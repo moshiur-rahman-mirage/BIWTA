@@ -1,6 +1,5 @@
 package com.zaberp.zab.biwtabackend.service;
 
-import com.zaberp.zab.biwtabackend.model.Caitem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -9,9 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
+import java.sql.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,8 +25,12 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
 
     @Autowired
-    protected NamedParameterJdbcTemplate jdbcTemplate;
-    protected abstract NamedParameterJdbcTemplate getJdbcTemplate();
+    protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    protected abstract NamedParameterJdbcTemplate getNamedParameterJdbcTemplate();
 
     @Override
     public abstract JpaRepository<T, ID> getRepository();
@@ -30,13 +38,14 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     @Autowired
     private EntityManager entityManager;
 
-    public CommonServiceImpl(){
 
+
+    public CommonServiceImpl(){
     }
 
     @Autowired
-    public CommonServiceImpl(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public CommonServiceImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
@@ -45,7 +54,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
                 " WHERE zid = :zid AND " + transactionNumberColumn + " = :transactionNumber";
         Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber);
 
-        return jdbcTemplate.query(sql, params, getRowMapper()).stream().findFirst();
+        return namedParameterJdbcTemplate.query(sql, params, getRowMapper()).stream().findFirst();
     }
 
     @Override
@@ -55,7 +64,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
         Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber);
 
-        return jdbcTemplate.query(sql, params, getRowMapper());
+        return namedParameterJdbcTemplate.query(sql, params, getRowMapper());
     }
 
     public Page<T> findByZidAndTrnnumWithPaginationAndSorting(int zid,String trnnum, int page, int size, String sortBy, boolean ascending){
@@ -68,14 +77,14 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     public Iterable<T> findByZid(int zid) {
         String sql = "SELECT * FROM " + getTableName() + " WHERE zid = :zid";
         Map<String, Object> params = Map.of("zid", zid);
-        return jdbcTemplate.query(sql, params, getRowMapper());
+        return namedParameterJdbcTemplate.query(sql, params, getRowMapper());
     }
 
     @Override
     public void deleteByZidAndTransactionNumber(int zid,String column,String transactionNumber) {
         String sql = "DELETE FROM " + getTableName() + " WHERE zid = :zid AND " + column + " = :transactionNumber";
         Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber);
-        jdbcTemplate.update(sql, params);
+        namedParameterJdbcTemplate.update(sql, params);
     }
 
 
@@ -102,7 +111,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     public void deleteByConditions(int zid,String column,String transactionNumber,int row) {
         String sql = "DELETE FROM " + getTableName() + " WHERE zid = :zid AND " + column + " = :transactionNumber and xrow = :row ";
         Map<String, Object> params = Map.of("zid", zid, "transactionNumber", transactionNumber,"row",row);
-        jdbcTemplate.update(sql, params);
+        namedParameterJdbcTemplate.update(sql, params);
     }
 
     @Override
@@ -117,10 +126,10 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
                 "size", size,
                 "offset", offset
         );
-        List<T> content = jdbcTemplate.query(sql, params, getRowMapper());
+        List<T> content = namedParameterJdbcTemplate.query(sql, params, getRowMapper());
 
         String countSql = "SELECT COUNT(1) FROM " + getTableName() + " WHERE zid = :zid";
-        int totalCount = jdbcTemplate.queryForObject(countSql, Map.of("zid", zid), Integer.class);
+        int totalCount = namedParameterJdbcTemplate.queryForObject(countSql, Map.of("zid", zid), Integer.class);
         Pageable pageable = PageRequest.of(page, size, Sort.by(ascending ? Sort.Order.asc(sortBy) : Sort.Order.desc(sortBy)));
         return new PageImpl<>(content, pageable, totalCount);
     }
@@ -154,14 +163,14 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
         params.put("size", size);
         params.put("offset", offset);
 
-        List<T> content = jdbcTemplate.query(sql.toString(), params, getRowMapper());
+        List<T> content = namedParameterJdbcTemplate.query(sql.toString(), params, getRowMapper());
 
         StringBuilder countSql = new StringBuilder("SELECT COUNT(1) FROM " + getTableName() + " WHERE zid = :zid");
         if (columnName != null && columnValue != null) {
             countSql.append(" AND ").append(columnName).append(" = :").append(columnName);
         }
 
-        int totalCount = jdbcTemplate.queryForObject(countSql.toString(), params, Integer.class);
+        int totalCount = namedParameterJdbcTemplate.queryForObject(countSql.toString(), params, Integer.class);
         Pageable pageable = PageRequest.of(page, size, Sort.by(ascending ? Sort.Order.asc(sortBy) : Sort.Order.desc(sortBy)));
 
         return new PageImpl<>(content, pageable, totalCount);
@@ -186,7 +195,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
         );
         try {
 
-            List<T> results = getJdbcTemplate().query(sql, params, getRowMapper());
+            List<T> results = getNamedParameterJdbcTemplate().query(sql, params, getRowMapper());
             System.out.println(results);
             return results.isEmpty() ? Collections.emptyList() : results;
         } catch (Exception e) {
@@ -299,6 +308,64 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
             throw e;
         }
     }
+
+
+
+
+    public String confirmRequest(int zid, String user, String position,String wh,String tornum,String request) {
+        System.out.println("Executing procedure with params:");
+        System.out.println("zid: " + zid + ", user: " + user + ", tornum: " + tornum + ", wh: " + wh+", position "+position );
+
+        try {
+            // Prepare the SQL query
+            String sql = "EXEC zabsp_Confirmed_Request_SAS @zid = ?, @user = ?, @position=?,@wh=?,@tornum=?,@request=?";
+
+            // Execute the query with parameter binding
+            jdbcTemplate.update(sql, zid, user, position, wh, tornum,request);
+
+            return "Procedure executed successfully!";
+        } catch (Exception e) {
+            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
+        }
+    }
+
+
+    public String approveRequest(int zid, String user, String position, String tornum, int ypd, String status, String aprcs) {
+        System.out.println("here in service");
+
+        try {
+            SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                    .withProcedureName("zabsp_apvprcs_SME")
+                    .declareParameters(
+                            new SqlParameter("zid", Types.INTEGER),
+                            new SqlParameter("user", Types.VARCHAR),
+                            new SqlParameter("position", Types.VARCHAR),
+                            new SqlParameter("reqnum", Types.VARCHAR),
+                            new SqlParameter("ypd", Types.INTEGER),
+                            new SqlParameter("status", Types.VARCHAR),
+                            new SqlParameter("aprcs", Types.VARCHAR)
+                    );
+
+            SqlParameterSource inParams = new MapSqlParameterSource()
+                    .addValue("zid", zid)
+                    .addValue("user", user)
+                    .addValue("position", position)
+                    .addValue("reqnum", tornum)
+                    .addValue("ypd", ypd)
+                    .addValue("status", status)
+                    .addValue("aprcs", aprcs);
+
+            jdbcCall.execute(inParams);
+
+            return "Procedure executed successfully!";
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new RuntimeException("Error executing procedure: " + e.getMessage(), e);
+        }
+
+    }
+
+
 
 
 

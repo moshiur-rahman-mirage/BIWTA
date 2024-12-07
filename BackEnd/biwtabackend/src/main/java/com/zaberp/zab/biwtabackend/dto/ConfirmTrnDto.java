@@ -2,7 +2,7 @@ package com.zaberp.zab.biwtabackend.dto;
 
 import java.util.Date;
 
-public class ConfirmGrnDto {
+public class ConfirmTrnDto {
 
     private int zid;
     private String zemail;

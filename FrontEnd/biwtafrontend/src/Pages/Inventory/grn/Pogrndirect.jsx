@@ -34,7 +34,7 @@ import GenericDropDown from '../../../ReusableComponents/GenericDropDown';
 const Pogrndirect = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
-    console.log(zid, zemail)
+    // console.log(zid, zemail)
     const [formData, setFormData] = useState({
         zid: zid,
         xgrnnum: '',
@@ -132,7 +132,7 @@ const Pogrndirect = () => {
     };
 
     const handleDropdownSelect = (fieldName, value) => {
-        console.log(value)
+        // console.log(value)
         setFormData((prevState) => ({
             ...prevState,
             [fieldName]: value,
@@ -853,7 +853,7 @@ const Pogrndirect = () => {
                                     <GenericDropDown
                                         variant={variant}
                                         label="Next Approver"
-                                        api={`api/pdmst/approver/100000`}
+                                        api={`api/employee/approver/100000`}
                                         xpkey="xstaff"
                                         xskey="xname"
                                         onSelect={(value) => handleGenericSelect("xsign1", value)}

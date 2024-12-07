@@ -1,6 +1,6 @@
 package com.zaberp.zab.biwtabackend.controller;
 
-import com.zaberp.zab.biwtabackend.dto.ConfirmGrnDto;
+import com.zaberp.zab.biwtabackend.dto.ConfirmTrnDto;
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
@@ -63,11 +63,7 @@ public class PogrnHeaderController {
         return ResponseEntity.ok(service.updateByZidAndXgrnnum(entity));
     }
 
-//    @DeleteMapping("/{zid}/{xgrnnum}")
-//    public ResponseEntity<Void> deleteByZidAndXgrnnum(@PathVariable int zid, @PathVariable String xgrnnum) {
-//        service.deleteByZidAndXgrnnum(zid, xgrnnum);
-//        return ResponseEntity.noContent().build();
-//    }
+
 
     @DeleteMapping("/{zid}/{xgrnnum}")
     public ResponseEntity<Void> deleteXgrnnum(
@@ -87,7 +83,7 @@ public class PogrnHeaderController {
     }
 
     @PostMapping("/confirmGRN")
-    public String confirmGRN(@RequestBody ConfirmGrnDto confirmGrn){
+    public String confirmGRN(@RequestBody ConfirmTrnDto confirmGrn){
         int zid = confirmGrn.getZid();
         String zemail=confirmGrn.getZemail();
         String xgrnnum = confirmGrn.getXgrnnum();
@@ -97,47 +93,6 @@ public class PogrnHeaderController {
         return service.confirmGRN(zid, zemail, xgrnnum,xdate,xwh,len);
     }
 
-    @PostMapping("/confirmRequest")
-    public String confirmRequest(@RequestBody ConfirmGrnDto confirmGrn){
-        int zid = confirmGrn.getZid();
-        String user=confirmGrn.getUser();
-        String position=confirmGrn.getUser();
-        String wh = confirmGrn.getWh();
-        String tornum = confirmGrn.getTornum();
-        String request = confirmGrn.getRequest();
-
-        return service.confirmRequest(zid, user, position,wh,tornum,request);
-    }
-
-
-    @PostMapping("/approveRequest")
-    public String approveRequest(@RequestBody ConfirmGrnDto confirmGrn) {
-        System.out.println(confirmGrn);
-        if (confirmGrn == null) {
-            return "Error: Request body is null";
-        }
-
-        int zid = confirmGrn.getZid();
-        String user = confirmGrn.getUser();
-        String position = confirmGrn.getPosition();
-        String tornum = confirmGrn.getTornum();
-        String status = confirmGrn.getXstatusdoc();
-        String aprcs = confirmGrn.getRequest();
-
-        System.out.println(status);
-
-        if (user == null || position == null || tornum == null || status == null || aprcs == null) {
-            return "Error: Missing required fields";
-        }
-
-        try {
-            System.out.println("in try");
-            String result = service.approveRequest(zid, user, position, tornum, 0, status, aprcs);
-            return result;
-        } catch (Exception e) {
-            return "Error processing request: " + e.getMessage();
-        }
-    }
 
 
 

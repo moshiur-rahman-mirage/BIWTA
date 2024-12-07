@@ -1,5 +1,6 @@
 package com.zaberp.zab.biwtabackend.controller;
 
+import com.zaberp.zab.biwtabackend.dto.ConfirmTrnDto;
 import com.zaberp.zab.biwtabackend.dto.RequestBodyDto;
 import com.zaberp.zab.biwtabackend.service.CommonService;
 import org.slf4j.Logger;
@@ -156,6 +157,48 @@ public abstract class BaseController<T, Id> {
             return updatedRows + " row(s) updated successfully!";
         } catch (Exception e) {
             return "Error: " + e.getMessage();
+        }
+    }
+
+        @PostMapping("/confirmRequest")
+    public String confirmRequest(@RequestBody ConfirmTrnDto confirmTrnDto){
+        int zid = confirmTrnDto.getZid();
+        String user=confirmTrnDto.getUser();
+        String position=confirmTrnDto.getUser();
+        String wh = confirmTrnDto.getWh();
+        String tornum = confirmTrnDto.getTornum();
+        String request = confirmTrnDto.getRequest();
+
+        return getService().confirmRequest(zid, user, position,wh,tornum,request);
+    }
+
+
+        @PostMapping("/approveRequest")
+    public String approveRequest(@RequestBody ConfirmTrnDto confirmTrnDto) {
+        System.out.println(confirmTrnDto);
+        if (confirmTrnDto == null) {
+            return "Error: Request body is null";
+        }
+
+        int zid = confirmTrnDto.getZid();
+        String user = confirmTrnDto.getUser();
+        String position = confirmTrnDto.getPosition();
+        String tornum = confirmTrnDto.getTornum();
+        String status = confirmTrnDto.getXstatusdoc();
+        String aprcs = confirmTrnDto.getRequest();
+
+        System.out.println(status);
+
+        if (user == null || position == null || tornum == null || status == null || aprcs == null) {
+            return "Error: Missing required fields";
+        }
+
+        try {
+            System.out.println("in try");
+            String result = getService().approveRequest(zid, user, position, tornum, 0, status, aprcs);
+            return result;
+        } catch (Exception e) {
+            return "Error processing request: " + e.getMessage();
         }
     }
 }

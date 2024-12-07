@@ -776,7 +776,7 @@ const Pogrnapp = () => {
                                     <GenericDropDown
                                         variant={variant}
                                         label="Next Approver"
-                                        api={`api/pdmst/approver/100000`}
+                                        api={`api/employee/approver/100000`}
                                         xpkey="xstaff"
                                         xskey="xname"
                                         onSelect={(value) => handleGenericSelect("xsign1", value)}

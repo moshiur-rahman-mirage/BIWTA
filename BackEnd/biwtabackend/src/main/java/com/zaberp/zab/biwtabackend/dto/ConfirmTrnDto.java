@@ -1,5 +1,7 @@
 package com.zaberp.zab.biwtabackend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class ConfirmTrnDto {
@@ -9,11 +11,31 @@ public class ConfirmTrnDto {
     private String user;
     private String position;
     private String tornum;
+    private String xstatustor;
+    private String status;
     private String wh;
     private String request;
     private String xgrnnum;
     private Date xdate;
     private String xwh;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private String updated;
+
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
 
     public String getXstatusdoc() {
         return xstatusdoc;
@@ -113,6 +135,14 @@ public class ConfirmTrnDto {
 
     public void setRequest(String request) {
         this.request = request;
+    }
+
+    public String getXstatustor() {
+        return xstatustor;
+    }
+
+    public void setXstatustor(String xstatustor) {
+        this.xstatustor = xstatustor;
     }
 }
 

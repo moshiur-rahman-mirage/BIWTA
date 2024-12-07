@@ -30,6 +30,7 @@ public class CaitemController extends BaseController<Caitem,CaitemId>{
         this.caitemService = caitemService;
         this.primaryKeyService = primaryKeyService;
     }
+
     @PostMapping
     public ResponseEntity<Caitem> createItem(@RequestBody Caitem caitem) {
         Caitem createdItem = caitemService.createItem(caitem);
@@ -39,5 +40,15 @@ public class CaitemController extends BaseController<Caitem,CaitemId>{
     @Override
     protected CommonService<Caitem, CaitemId> getService() {
         return caitemService;
+    }
+
+
+    @GetMapping("/search")
+    public List<Caitem> search(
+            @RequestParam("zid") int zid,
+            @RequestParam("text") String searchText
+    ) {
+        return caitemService.searchByText(zid, searchText);
+
     }
 }

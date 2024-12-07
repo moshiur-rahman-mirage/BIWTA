@@ -45,6 +45,10 @@ public class CaitemService extends CommonServiceImpl<Caitem, CaitemId> {
         return caitemRepository.save(caitem);
     }
 
+    public List<Caitem> searchByText(int zid, String searchText) {
+        return caitemRepository.findBySearchTextAndZid(zid,searchText);
+    }
+
     @Override
     protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
         return jdbcTemplate;

@@ -2,6 +2,7 @@ package com.zaberp.zab.biwtabackend.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,23 +89,6 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     }
 
 
-//    public void deleteByConditions(int zid, Map<String, Object> additionalConditions) {
-//        System.out.println("delete by conditions");
-//        StringBuilder sql = new StringBuilder("DELETE FROM " + getTableName() + " WHERE zid = :zid");
-//        Map<String, Object> params = Map.of("zid", zid);
-//
-//        // Append additional conditions if provided
-//        if (additionalConditions != null && !additionalConditions.isEmpty()) {
-//            additionalConditions.forEach((column, value) -> {
-//                sql.append(" AND ").append(column).append(" = :").append(column);
-//            });
-//            params = new HashMap<>(params); // Ensure we can add more parameters
-//            params.putAll(additionalConditions);
-//        }
-//
-//        System.out.println(sql.toString());
-//        jdbcTemplate.update(sql.toString(), params);
-//    }
 
 
     @Override
@@ -335,7 +319,7 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
         try {
             SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-                    .withProcedureName("zabsp_apvprcs_SME")
+                    .withProcedureName("zabsp_apvprcs_SAS")
                     .declareParameters(
                             new SqlParameter("zid", Types.INTEGER),
                             new SqlParameter("user", Types.VARCHAR),
@@ -366,6 +350,89 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
     }
 
 
+
+
+    @Transactional()
+    public List<Object[]> getDynamicData(
+
+            List<String> selectedFields,
+            Map<String, Object> whereConditions) {
+
+
+        StringBuilder queryBuilder = new StringBuilder("SELECT ");
+
+        if (selectedFields == null || selectedFields.isEmpty()) {
+            queryBuilder.append("p.* ");
+        } else {
+            for (String field : selectedFields) {
+                queryBuilder.append("p.").append(field).append(", ");
+            }
+            queryBuilder.setLength(queryBuilder.length() - 2);
+        }
+
+        queryBuilder.append(" FROM ").append(getTableName()).append(" p");
+
+        if (whereConditions != null && !whereConditions.isEmpty()) {
+            queryBuilder.append(" WHERE ");
+            boolean isFirstCondition = true;
+            for (String column : whereConditions.keySet()) {
+                if (!isFirstCondition) {
+                    queryBuilder.append(" AND ");
+                }
+                queryBuilder.append("p.").append(column).append(" = :").append(column);
+                isFirstCondition = false;
+            }
+        }
+
+        Query query = entityManager.createQuery(queryBuilder.toString());
+
+        if (whereConditions != null) {
+            for (Map.Entry<String, Object> entry : whereConditions.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+
+        try {
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error executing dynamic query.", e);
+        }
+    }
+
+
+    public List<Map<String, Object>> getDynamicDataWithColumnNames(
+            List<String> selectedFields, Map<String, Object> whereConditions) {
+
+        StringBuilder queryBuilder = new StringBuilder("SELECT ");
+
+        if (selectedFields == null || selectedFields.isEmpty()) {
+            queryBuilder.append("*");
+        } else {
+            queryBuilder.append(String.join(", ", selectedFields));
+        }
+
+        queryBuilder.append(" FROM ").append(getTableName()).append(" WHERE 1=1");
+
+        if (whereConditions != null) {
+            whereConditions.forEach((key, value) -> queryBuilder.append(" AND ").append(key).append(" = :").append(key));
+        }
+
+        Query query = entityManager.createNativeQuery(queryBuilder.toString(), Tuple.class);
+
+        if (whereConditions != null) {
+            whereConditions.forEach(query::setParameter);
+        }
+
+        List<Tuple> tuples = query.getResultList();
+
+        // Convert Tuple results to a list of maps
+        return tuples.stream().map(tuple -> {
+            Map<String, Object> resultMap = new HashMap<>();
+            tuple.getElements().forEach(element -> resultMap.put(element.getAlias(), tuple.get(element.getAlias())));
+            return resultMap;
+        }).collect(Collectors.toList());
+    }
 
 
 

@@ -4,19 +4,14 @@ package com.zaberp.zab.biwtabackend.repository;
 import com.zaberp.zab.biwtabackend.dto.ImtorDto;
 import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
-import com.zaberp.zab.biwtabackend.repository.custom.CustomImtorheaderRepository;
-import com.zaberp.zab.biwtabackend.repository.custom.CustomImtorheaderRepositoryImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ImtorheaderRepository extends JpaRepository<Imtorheader, ImtorheaderId> {
@@ -80,6 +75,8 @@ public interface ImtorheaderRepository extends JpaRepository<Imtorheader, Imtorh
     List<ImtorDto> findImtorWithZidAndText(
             @Param("zid") int zid,
             @Param("searchText") String searchText);
+
+    public Imtorheader findByZidAndXtornum(int zid, String xtornum);
 
 
 //    @Procedure(procedureName = "zabsp_confirmTO")

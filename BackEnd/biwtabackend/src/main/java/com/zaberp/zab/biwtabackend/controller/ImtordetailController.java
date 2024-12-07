@@ -22,7 +22,8 @@ public class ImtordetailController extends BaseController<Imtordetail,Imtordetai
 
     @PostMapping
     public ResponseEntity<Imtordetail> save(@RequestBody Imtordetail detail) {
-
+        System.out.println(detail.getZid());
+        System.out.println(detail.getXtornum());
         Imtordetail savedDetail = service.save(detail);
         System.out.println(savedDetail);
         return ResponseEntity.ok(savedDetail);

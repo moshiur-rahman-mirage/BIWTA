@@ -75,6 +75,7 @@ export const menuitems = [
         to: "inventory/transfer",
         submenu: [
           { title: "Store Requisition", to: "inventory/transfer/imtorheader" },
+          { title: "Store Requisition Approval", to: "inventory/transfer/imtorheaderapp" },
           { title: "Issue From Store", to: "inventory/transfer/imtormoreqheader" },
           { title: "Receive From Store", to: "inventory/transfer/imtransfersr" },
           { title: "Product Damage", to: "inventory/transfer/imtorheaderdam" },

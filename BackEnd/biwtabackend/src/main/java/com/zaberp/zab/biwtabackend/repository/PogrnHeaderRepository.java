@@ -4,7 +4,6 @@ package com.zaberp.zab.biwtabackend.repository;
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
-import com.zaberp.zab.biwtabackend.repository.custom.CustomPoGrnHeaderRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;

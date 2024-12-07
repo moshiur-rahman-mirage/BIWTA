@@ -100,11 +100,24 @@ const Imtordetail = ({ xtornum = '' }) => {
         }
     }, [refreshCallback]);
 
-    useEffect(() => {
 
+
+    useEffect(() => {
+        if (refreshCallback && formData.xtornum) {
+            refreshCallback(); // Trigger the refresh callback from SortableList
+        }
+    }, [formData.xtornum, refreshCallback]);
+
+
+    useEffect(() => {
+        setRefreshTrigger(true);
+    }, [updateCount]);
+
+    useEffect(() => {
+        console.log("33")
         if (refreshTrigger) {
             handleRefresh();
-            setRefreshTrigger(false); // Reset trigger
+            setRefreshTrigger(false); 
         }
     }, [refreshTrigger, handleRefresh]);
 
@@ -126,6 +139,9 @@ const Imtordetail = ({ xtornum = '' }) => {
         });
         setIsTyping(true);
     };
+
+
+
 
 
 
@@ -233,7 +249,7 @@ const Imtordetail = ({ xtornum = '' }) => {
 
 
     const handleAdd = async () => {
-        const errors = validateForm(formData, ['xitem']);
+        const errors = validateForm(formData, ['xitem','xprepqty']);
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
             Swal.fire({
@@ -247,7 +263,8 @@ const Imtordetail = ({ xtornum = '' }) => {
         const endpoint = 'api/imtordetail';
         const data = {
             ...formData,
-            zid: zid
+            zid: zid,
+            xtornum:xtornum
         };
 
         addFunction(data, endpoint, 'POST', (response) => {
@@ -549,6 +566,7 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         variant={variant}
                                         size="small"
                                         fullWidth
+                                        id="xprepqty"
                                         name='xprepqty'
                                         onChange={handleChange}
                                         error={!!formErrors.xprepqty}

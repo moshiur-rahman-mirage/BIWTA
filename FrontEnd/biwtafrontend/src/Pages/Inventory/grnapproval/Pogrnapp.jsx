@@ -422,7 +422,7 @@ const Pogrnapp = () => {
 
                     <div className="shadow-lg rounded">
                         <div className="w-full  py-2 pt-0 mx-auto ">
-                            <Caption title="Product Receive Entry" />
+                            <Caption title="Product Receive Approval" />
                             <Box
                                 component="form"
                                 sx={{

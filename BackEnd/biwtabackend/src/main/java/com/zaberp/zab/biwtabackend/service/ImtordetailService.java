@@ -42,12 +42,16 @@ public class ImtordetailService extends CommonServiceImpl<Imtordetail,Imtordetai
     }
 
     public Imtordetail save(Imtordetail detail) {
-
+        System.out.println("imtordetail");
         Integer maxXrow = repository.findMaxXrowByZidAndXtornum(detail.getZid(), detail.getXtornum());
         if (maxXrow == null) {
             maxXrow = 0;
         }
+
         detail.setXrow(maxXrow + 1);
+        System.out.println(maxXrow);
+        System.out.println(detail.getZid());
+        System.out.println(detail.getXtornum());
         detail.setXdphqty(detail.getXprepqty());
         detail.setXqtyreq(detail.getXprepqty());
         detail.setXqtyord(detail.getXprepqty());

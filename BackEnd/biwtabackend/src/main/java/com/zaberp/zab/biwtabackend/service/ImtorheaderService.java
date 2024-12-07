@@ -1,14 +1,15 @@
 package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.dto.ImtorDto;
+import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
 import com.zaberp.zab.biwtabackend.repository.ImtorheaderRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,6 +28,9 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
     private final ImtorheaderRepository repository;
     private final PrimaryKeyService primaryKeyService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Autowired
     public ImtorheaderService(ImtorheaderRepository repository, NamedParameterJdbcTemplate jdbcTemplate, PrimaryKeyService primaryKeyService) {
@@ -36,6 +40,9 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
     }
 
 
+    public Imtorheader getSingleTrn(int zid,String xtornum){
+        return repository.findByZidAndXtornum(zid,xtornum);
+    }
 
     public Imtorheader createTransaction(Imtorheader imtorheader, String action) {
         String transactionPrefix = determineTransactionPrefix(action);
@@ -48,6 +55,7 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
         imtorheader.setZauserid(SecurityContextHolder.getContext().getAuthentication().getName());
         imtorheader.setZtime(LocalDateTime.now());
         imtorheader.setXstatustor(tempStatus);
+        imtorheader.setXpreparer(imtorheader.getZauserid());
         imtorheader.setXtrn(transactionPrefix);
         return repository.save(imtorheader);
     }
@@ -180,6 +188,60 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
 
     public List<ImtorDto> searchByText(int zid,String action, String searchText) {
         return repository.findImtorWithZidAndSearchText(zid,action,searchText);
+    }
+
+
+    public Page<ImtorDto> callForImtor(int zid, String user, String superior, String status,String xtrn, int page, int size, String sortBy, boolean ascending) {
+        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return getListImtor(zid,user,superior,status,xtrn,pageable);
+    }
+
+    public Page<ImtorDto> getListImtor(int zid, String user, String superior, String status,String xtrn, Pageable pageable) {
+        System.out.println(xtrn);
+        StringBuilder sql = new StringBuilder("SELECT new com.zaberp.zab.biwtabackend.dto.ImtorDto(" +
+                "p.zid, p.xtornum, p.xdate, p.xfwh, x.xlong, p.xstatustor, pd.xname) " +
+                "FROM Imtorheader p " +
+                "JOIN Pdmst pd ON p.zid = pd.zid AND p.xpreparer = pd.xstaff " +
+                "JOIN Xcodes x ON p.zid = x.zid AND p.xfwh = x.xcode AND x.xtype = 'Branch' " +
+                "WHERE p.zid = :zid and p.xtrn=:xtrn ");
+
+        if (user != null && user!="") {
+            sql.append(" AND p.zauserid = :user");
+        }
+        if (xtrn != null && xtrn!="") {
+            sql.append(" AND p.xtrn = :xtrn");
+        }
+        if (superior != null && superior!="") {
+            sql.append(" AND p.xidsup = :superior");
+        }
+        if (status != null && status!="") {
+            sql.append(" AND p.xstatustor = :status");
+        }
+        System.out.println(sql.toString());
+        TypedQuery<ImtorDto> query = entityManager.createQuery(sql.toString(), ImtorDto.class);
+        query.setParameter("zid", zid);
+        if (user != null && user!="") {
+            query.setParameter("user", user);
+        }
+        if (superior != null && superior!="") {
+            query.setParameter("superior", superior);
+        }
+        if (status != null && status!="") {
+            query.setParameter("status", status);
+        }
+        if (xtrn != null && xtrn!="") {
+            query.setParameter("xtrn", xtrn);
+        }
+
+        System.out.println(query.toString());
+        // Implement pagination manually
+        int totalRecords = query.getResultList().size();
+        int firstResult = (int) pageable.getOffset();
+        query.setFirstResult(firstResult);
+        query.setMaxResults(pageable.getPageSize());
+        List<ImtorDto> results = query.getResultList();
+        return new PageImpl<>(results, pageable, totalRecords);
     }
 
 }

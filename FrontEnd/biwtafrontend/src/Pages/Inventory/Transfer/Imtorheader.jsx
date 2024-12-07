@@ -81,7 +81,6 @@ const Imtorheader = () => {
         setStatus(event.target.value);
     };
 
-    // References
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
@@ -104,7 +103,6 @@ const Imtorheader = () => {
     ];
 
     const handleSortChange = (field) => {
-        // Toggle sorting order if the same field is clicked
         setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
         setSortField(field);
     };
@@ -114,9 +112,8 @@ const Imtorheader = () => {
         if (zid && zemail) setLoading(false);
     }, [zid, zemail]);
 
-    // Handlers
+
     const handleChange = (e) => {
-        // console.log(e.target)
         const { name, value } = e.target;
         setFormData((prev) => {
             if (prev[name] !== value) {
@@ -164,7 +161,7 @@ const Imtorheader = () => {
     };
 
 
-    console.log(directFetch)
+
     useEffect(() => {
         if (selectedItem) {
             // console.log(convertDate(selectedItem.xdate))
@@ -330,22 +327,62 @@ const Imtorheader = () => {
     };
 
 
+    const handleUpdateBeforeConfirm = async () => {
+        // const errors = validateForm(formData, ['xfwh']);
+        // if (Object.keys(errors).length > 0) {
+        //     setFormErrors(errors);
+        //     Swal.fire({
+        //         icon: 'error',
+        //         title: 'Invalid Input',
+        //         text: 'Please fix the errors before proceeding.',
+        //     });
+        //     return;
+        // }
+        setUpdateCount(prevCount => prevCount + 1);
+    
+        const tableName = "Imtorheader"; 
+        const updates ={ xsign1: formData.xsign1 }; 
+        const whereConditions = { xtornum: formData.xtornum, zid: zid }; 
+        
+        
+        
+        const data = {
+            tableName,
+            whereConditions, 
+            updates: updates,
+        };
+
+    
+        const endpoint = `api/imtorheader/update`; 
+    
+        await handleApiRequest({
+            endpoint,
+            data,
+            method: 'PUT',
+        });
+    
+        setFormErrors({});
+    };
+
 
     const handleConfirm = async () => {
-        if (window.confirm('Confirm This GRN?')) {
+        if (window.confirm('Confirm This Requisition?')) {
             setStatus("Processing...");
+            handleUpdateBeforeConfirm();
             const params = {
                 zid: 100000,
-                zemail: zemail,
-                xtornum: formData.xtornum,
-                xdate: formData.xdate,
-                xfwh: formData.xfwh,
-                len: 8
+                user: zemail,
+                position:zemail,
+                wh:formData.xfwh,
+                tornum: formData.xtornum,
+                request:'SR_WR Approval'
+
             };
 
             try {
 
-                const response = await axiosInstance.post("/api/imtorheader/confirmsr", params);
+                const response = await axiosInstance.post("/api/imtorheader/confirmRequest", params);
+                console.log(response)
                 setStatus(response.data);
 
                 Swal.fire({
@@ -353,9 +390,11 @@ const Imtorheader = () => {
                     title: 'Success!',
                     text: 'Operation completed successfully'
                 });
-
+                reloadFormData();
+                setUpdateCount(prevCount => prevCount + 1);
+                // handleItemSelect();
             } catch (error) {
-                // Handle error response
+           
                 setStatus("Error: " + (error.response?.data || error.message));
 
                 Swal.fire({
@@ -367,6 +406,44 @@ const Imtorheader = () => {
         }
     };
 
+
+
+    const reloadFormData = async () => {
+        try {
+            
+            if (!zid || !formData?.xtornum) {
+                console.error("Missing required parameters: zid or xtornum");
+                return;
+            }
+            const requestBody = {
+                selectedFields: ["xtornum", "xstatustor"], 
+                whereConditions: {
+                    zid: zid,
+                    xtornum: formData.xtornum
+                }
+            };
+    
+           
+            const response = await axiosInstance.post("/api/imtorheader/fetch", requestBody);
+            console.log("API Response:", response);
+    
+           
+            if (response?.data) {
+                setFormData(response.data[0]);
+            } else {
+                console.warn("No data received from the API.");
+            }
+        } catch (error) {
+            console.error("Error reloading form data:", error);
+            if (error.response) {
+                console.error(
+                    `API returned status ${error.response.status}:`,
+                    error.response.data
+                );
+            }
+        }
+    };
+    
 
 
 
@@ -390,7 +467,7 @@ const Imtorheader = () => {
                         paddingY: 0.5,
                         height: '2.5rem',
                         '&:hover': {
-                            backgroundColor: '#F59E0B', // Yellow-600
+                            backgroundColor: '#F59E0B',
                         },
                     }}
                     size="medium"
@@ -402,12 +479,11 @@ const Imtorheader = () => {
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
-                        paddingX: 2, // equivalent to Tailwind's px-2
-                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
-
-                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        paddingX: 2,
+                        paddingY: 0.5,
+                        height: '2.5rem',
                         '&:hover': {
-                            backgroundColor: '#F59E0B', // Yellow-600
+                            backgroundColor: '#F59E0B',
                         },
                     }}
                     size="medium"
@@ -702,7 +778,7 @@ const Imtorheader = () => {
                                             variant="subtitle1"
                                             sx={{
                                                 marginLeft: 1,
-                                                color: status === 'Confirmed' ? 'green' : 'red', // Conditional styling
+                                                color: status === 'Open' ? 'green' : 'red', // Conditional styling
                                             }}
                                         >
                                             {formData.xstatustor}
@@ -760,7 +836,7 @@ const Imtorheader = () => {
                                     <GenericDropDown
                                         variant={variant}
                                         label="Next Approver"
-                                        api={`api/pdmst/approver/100000`}
+                                        api={`api/employee/approver/100000`}
                                         xpkey="xstaff"
                                         xskey="xname"
                                         onSelect={(value) => handleDropdownSelect("xsign1", value)}

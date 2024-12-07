@@ -3,6 +3,7 @@ package com.zaberp.zab.biwtabackend.controller;
 
 import com.zaberp.zab.biwtabackend.dto.ConfirmImtorDto;
 import com.zaberp.zab.biwtabackend.dto.ImtorDto;
+import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
 import com.zaberp.zab.biwtabackend.id.ImtorheaderId;
 import com.zaberp.zab.biwtabackend.model.Imtorheader;
 import com.zaberp.zab.biwtabackend.service.CommonService;
@@ -59,6 +60,28 @@ public class ImtorheaderController extends BaseController<Imtorheader,Imtorheade
     }
 
 
+
+    @GetMapping("/pending")
+    public Page<ImtorDto> getpendingTors(
+            @RequestParam int zid,
+            @RequestParam Optional<String> user,
+            @RequestParam Optional<String> superior,
+            @RequestParam Optional<String> status,
+            @RequestParam Optional<String> trn,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "xtornum") String sortBy,
+            @RequestParam(defaultValue = "true") boolean ascending) {
+
+        String finalSuperior = superior.orElse("");
+        String finalStatus = status.orElse("");
+        String allUser= user.orElse("");
+        String xtrn= trn.orElse("");
+        System.out.println(xtrn);
+        return service.callForImtor(zid,allUser,finalSuperior,finalStatus,xtrn,page,size,sortBy,ascending);
+    }
+
+
     @GetMapping("/confirmed")
     public Page<ImtorDto> getAppvoedItems(
             @RequestParam int zid,
@@ -78,6 +101,16 @@ public class ImtorheaderController extends BaseController<Imtorheader,Imtorheade
             @RequestParam("text") String searchText
     ) {
         return service.searchByText(zid, action, searchText);
+    }
+
+
+
+    @GetMapping("/singleTrn")
+    public Imtorheader findSingleTrn(
+            @RequestParam("zid") int zid,
+            @RequestParam("xtornum") String xtornum
+    ) {
+        return service.getSingleTrn(zid, xtornum);
     }
 
     @PostMapping("/confirmsr")

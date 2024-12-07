@@ -1,11 +1,14 @@
 package com.zaberp.zab.biwtabackend.controller;
 
 import com.zaberp.zab.biwtabackend.dto.ConfirmTrnDto;
+import com.zaberp.zab.biwtabackend.dto.DynamicRequest;
 import com.zaberp.zab.biwtabackend.dto.RequestBodyDto;
 import com.zaberp.zab.biwtabackend.service.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,6 +125,36 @@ public abstract class BaseController<T, Id> {
 
 
 
+
+    @PostMapping("/fetch")
+    public ResponseEntity<?> getDynamicData(
+            @RequestBody DynamicRequest dynamicRequest) {
+        try {
+            List<Map<String, Object>> result = getService().getDynamicDataWithColumnNames(
+                    dynamicRequest.getSelectedFields(),
+                    dynamicRequest.getWhereConditions()
+            );
+
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Invalid input",
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "error", "Internal server error",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
+
+
+
+
+
+
     @PutMapping("/update")
     public String updateTable(@RequestBody Map<String, Object> payload) {
         try {
@@ -168,6 +201,15 @@ public abstract class BaseController<T, Id> {
         String wh = confirmTrnDto.getWh();
         String tornum = confirmTrnDto.getTornum();
         String request = confirmTrnDto.getRequest();
+        String updated=confirmTrnDto.getUpdated();
+
+            System.out.println("Details:");
+            System.out.println("ZID: " + zid);
+            System.out.println("User: " + user);
+            System.out.println("Position: " + position);
+            System.out.println("Warehouse (WH): " + wh);
+            System.out.println("TORNUM: " + tornum);
+            System.out.println("Request: " + request);
 
         return getService().confirmRequest(zid, user, position,wh,tornum,request);
     }
@@ -175,7 +217,7 @@ public abstract class BaseController<T, Id> {
 
         @PostMapping("/approveRequest")
     public String approveRequest(@RequestBody ConfirmTrnDto confirmTrnDto) {
-        System.out.println(confirmTrnDto);
+            System.out.println("Received DTO: " + confirmTrnDto);
         if (confirmTrnDto == null) {
             return "Error: Request body is null";
         }
@@ -184,10 +226,16 @@ public abstract class BaseController<T, Id> {
         String user = confirmTrnDto.getUser();
         String position = confirmTrnDto.getPosition();
         String tornum = confirmTrnDto.getTornum();
-        String status = confirmTrnDto.getXstatusdoc();
+        String status = confirmTrnDto.getStatus();
         String aprcs = confirmTrnDto.getRequest();
 
-        System.out.println(status);
+            System.out.println("Details:");
+            System.out.println("ZID: " + zid);
+            System.out.println("User: " + user);
+            System.out.println("Position: " + position);
+            System.out.println("TORNUM: " + tornum);
+            System.out.println("status: " + status);
+            System.out.println("Request: " + aprcs);
 
         if (user == null || position == null || tornum == null || status == null || aprcs == null) {
             return "Error: Missing required fields";

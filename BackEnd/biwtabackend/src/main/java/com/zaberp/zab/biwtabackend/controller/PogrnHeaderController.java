@@ -2,8 +2,11 @@ package com.zaberp.zab.biwtabackend.controller;
 
 import com.zaberp.zab.biwtabackend.dto.ConfirmTrnDto;
 import com.zaberp.zab.biwtabackend.dto.PogrnheaderXcusdto;
+import com.zaberp.zab.biwtabackend.id.CacusId;
 import com.zaberp.zab.biwtabackend.id.PogrnHeaderId;
+import com.zaberp.zab.biwtabackend.model.Cacus;
 import com.zaberp.zab.biwtabackend.model.Pogrnheader;
+import com.zaberp.zab.biwtabackend.service.CommonService;
 import com.zaberp.zab.biwtabackend.service.PogrnHeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,11 +19,16 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/pogrnheader")
-public class PogrnHeaderController {
+public class PogrnHeaderController extends BaseController<Pogrnheader,PogrnHeaderId>{
 
     @Autowired
     private PogrnHeaderService service;
 
+
+    @Override
+    protected CommonService<Pogrnheader, PogrnHeaderId> getService() {
+        return service;
+    }
     @GetMapping("/{zid}/{xgrnnum}")
     public ResponseEntity<Pogrnheader> getByZidAndXgrnnum(@PathVariable int zid, @PathVariable String xgrnnum) {
         Optional<Pogrnheader> entity = service.getByZidAndXgrnnum(zid, xgrnnum);
@@ -39,10 +47,10 @@ public class PogrnHeaderController {
             @RequestParam(defaultValue = "xgrnnum") String sortBy,
             @RequestParam(defaultValue = "true") boolean ascending) {
 
-        String finalSuperior = superior.orElse(""); // Default to empty string if absent
+        String finalSuperior = superior.orElse("");
         String finalStatus = status.orElse("");
         String allUser= user.orElse("");
-
+        System.out.println(superior);
         return service.getPogrnList(zid,allUser,finalSuperior,finalStatus,page, size, sortBy, ascending);
     }
 
@@ -62,7 +70,6 @@ public class PogrnHeaderController {
         }
         return ResponseEntity.ok(service.updateByZidAndXgrnnum(entity));
     }
-
 
 
     @DeleteMapping("/{zid}/{xgrnnum}")
@@ -92,8 +99,6 @@ public class PogrnHeaderController {
         int len=confirmGrn.getLen();
         return service.confirmGRN(zid, zemail, xgrnnum,xdate,xwh,len);
     }
-
-
 
 
 

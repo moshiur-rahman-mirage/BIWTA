@@ -48,6 +48,11 @@ export const validateForm = (formData, fieldsToValidate = []) => {
                     errors.xdate = 'Date is required.';
                 }
                 break;
+                case 'xprepqty':
+                    if (!formData.xprepqty) {
+                        errors.xprepqty = 'Qty is required.';
+                    }
+                    break;
 
             case 'xrategrn':
                 if (!formData.xrategrn) {

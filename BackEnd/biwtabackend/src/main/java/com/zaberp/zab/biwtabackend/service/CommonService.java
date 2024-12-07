@@ -23,6 +23,9 @@ public interface CommonService<T,Id> {
     public Page<T> findByZidAndTrnnumWithPaginationAndSorting(int zid,String trnnum, int page, int size, String sortBy, boolean ascending);
     public Page<T> findByZidAndOtherWithPaginationAndSorting(int zid,String columnName,String columnValue, int page, int size, String sortBy, boolean ascending);
     public List<T> getBySearchTextAndZid(int zid, String searchText, List<String> searchFields);
+    public List<Object[]> getDynamicData(List<String> selectedFields,Map<String, Object> whereConditions);
+    public List<Map<String, Object>> getDynamicDataWithColumnNames(
+            List<String> selectedFields, Map<String, Object> whereConditions);
     T save(T entity);
     int updateTableWithDynamicColumnsAndWhere(
             String tableName,

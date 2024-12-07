@@ -40,7 +40,7 @@ public interface ImtorheaderRepository extends JpaRepository<Imtorheader, Imtorh
             "FROM Imtorheader p " +
             "JOIN Xcodes x ON p.zid = x.zid AND p.xfwh = x.xcode AND x.xtype = 'Branch' " +
             "WHERE p.zid = :zid  " +
-            "AND ( p.xstatustor in ('Partial Issue','Transferred','Confirmed','Checked','Approved')) " +
+            "AND ( p.xstatustor in ('Partial Issue','Transferred','Checked','Approved')) " +
             "AND (:xtrn = '' OR p.xtrn = :xtrn) " +
             "")
     Page<ImtorDto> findImtorWithZidAndStatus(@Param("zid") int zid,@Param("xtrn") String xtrn, Pageable pageable);

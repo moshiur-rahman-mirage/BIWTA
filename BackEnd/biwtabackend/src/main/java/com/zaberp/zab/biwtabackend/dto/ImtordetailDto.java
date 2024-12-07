@@ -24,7 +24,7 @@ public class ImtordetailDto {
 
     }
 
-    public ImtordetailDto(int zid, String xtornum, int xrow, String xitem, String xdesc, BigDecimal xqtyord, String xstype, BigDecimal xprepqty) {
+    public ImtordetailDto(int zid, String xtornum, int xrow, String xitem, String xdesc, BigDecimal xqtyord, String xstype, BigDecimal xprepqty,BigDecimal xqtyalc) {
         this.zid = zid;
         this.xtornum = xtornum;
         this.xrow = xrow;
@@ -33,6 +33,7 @@ public class ImtordetailDto {
         this.xqtyord = xqtyord;
         this.xstype = xstype;
         this.xprepqty = xprepqty;
+        this.xqtyalc=xqtyalc;
     }
 
 

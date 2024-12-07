@@ -69,7 +69,6 @@ const Imtormoreqheader = () => {
         setStatus(event.target.value);
     };
 
-    // References
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
@@ -85,14 +84,9 @@ const Imtormoreqheader = () => {
     ];
 
 
-    const supConfig = [
-        { header: 'Supplier ID', field: 'xcus' },
-        { header: 'Name', field: 'xorg' },
-        { header: 'Address', field: 'xmadd' },
-    ];
 
     const handleSortChange = (field) => {
-        // Toggle sorting order if the same field is clicked
+       
         setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
         setSortField(field);
     };
@@ -126,30 +120,8 @@ const Imtormoreqheader = () => {
 
     };
 
-    const handleDropdownSelect = (fieldName, value) => {
-        console.log(fieldName);
-
-        setFormData((prevState) => {
-            const updatedState = { ...prevState, [fieldName]: value };
-
-            if (fieldName === 'xfwh') {
-                updatedState.xfwh = value.xcode;
-                updatedState.xfwhdesc = value.xlong;
-            }
-            if (fieldName === 'xtwh') {
-                updatedState.xtwh = value.xcode;
-                updatedState.xtwhdesc = value.xlong;
-            }
-            return updatedState;
-        });
-    };
 
 
-
-
-
-
-    console.log(directFetch)
     useEffect(() => {
         if (selectedItem) {
             // console.log(convertDate(selectedItem.xdate))
@@ -173,36 +145,7 @@ const Imtormoreqheader = () => {
     }, [updateCount]);
 
 
-    const handleAdd = async () => {
-        const errors = validateForm(formData, ['xfwh']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
 
-        const endpoint = 'api/imtorheader?action=requisition';
-        const data = {
-            ...formData,
-            zauserid: zemail,
-            zid: zid
-        };
-
-        addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xtornum) {
-
-                setFormData((prev) => ({ ...prev, xtornum: response.xtornum, xstatustor: response.xstatustor }));
-                setUpdateCount(prevCount => prevCount + 1);
-                setFormErrors({});
-            } else {
-                // alert('Supplier added successfully.');
-            }
-        });
-    };
 
 
 
@@ -231,56 +174,10 @@ const Imtormoreqheader = () => {
         alert('Form cleared.');
     };
 
-    const handleDelete = async () => {
-        // console.log(formData)
-        const endpoint = `api/imtorheader/${zid}/${formData.xtornum}`;
-        await handleApiRequest({
-            endpoint,
-            method: 'DELETE',
-            onSuccess: (response) => {
-                setFormData({
-                    zid: zid,
-                    xtornum: '',
-                    xstatustor: '',
-                    xdate: new Date().toISOString().split('T')[0],
-                    xfwh: '',
-                    xfwhdesc: '',
-                    xnote: '',
-                    xlong: ''
-
-                });
-                setUpdateCount(prevCount => prevCount + 1);
-
-            },
-        });
-    };
 
 
-    const handleUpdate = async () => {
-        const errors = validateForm(formData, ['xfwh']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-        setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/imtorheader/${zid}/${formData.xtornum}`;
-        const data = {
-            ...formData,
-            zid: zid
-        };
 
-        await handleApiRequest({
-            endpoint,
-            data,
-            method: 'PUT',
-        });
-        setFormErrors({});
-    };
+
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -318,7 +215,7 @@ const Imtormoreqheader = () => {
                     title: 'Success!',
                     text: 'Operation completed successfully'
                 });
-
+                reloadFormData();
             } catch (error) {
                 // Handle error response
                 setStatus("Error: " + (error.response?.data || error.message));
@@ -354,7 +251,7 @@ const Imtormoreqheader = () => {
                 title: 'Success!',
                 text: 'Operation completed successfully'
             });
-
+            reloadFormData();
         } catch (error) {
             setStatus("Error: " + (error.response?.data || error.message));
 
@@ -365,6 +262,46 @@ const Imtormoreqheader = () => {
             });
         }
 
+    };
+
+
+    const reloadFormData = async () => {
+        try {
+            
+            if (!zid || !formData?.xtornum) {
+                console.error("Missing required parameters: zid or xtornum");
+                return;
+            }
+            const requestBody = {
+                selectedFields: [ "xstatustor"], 
+                whereConditions: {
+                    zid: zid,
+                    xtornum: formData.xtornum
+                }
+            };
+    
+           
+            const response = await axiosInstance.post("/api/imtorheader/fetch", requestBody);
+            console.log("API Response:", response);
+    
+           
+            if (response?.data) {
+                setFormData((prevFormData) => ({
+                    ...prevFormData, 
+                    ...response.data[0],
+                }));
+            } else {
+                console.warn("No data received from the API.");
+            }
+        } catch (error) {
+            console.error("Error reloading form data:", error);
+            if (error.response) {
+                console.error(
+                    `API returned status ${error.response.status}:`,
+                    error.response.data
+                );
+            }
+        }
     };
 
 
@@ -450,10 +387,7 @@ const Imtormoreqheader = () => {
                 {/* Sidebar with Action Buttons */}
                 <div className="col-span-1">
                     <SideButtons
-                        onAdd={handleAdd}
                         onClear={handleClear}
-                        onUpdate={handleUpdate}
-                        onDelete={handleDelete}
                         showAdd={false}
                         showUpdate={false}
                         showDelete={false}
@@ -618,17 +552,14 @@ const Imtormoreqheader = () => {
                                         size="small"
                                         name="xfwh"
                                         type="Branch"
-                                        onSelect={(value) => handleDropdownSelect("xfwh", value)}
                                         value={formData.xfwh}
                                         defaultValue=""
                                         error={!!formErrors.xfwh}  // Check if there's an error for this field
                                         helperText={formErrors.xfwh}
                                         withXlong="false"
+                                        fontWeight={600}
                                         InputLabelProps={{
                                             shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
                                         }}
                                     />
 
@@ -729,14 +660,15 @@ const Imtormoreqheader = () => {
 
                     <SortableList
                         directFetch='Yes'
-                        apiUrl={apiListUrl2}
+                        apiUrl={`api/imtorheader/confirmed`}
                         isFolded={false}
-                        caption="Store Requisition List"
+                        caption="Damage Requisition List"
                         columns={[
                             { field: 'xtornum', title: 'Requisition Number', width: '25%', align: 'left' },
                             { field: 'xfwh', title: 'Store', width: '25%', align: 'left' },
                             { field: 'xfwhdesc', title: 'Store Name', width: '40%', align: 'left' },
                             { field: 'xdate', title: 'Date', width: '10%', align: 'left' },
+                            { field: 'xstatustor', title: 'Status', width: '10%', align: 'left' },
                         ]}
                         onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
@@ -748,7 +680,7 @@ const Imtormoreqheader = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xtornum"
-                        additionalParams={{ zid: zid, user: zemail, xtrn: 'SR--' }}
+                        additionalParams={{ zid: zid,xstatustor:'Approved', xtrn: 'SR--' }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"
@@ -765,6 +697,7 @@ const Imtormoreqheader = () => {
                             { field: 'xitem', title: 'Item', width: '10%', align: 'left' },
                             { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
                             { field: 'xprepqty', title: 'Required Quantity', width: '65%', align: 'left' },
+                            { field: 'xqtyalc', title: 'Issued Quantity', width: '65%', align: 'left' },
                             { field: 'xstype', title: 'Stock Status', width: '65%', align: 'left' },
 
                         ]}

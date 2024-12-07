@@ -377,7 +377,7 @@ const Pogrndirect = () => {
                     title: 'Success!',
                     text: 'Operation completed successfully'
                 });
-
+                reloadFormData();
             } catch (error) {
                 setStatus("Error: " + (error.response?.data || error.message));
 
@@ -389,6 +389,47 @@ const Pogrndirect = () => {
             }
         }
     };
+
+
+    const reloadFormData = async () => {
+        try {
+            
+            if (!zid || !formData?.xgrnnum) {
+                console.error("Missing required parameters: zid or xtornum");
+                return;
+            }
+            const requestBody = {
+                selectedFields: [ "xstatusdoc"], 
+                whereConditions: {
+                    zid: zid,
+                    xgrnnum: formData.xgrnnum
+                }
+            };
+    
+           
+            const response = await axiosInstance.post("/api/pogrnheader/fetch", requestBody);
+            console.log("API Response:", response);
+    
+           
+            if (response?.data) {
+                setFormData((prevFormData) => ({
+                    ...prevFormData, 
+                    ...response.data[0],
+                }));
+            } else {
+                console.warn("No data received from the API.");
+            }
+        } catch (error) {
+            console.error("Error reloading form data:", error);
+            if (error.response) {
+                console.error(
+                    `API returned status ${error.response.status}:`,
+                    error.response.data
+                );
+            }
+        }
+    };
+
 
 
 

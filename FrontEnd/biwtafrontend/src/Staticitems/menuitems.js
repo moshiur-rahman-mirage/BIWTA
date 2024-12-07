@@ -79,6 +79,7 @@ export const menuitems = [
           { title: "Issue From Store", to: "inventory/transfer/imtormoreqheader" },
           { title: "Receive From Store", to: "inventory/transfer/imtransfersr" },
           { title: "Product Damage", to: "inventory/transfer/imtorheaderdam" },
+          { title: "Product Damage Approval", to: "inventory/transfer/imtorheaderdamapp" },
         ],
       },
     ],

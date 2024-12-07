@@ -24,7 +24,7 @@ public interface ImtordetailRepository extends JpaRepository<Imtordetail, Imtord
 
 
     @Query("SELECT new com.zaberp.zab.biwtabackend.dto.ImtordetailDto(" +
-            "p.zid, p.xtornum, p.xrow, p.xitem, c.xdesc, p.xqtyord, p.xstype, p.xprepqty) " +
+            "p.zid, p.xtornum, p.xrow, p.xitem, c.xdesc, p.xqtyord, p.xstype, p.xprepqty,p.xqtyalc) " +
             "FROM Imtordetail p join Caitem c on p.zid=c.zid and p.xitem=c.xitem " +
             "WHERE p.zid = :zid and p.xtornum=:xtornum ") // You can adjust the condition as needed
     Page<ImtordetailDto> findAllByZid(int zid, String xtornum, Pageable pageable);

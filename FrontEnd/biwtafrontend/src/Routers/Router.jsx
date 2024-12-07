@@ -44,6 +44,7 @@ import ApprovalLayer from "../Pages/ApprovalLayer/ApprovalLayer";
 import Pogrnapp from "../Pages/Inventory/grnapproval/Pogrnapp";
 import ItemCategory from "../Pages/Xcodes/ItemCategory";
 import Imtorheaderapp from "../Pages/Inventory/Transfer/Imtorheaderapp";
+import Imtorheaderdamapp from "../Pages/Inventory/Transfer/Imtorheaderdamapp";
 
 
 
@@ -127,7 +128,8 @@ const Router = createBrowserRouter([
             { path: "transfer/imtorheaderapp", element: <Imtorheaderapp/> },
             { path: "transfer/imtormoreqheader", element: <Imtormoreqheader/> },
             { path: "transfer/imtransfersr", element: <Imtransfersr/> },
-            { path: "transfer/imtorheaderdam", element: <Imtorheaderdam/> }
+            { path: "transfer/imtorheaderdam", element: <Imtorheaderdam/> },
+            { path: "transfer/imtorheaderdamapp", element: <Imtorheaderdamapp/> }
         ],
       },
      

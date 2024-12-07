@@ -1,3 +1,5 @@
+
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     TextField,
@@ -5,46 +7,43 @@ import {
     Typography,
     Button,
     Modal,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
 } from '@mui/material';
 import { useAuth } from '../../../Provider/AuthProvider';
-
+import LoadingPage from '../../Loading/Loading';
 import HelmetTitle from '../../../utility/HelmetTitle';
 import SideButtons from '../../../Shared/SideButtons';
 import Caption from '../../../utility/Caption';
 import DynamicDropdown from '../../../ReusableComponents/DynamicDropdown';
-
+import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
 import { handleApiRequest } from '../../../utility/handleApiRequest';
 import { addFunction } from '../../../ReusableComponents/addFunction';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
-import LoadingPage from '../../Loading/Loading';
-import SortableList from '../../../ReusableComponents/SortableList';
-import XlongDropDown from '../../../ReusableComponents/XlongDropDown';
 import { convertDate } from '../../../utility/convertDate';
 import axiosInstance from '../../../Middleware/AxiosInstance';
 import Swal from 'sweetalert2';
 import { validateForm } from '../../../ReusableComponents/validateForm';
+import SortableList from '../../../ReusableComponents/SortableList';
+import Imtordetail from './Imtordetail';
 import GenericDropDown from '../../../ReusableComponents/GenericDropDown';
 
 
-const Pogrnapp = () => {
+const Imtorheaderdamapp = () => {
     // Authentication Context
     const { zid, zemail } = useAuth();
+    console.log(zemail)
+    const xwh = localStorage.getItem("xwh");
     console.log(zid, zemail)
     const [formData, setFormData] = useState({
         zid: zid,
-        xgrnnum: '',
-        xstatusgrn: '',
+        xtornum: '',
+        xstatustor: '',
         xdate: new Date().toISOString().split('T')[0],
-        xcus: '',
-        xwh: '',
-        xref: '',
-        xstatus: 'Open',
-        xstatusdoc:'',
+        xfwh: xwh,
+        xfwhdesc: '',
+        xtwh: '',
+        xtwhdesc: '',
         xnote: '',
+        xlong: ''
 
 
     });
@@ -66,25 +65,34 @@ const Pogrnapp = () => {
     const [sortField, setSortField] = useState('name'); // Default sorting field
     const [sortOrder, setSortOrder] = useState('asc');
     const [open, setOpen] = useState(false);
-    const apiListUrl = `api/pogrndetails/${zid}/${formData.xgrnnum}`
+
+    const apiListUrl = `api/imtordetail?action=requisition/${zid}/${formData.xtornum}`
+
+    const query = ''
+    const apiSearchUrl = `api/imtorheader/${zid}/search?searchText=${query}&searchFields=xstaff,xname,xmobile`
+    const addEndpoint = 'api/imtorheader';
+    const updateEndpoint = `api/imtorheader/update`;
+    const deleteEndpoint = `api/imtorheader/${zid}/transaction`;
+    const mainSideListEndpoint = `api/imtorheader/${zid}/paginated`;
+
 
 
     // Handle dropdown value change
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
     };
-    // References
+
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
     const variant = 'standard';
-    const apiBaseUrl = `api/pogrnheader`;
+    const apiBaseUrl = `api/imtorheader`;
 
     const fieldConfig = [
-        { header: 'GRN Number', field: 'xgrnnum' },
+        { header: 'Requisition Number', field: 'xtornum' },
         { header: 'Date', field: 'xdate' },
-        { header: 'Store', field: 'xwh' },
-        { header: 'Supplier', field: 'xorg' },
-        { header: 'Challan', field: 'xref' },
+        { header: 'From Store', field: 'xfwh' },
+        { header: 'Store Name', field: 'xfwhdesc' },
+        
     ];
 
 
@@ -95,7 +103,6 @@ const Pogrnapp = () => {
     ];
 
     const handleSortChange = (field) => {
-        // Toggle sorting order if the same field is clicked
         setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
         setSortField(field);
     };
@@ -105,9 +112,8 @@ const Pogrnapp = () => {
         if (zid && zemail) setLoading(false);
     }, [zid, zemail]);
 
-    // Handlers
+
     const handleChange = (e) => {
-        // console.log(e.target)
         const { name, value } = e.target;
         setFormData((prev) => {
             if (prev[name] !== value) {
@@ -130,34 +136,35 @@ const Pogrnapp = () => {
     };
 
     const handleDropdownSelect = (fieldName, value) => {
-        console.log(value)
-        setFormData((prevState) => ({
-            ...prevState,
-            [fieldName]: value,
+        console.log(fieldName);
 
-            xwh: value.xcode,
-            xlong: value.xlong,
-        }));
+        setFormData((prevState) => {
+            const updatedState = { ...prevState, [fieldName]: value };
+
+            if (fieldName === 'xfwh') {
+                updatedState.xfwh = value.xcode;
+                updatedState.xfwhdesc = value.xlong;
+            }
+
+            if (fieldName === 'xtwh') {
+                updatedState.xtwh = value.xcode;
+                updatedState.xtwhdesc = value.xlong;
+            }
+
+            if (fieldName === 'xsign1') {
+                updatedState.xsign1 = value;
+
+            }
+
+            return updatedState;
+        });
     };
 
 
-    const handleGenericSelect = (fieldName, value) => {
-        console.log(value)
-           setFormData((prevState) => ({
-               ...prevState,
-               [fieldName]: value,
 
-              
-
-           }));
-    };
-
-    // console.log(formData)
-
-
-    console.log(directFetch)
     useEffect(() => {
         if (selectedItem) {
+            // console.log(convertDate(selectedItem.xdate))
             setFormData({
                 ...selectedItem,
                 xdate: convertDate(selectedItem.xdate)
@@ -167,47 +174,15 @@ const Pogrnapp = () => {
 
 
     useEffect(() => {
-        if (refreshCallback && formData.xgrnnum) {
-            refreshCallback();
+        if (refreshCallback && formData.xtornum) {
+            refreshCallback(); // Trigger the refresh callback from SortableList
         }
-    }, [formData.xgrnnum, refreshCallback]);
+    }, [formData.xtornum, refreshCallback]);
 
 
     useEffect(() => {
         setRefreshTrigger(true);
     }, [updateCount]);
-
-
-    const handleAdd = async () => {
-        const errors = validateForm(formData, ['xwh', 'xcus']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-
-        const endpoint = 'api/pogrnheader';
-        const data = {
-            ...formData,
-            zauserid: zemail,
-            zid: zid
-        };
-        addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xgrnnum) {
-
-                setFormData((prev) => ({ ...prev, xgrnnum: response.xgrnnum }));
-                setUpdateCount(prevCount => prevCount + 1);
-                setFormErrors({});
-            } else {
-                // alert('Supplier added successfully.');
-            }
-        });
-    };
-
 
 
 
@@ -216,129 +191,123 @@ const Pogrnapp = () => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xgrnnum: item.xgrnnum, xwh: item.xwh, xcus: item.xcus, xref: item.xref, xorg: item.xorg, xlong: item.xlong,xstatusdoc:item.xstatusdoc
+            xtornum: item.xtornum, xfwh: item.xfwh, xlong: item.xlong, xfwhdesc: item.xfwhdesc, xstatustor: item.xstatustor, xtwh: item.xtwh
         }));
     }, []);
 
     const handleClear = () => {
         setFormData({
             zid: zid,
-            xgrnnum: '',
-            xstatusgrn: '',
+            xtornum: '',
+            xstatustor: '',
             xdate: new Date().toISOString().split('T')[0],
-            xcus: '',
-            xwh: '',
-            xref: '',
-            xstatus: '',
+            xfwh: xwh,
+            xfwhdesc: '',
+            xtwh: '',
+            xtwhdesc: '',
             xnote: '',
-            xlong: '',
-            xorg: '',
-            xsign1: ''
+            xlong: ''
 
         });
         alert('Form cleared.');
     };
 
-    const handleDelete = async () => {
-        // console.log(formData)
-        const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
-        await handleApiRequest({
-            endpoint,
-            method: 'DELETE',
-            onSuccess: (response) => {
-                setFormData({
+
+    const reloadFormData = async () => {
+        try {
+
+            if (!zid || !formData?.xtornum) {
+                console.error("Missing required parameters: zid or xtornum");
+                return;
+            }
+            const requestBody = {
+                selectedFields: [ "xstatustor"],
+                whereConditions: {
                     zid: zid,
-                    xgrnnum: '',
-                    xstatusgrn: '',
-                    xdate: new Date().toISOString().split('T')[0],
-                    xcus: '',
-                    xwh: '',
-                    xref: '',
-                    xstatus: '',
-                    xnote: '',
-                    xlong: '',
-                    xorg: '',
-                    xsign1: ''
+                    xtornum: formData.xtornum
+                }
+            };
 
-                });
-                setUpdateCount(prevCount => prevCount + 1);
 
-            },
-        });
+            const response = await axiosInstance.post("/api/imtorheader/fetch", requestBody);
+            console.log("API Response:", response);
+
+
+            if (response?.data) {
+                setFormData((prevFormData) => ({
+                    ...prevFormData, 
+                    ...response.data[0],
+                }));
+            } else {
+                console.warn("No data received from the API.");
+            }
+        } catch (error) {
+            console.error("Error reloading form data:", error);
+            if (error.response) {
+                console.error(
+                    `API returned status ${error.response.status}:`,
+                    error.response.data
+                );
+            }
+        }
     };
 
 
-    const handleUpdate = async () => {
-        const errors = validateForm(formData, ['xwh', 'xcus']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
+
+
+    const handleUpdateBeforeConfirm = async () => {
+
         setUpdateCount(prevCount => prevCount + 1);
-        const endpoint = `api/pogrnheader/${zid}/${formData.xgrnnum}`;
+
+        const tableName = "Imtorheader";
+        const updates = { xsign1: formData.xsign1 };
+        const whereConditions = { xtornum: formData.xtornum, zid: zid };
+
         const data = {
-            ...formData,
-            zid: zid
+            tableName,
+            whereConditions,
+            updates: updates,
         };
-        // console.log(data)
+
+        const endpoint = `api/imtorheader/update`;
 
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
         });
+
         setFormErrors({});
     };
 
 
 
-
-    
-
-    const handleOpen = () => {
-        document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
-        document.body.style.overflow = "hidden";
-        setOpen(true);
-        // setRefreshTrigger(true)
-    };
-
-    const handleClose = () => {
-        document.body.style.paddingRight = "";
-        document.body.style.overflow = "";
-        setOpen(false);
-    };
-
-
-
     const handleApprove = async () => {
-        if (window.confirm('Are You Sure to Approve This GRN?')) {
+        if (window.confirm('Are You Sure to Approve This Damage?')) {
             setStatus("Processing...");
+            handleUpdateBeforeConfirm()
             const params = {
                 zid: 100000,
                 user: zemail,
                 position: zemail,
-                tornum: formData.xgrnnum,
-                status: formData.xstatusdoc,
-                request: 'GRN Approval'
+                tornum: formData.xtornum,
+                status: formData.xstatustor,
+                request: 'Damage Approval'
             };
-            
+
             try {
 
-               const response = await axiosInstance.post("/api/pogrnheader/approveRequest", params);
-               console.log(params)
-               setStatus(response.data);
-               setUpdateCount(prevCount => prevCount + 1);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Operation completed successfully'
-                });
-
+                const response = await axiosInstance.post("/api/imtorheader/approveRequest", params);
+                console.log(params)
+                console.log("app response" + response.data)
+                setStatus(response.data);
+                setUpdateCount(prevCount => prevCount + 1);
+                // Swal.fire({
+                //     icon: 'success',
+                //     title: 'Success!',
+                //     text: 'Operation completed successfully'
+                // });
+                reloadFormData();
             } catch (error) {
                 setStatus("Error: " + (error.response?.data || error.message));
 
@@ -370,12 +339,11 @@ const Pogrnapp = () => {
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
-                        paddingX: 2, // equivalent to Tailwind's px-2
-                        paddingY: 0.5, // equivalent to Tailwind's py-0.5
-                        // equivalent to Tailwind's w-24 (6rem = 24 * 0.25rem)
-                        height: '2.5rem', // equivalent to Tailwind's h-10 (2.5rem = 10 * 0.25rem)
+                        paddingX: 2,
+                        paddingY: 0.5,
+                        height: '2.5rem',
                         '&:hover': {
-                            backgroundColor: '#F59E0B', // Yellow-600
+                            backgroundColor: '#F59E0B',
                         },
                     }}
                     size="medium"
@@ -392,24 +360,20 @@ const Pogrnapp = () => {
 
 
                 {/* Helmet Title for Page */}
-                <HelmetTitle title="Product Receive Entry" />
+                <HelmetTitle title="Damage Approval" />
 
                 {/* Sidebar with Action Buttons */}
                 <div className="col-span-1">
                     <SideButtons
-                        onAdd={handleAdd}
+
                         onClear={handleClear}
-                        onUpdate={handleUpdate}
-                        onDelete={handleDelete}
                         showAdd={false}
-                        showDelete={false}
                         showUpdate={false}
+                        showDelete={false}
                     />
                 </div>
 
 
-              
-                {/* Modal */}
 
                 <Box sx={{
                     gridColumn: 'span 5',
@@ -422,7 +386,7 @@ const Pogrnapp = () => {
 
                     <div className="shadow-lg rounded">
                         <div className="w-full  py-2 pt-0 mx-auto ">
-                            <Caption title="Product Receive Approval" />
+                            <Caption title="Damage Approval" />
                             <Box
                                 component="form"
                                 sx={{
@@ -456,9 +420,9 @@ const Pogrnapp = () => {
                                     {/* Supplier ID Field */}
                                     <TextField
                                         ref={triggerRef}
-                                        id="xgrnnum"
-                                        name="xgrnnum"
-                                        label="GRN Number"
+                                        id="xtornum"
+                                        name="xtornum"
+                                        label="SR Number"
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -466,13 +430,13 @@ const Pogrnapp = () => {
                                             },
                                         }}
                                         size="small"
-                                        value={formData.xgrnnum || ''}
+                                        value={formData.xtornum || ''}
                                         variant={variant}
                                         fullWidth
                                         onChange={(e) => {
                                             handleChange(e);
                                             const query = e.target.value;
-                                            const apiSearchUrl = `api/pogrnheader/search?zid=${zid}&text=${query}`;
+                                            const apiSearchUrl = `api/imtorheader/search?action=Requisition&zid=${zid}&text=${query}`;
                                             handleSearch(
                                                 e.target.value,
                                                 apiSearchUrl,
@@ -497,7 +461,7 @@ const Pogrnapp = () => {
                                     <TextField
                                         id="xdate"
                                         name="xdate"
-                                        label="Date"
+                                        label="SR Date"
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -522,100 +486,7 @@ const Pogrnapp = () => {
 
                                 </Box>
 
-                                {/* Row 2 */}
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(2, 1fr)"
-                                    gap={2}
-                                    mb={2}
-                                >
 
-
-                                    <DynamicDropdown
-                                        isOpen={supDropdownOpen}
-                                        onClose={() => setSupDropdownOpen(false)}
-                                        triggerRef={supplierRef}
-                                        data={searchResults}
-                                        headers={supConfig.map((config) => config.header)}
-                                        onSelect={handleResultClick}
-                                        dropdownWidth={600}
-                                        dropdownHeight={400}
-                                    />
-                                    {/* Mailing Address */}
-                                    <TextField
-                                        ref={supplierRef}
-                                        id="xcus"
-                                        name="xcus"
-                                        label="Supplier"
-                                        size="small"
-                                        value={formData.xcus}
-                                        error={!!formErrors.xcus}
-                                        helperText={formErrors.xcus}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        variant={variant}
-                                        fullWidth
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        onChange={(e) => {
-                                            handleChange(e);
-                                            const query = e.target.value;
-                                            const apiSupUrl = `api/cacus/search?zid=${zid}&text=${query}`;
-                                            handleSearch(
-                                                e.target.value,
-                                                apiSupUrl,
-                                                supConfig,
-                                                setSearchResults,
-                                                setSupDropdownOpen,
-                                                supplierRef,
-                                                setDropdownPosition,
-                                                { zid }
-                                            );
-                                        }}
-                                    />
-                                    {/* Email */}
-                                    <TextField
-                                        id="xorg"
-                                        name="xorg"
-                                        label="Supplier Name"
-                                        size="small"
-                                        value={formData.xorg}
-                                        variant={variant}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        inputProps={{
-                                            readOnly: true,
-                                        }}
-                                        fullWidth
-                                        onChange={handleChange}
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                    />
-                                    {/* Phone */}
-
-                                </Box>
-
-                                {/* Row 3 */}
                                 <Box
                                     display="grid"
                                     gridTemplateColumns="repeat(2, 1fr)"
@@ -627,15 +498,67 @@ const Pogrnapp = () => {
 
                                     <XlongDropDown
                                         variant={variant}
-                                        label="Store"
+                                        label="From Store"
                                         size="small"
-                                        name="xwh"
+                                        name="xfwh"
                                         type="Branch"
-                                        onSelect={(value) => handleDropdownSelect("xwh", value)}
-                                        value={formData.xwh}
+                                        onSelect={(value) => handleDropdownSelect("xfwh", value)}
+                                        value={formData.xfwh}
                                         defaultValue=""
-                                        error={!!formErrors.xwh}  // Check if there's an error for this field
-                                        helperText={formErrors.xwh}
+                                        error={!!formErrors.xfwh}  // Check if there's an error for this field
+                                        helperText={formErrors.xfwh}
+                                        withXlong="false"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
+                                        }}
+                                        sx={{
+                                            pointerEvents: 'none', // Disables interaction with the dropdown
+                                        }}
+                                    />
+
+                                    {/* Mobile */}
+                                    <TextField
+                                        id="xfwhdesc"
+                                        name="xfwhdesc"
+                                        label="Store Name"
+                                        size="small"
+                                        value={formData.xfwhdesc}
+                                        variant={variant}
+                                        hidden
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            sx: {
+                                                fontWeight: 600,
+                                            },
+                                        }}
+                                        inputProps={{
+                                            readOnly: true,
+                                        }}
+                                        onChange={handleChange}
+                                        sx={{
+                                            display: 'none',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '.9rem',
+                                            },
+                                        }}
+                                    />
+
+
+
+                                    <XlongDropDown
+                                        variant={variant}
+                                        label="To Store"
+                                        size="small"
+                                        name="xtwh"
+                                        type="Branch"
+                                        onSelect={(value) => handleDropdownSelect("xtwh", value)}
+                                        value={formData.xtwh}
+                                        defaultValue=""
+                                        error={!!formErrors.xtwh}
+                                        helperText={formErrors.xtwh}
                                         withXlong="false"
                                         InputLabelProps={{
                                             shrink: true,
@@ -646,14 +569,15 @@ const Pogrnapp = () => {
                                     />
 
 
-
+                                    {/* Mobile */}
                                     <TextField
-                                        id="xlong"
-                                        name="xlong"
+                                        id="xtwhdesc"
+                                        name="xtwhdesc"
                                         label="Store Name"
                                         size="small"
-                                        value={formData.xlong}
+                                        value={formData.xtwhdesc}
                                         variant={variant}
+                                        hidden
                                         InputLabelProps={{
                                             shrink: true,
                                             sx: {
@@ -663,20 +587,14 @@ const Pogrnapp = () => {
                                         inputProps={{
                                             readOnly: true,
                                         }}
-                                        fullWidth
                                         onChange={handleChange}
                                         sx={{
+                                            display: 'none',
                                             '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
+                                                fontSize: '.9rem',
                                             },
                                         }}
                                     />
-
-
-                                    {/* Fax */}
-
 
                                 </Box>
                                 <Box
@@ -695,40 +613,15 @@ const Pogrnapp = () => {
                                             variant="subtitle1"
                                             sx={{
                                                 marginLeft: 1,
-                                                color: status === 'Confirmed' ? 'green' : 'red', // Conditional styling
+                                                color: status === 'Open' ? 'green' : 'red', // Conditional styling
                                             }}
                                         >
-                                            {formData.xstatusdoc}
+                                            {formData.xstatustor}
                                         </Typography>
                                     </Box>
+                                    <div>
 
-                                    <TextField
-                                        id='xref'
-                                        name='xref'
-                                        label="Challan No"
-                                        size="small"
-                                        value={formData.xref}
-                                        variant={variant}
-                                        onChange={handleChange}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        fullWidth
-                                        // disabled
-                                        required
-                                        sx={{
-                                            gridColumn: 'span 2',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-
-                                    />
+                                    </div>
 
 
 
@@ -765,6 +658,8 @@ const Pogrnapp = () => {
                                             },
                                         }}
                                     />
+
+
                                 </Box>
                                 <Box
                                     display="grid"
@@ -779,7 +674,7 @@ const Pogrnapp = () => {
                                         api={`api/employee/approver/100000`}
                                         xpkey="xstaff"
                                         xskey="xname"
-                                        onSelect={(value) => handleGenericSelect("xsign1", value)}
+                                        onSelect={(value) => handleDropdownSelect("xsign1", value)}
                                         value={formData.xsign1}
                                         size="small"
                                         defaultValue=""
@@ -805,22 +700,21 @@ const Pogrnapp = () => {
                 <Box sx={{
                     gridColumn: 'span 6',
                     px: 0,
-                    // border: '1px solid #ccc', // Light gray border
+
                     borderRadius: '8px', // Optional: Rounded corners
-                    // padding: 2,
+
                 }}>
 
                     <SortableList
                         directFetch='Yes'
-                        apiUrl={apiBaseUrl}
+                        apiUrl={`api/imtorheader/pending`}
                         isFolded={false}
-                        caption="Pending Receive Entry List for Approve"
+                        caption="Pending Damage List for Approval"
                         columns={[
-                            { field: 'xgrnnum', title: 'GRN Number', width: '25%', },
-                            { field: 'xcus', title: 'Name', width: '25%' },
-                            { field: 'xorg', title: 'Supplier Name', width: '40%', align: 'center' },
-                            { field: 'xdate', title: 'GRN Date', width: '10%', align: 'center' },
-                            { field: 'xstatusdoc', title: 'GRN Status', width: '10%', align: 'center' },
+                            { field: 'xtornum', title: 'Requisition Number', width: '25%', align: 'left' },
+                            { field: 'xfwh', title: 'Store', width: '25%', align: 'left' },
+                            { field: 'xfwhdesc', title: 'Store Name', width: '40%', align: 'left' },
+                            { field: 'xdate', title: 'Date', width: '10%', align: 'left' },
                         ]}
                         onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
@@ -829,11 +723,10 @@ const Pogrnapp = () => {
                                 setRefreshTrigger(false);
                             }
                         }}
-                        
                         pageSize={10}
                         onSortChange={handleSortChange}
-                        sortField="xgrnnum"
-                        additionalParams={{ zid: zid, superior: zemail }}
+                        sortField="xtornum"
+                        additionalParams={{ zid: zid, superior: zemail, trn: "DAM-" }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"
@@ -841,38 +734,37 @@ const Pogrnapp = () => {
                         page={1}
                     />
                     <SortableList
-
-                        apiUrl={`api/pogrndetails/${zid}/${formData.xgrnnum}`}
+                        apiUrl={`api/imtordetail/${zid}/${formData.xtornum}`}
                         isFolded={false}
-                        caption="Receive Entry Detail List"
+                        caption="Damage Detail List"
                         columns={[
-                            { field: 'xrow', title: 'Serial', width: '5%', },
-                            { field: 'xitem', title: 'Item', width: '10%' },
-                            { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
-                            { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
-                            { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
+                            { field: 'xrow', title: 'Serial', width: '5%', align: 'left' },
+                            { field: 'xitem', title: 'Item', width: '10%', align: 'left' },
+                            { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
+                            { field: 'xqtyord', title: 'Required Quantity', width: '65%', align: 'left' },
+
                         ]}
                         // onItemSelect={handleItemSelect}
                         onRefresh={(refresh) => {
-                            if (formData.xgrnnum) {
-                                refresh(); // Trigger the refresh only when xgrnnum is available
+                            if (formData.xtornum) {
+                                refresh(); // Trigger the refresh only when xtornum is available
                             }
                         }}
                         pageSize={10}
                         // onSortChange={handleSortChange}
-                        sortField="xgrnnum"
+                        sortField="xtornum"
                         additionalParams={{}}
                         captionFont=".9rem"
                         xclass="py-0 pl-2"
                         bodyFont=".7rem"
                         mt={2}
                         page={1}
-                    // isModal
                     />
                 </Box>
+
             </div >
         </div>
     );
 };
 
-export default Pogrnapp;
+export default Imtorheaderdamapp;

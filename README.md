@@ -6,8 +6,8 @@ BIWTA is an inventory management system designed for managing medical dispense a
 
 ## Technologies Used
 
-![React](https://img.shields.io/badge/React-v18.2.0-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-v2.5.4-green)
+![React](https://img.shields.io/badge/React-v18.3.1-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-v3.3.5-green)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-v2019-blue)
 
 This project utilizes the following technologies:
@@ -27,8 +27,5 @@ This project utilizes the following technologies:
 
 Follow these steps to set up and run the project locally:
 
-### 1. Clone the repository:
 
-```bash
-git clone https://github.com/yourusername/biwta.git
-cd biwta
+

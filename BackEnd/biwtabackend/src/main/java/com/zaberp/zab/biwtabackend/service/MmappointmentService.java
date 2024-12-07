@@ -7,28 +7,30 @@ import com.zaberp.zab.biwtabackend.repository.MmappointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MmappointmentService {
+public class MmappointmentService extends CommonServiceImpl<Mmappointment,MmappointmentId>{
 
     @Autowired
     private MmappointmentRepository mmappointmentRepository;
 
 
     private final MmappointmentRepository repository;
-
+    private final NamedParameterJdbcTemplate jdbcTemplate;
     private final PrimaryKeyService primaryKeyService;
 
-    public MmappointmentService(MmappointmentRepository repository, PrimaryKeyService primaryKeyService) {
+    public MmappointmentService(MmappointmentRepository repository, NamedParameterJdbcTemplate jdbcTemplate, PrimaryKeyService primaryKeyService) {
         this.repository = repository;
+        this.jdbcTemplate = jdbcTemplate;
         this.primaryKeyService = primaryKeyService;
     }
 
-    public List<Mmappointment> findAll() {
-        return repository.findAll();
-    }
+
 
     public Mmappointment save(Mmappointment mmAppointment) {
         String generatedKey=primaryKeyService.getGeneratedPrimaryKey(mmAppointment.getZid(),"Inventory Transaction","RX--",6);
@@ -40,12 +42,26 @@ public class MmappointmentService {
         repository.deleteById(id);
     }
 
-    public Mmappointment findById(MmappointmentId id) {
-        return repository.findById(id).orElse(null);
+
+    @Override
+    protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return jdbcTemplate;
     }
 
-    public List<Mmappointment> findByZid(int zid) {
-        return repository.findByZid(zid);
+    @Override
+    public JpaRepository<Mmappointment, MmappointmentId> getRepository() {
+        return repository;
+    }
+
+
+    @Override
+    protected String getTableName() {
+        return "Mmappointment";
+    }
+
+    @Override
+    protected RowMapper<Mmappointment> getRowMapper() {
+        return null;
     }
 
     public Mmappointment findByZidAndXcase(int zid, String xcase) {

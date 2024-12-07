@@ -33,9 +33,6 @@ public class CaitemService extends CommonServiceImpl<Caitem, CaitemId> {
 
 
 
-
-
-
     public Caitem createItem(Caitem caitem) {
         String generatedKey = primaryKeyService.getGeneratedPrimaryKey(
                 caitem.getZid(), "Item Code", "IC--", 6);
@@ -51,6 +48,7 @@ public class CaitemService extends CommonServiceImpl<Caitem, CaitemId> {
 
     @Override
     protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+
         return jdbcTemplate;
     }
 

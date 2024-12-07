@@ -351,7 +351,7 @@ const [refreshTrigger, setRefreshTrigger] = useState(false);
           </Box>
 
           <GenericList
-            apiUrl={apiBaseUrl}
+            apiUrl={`api/mmappointment`}
             caption="Today Prescription List"
             columns={[
               { field: 'xcase', title: 'Case ID', width: '45%', },

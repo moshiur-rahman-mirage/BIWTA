@@ -10,6 +10,7 @@ const XlongDropDown = ({
     type,
     onSelect,
     withXlong,
+    fontWeight,
     defaultValue = '',
     fontSize = '0.9rem', // Default font size for options
     captionSize = '0.875rem', // Default font size for the label
@@ -64,7 +65,7 @@ const XlongDropDown = ({
             shrink
                 sx={{
                     fontSize: '1rem',
-                    fontWeight: 600,
+                    fontWeight: {fontWeight},
 
                 }}
             >

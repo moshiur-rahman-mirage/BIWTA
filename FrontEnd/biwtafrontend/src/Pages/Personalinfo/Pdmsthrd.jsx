@@ -695,12 +695,9 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
-
                                     }}
                                     name="xdesignation"
+                                    fontWeight={600}
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdesignation", value)}
@@ -722,12 +719,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     name='xdeptname'
                                     label="Department"
+                                    fontWeight={600}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     type="Department"
@@ -742,12 +738,11 @@ const Pdmsthrd = () => {
                                     name="xreligion"
                                     variant={variant}
                                     label="Religion"
+                                    fontWeight={600}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600,
-                                        },
+                                        
                                     }}
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
@@ -779,12 +774,11 @@ const Pdmsthrd = () => {
                                     name="xmstat"
                                     variant={variant}
                                     label="Marital Status"
+                                    fontWeight={600}
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     type="Marital Status"
@@ -842,11 +836,10 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
+                                    fontWeight={600}
                                     type="Job Title"
                                     onSelect={(value) => handleDropdownSelect("xjobtitle", value)}
                                     value={formData.xjobtitle}
@@ -863,12 +856,11 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     type="Job Location"
+                                    fontWeight={600}
                                     onSelect={(value) => handleDropdownSelect("xlocation", value)}
                                     value={formData.xlocation}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
@@ -892,12 +884,11 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
                                     name="xemptype"
+                                    fontWeight={600}
                                     type="Employee Type"
                                     onSelect={(value) => handleDropdownSelect("xemptype", value)}
                                     value={formData.xemptype}
@@ -914,11 +905,10 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
+                                    fontWeight={600}
                                     // InputLabelProps={{ shrink: true }}
                                     variant={variant}
                                     fullWidth
@@ -929,11 +919,10 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        
 
                                     }}
+                                    fontWeight={600}
                                     id="xprofdegree"
                                     name="xprofdegree"
                                     onChange={handleChange}

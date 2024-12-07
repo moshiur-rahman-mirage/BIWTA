@@ -42,6 +42,7 @@ import ProcessName from "../Pages/Xcodes/ProcessName";
 import Imtorheaderdam from "../Pages/Inventory/Transfer/Imtorheaderdam";
 import ApprovalLayer from "../Pages/ApprovalLayer/ApprovalLayer";
 import Pogrnapp from "../Pages/Inventory/grnapproval/Pogrnapp";
+import ItemCategory from "../Pages/Xcodes/ItemCategory";
 
 
 
@@ -90,6 +91,7 @@ const Router = createBrowserRouter([
               { path: "jobtitle", element: <JobTitle /> },
               { path: "emptype", element: <EmpType /> },
               { path: "itemgroup", element: <ItemGroup /> },
+              { path: "itemcat", element: <ItemCategory /> },
               { path: "paymenttype", element: <PaymentType /> },
             ],
           },

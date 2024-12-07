@@ -33,6 +33,7 @@ export const menuitems = [
           { title: "Job Title", to: "administrations/codes/jobtitle" },
           { title: "Employee Type", to: "administrations/codes/emptype" },
           { title: "Product Group", to: "administrations/codes/itemgroup" },
+          { title: "Product Category", to: "administrations/codes/itemcat" },
           { title: "Payment Type", to: "administrations/codes/paymenttype" },
         ],
       },

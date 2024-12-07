@@ -49,7 +49,7 @@ const SortableList = ({
     const handleMouseLeave = () => setHoveredIndex(null);
 
     const constructApiUrl = useMemo(() => {
-        return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'asc'}`;
+        return `${apiUrl}?page=${page - 1}&size=${pageSize}&sortBy=${xsortField}&ascending=${sortOrder === 'desc'}`;
     }, [apiUrl, page, pageSize, xsortField, sortOrder]);
 
     const fetchData = async () => {
@@ -65,56 +65,6 @@ const SortableList = ({
             setLoading(false);
         }
     };
-
-
-
-
-
-    // const constructApiRequestBody = useMemo(() => {
-    //     return {
-    //         zid:zid,
-    //         page: page - 1,
-    //         size: pageSize,
-    //         sortBy: xsortField,
-    //         ascending: sortOrder === 'asc',
-    //     };
-    // }, [page, pageSize, xsortField, sortOrder]);
-
-    // const fetchData = async () => {
-    //     // console.log(JSON.stringify(constructApiRequestBody))
-    //     setLoading(true);
-    //     try {
-    //         console.log(apiUrl)
-    //         const response = await axiosInstance.postWithBody(apiUrl, constructApiRequestBody, {
-                
-    //             headers: {
-    //                 'Content-Type': 'application/json', // Ensure the body is in JSON format
-    //             },
-    //         });
-    //         console.log(response)
-    //         console.log(response.page.totalPages)
-    //         // const data = await response.json(); 
-    //         // console.log(data); 
-
-    //         const finalData = response.content
-
-    //         setItems(finalData || []);
-    //         setFilteredItems(finalData || []);
-    //         setxTotalPages(response.page.totalPages || 1);
-    //     } catch (error) {
-    //         console.error('Error fetching list items:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-
-
-
-
-
-
-
 
 
     useEffect(() => {
@@ -161,22 +111,22 @@ const SortableList = ({
             <TextField
                     sx={{
                        
-                        height: '30px', // Adjust overall height
+                        height: '30px',
                         marginTop: '2px',
                         '& .MuiInputBase-root': {
                             height: '100%',
                             display: 'flex',
-                            alignItems: 'center', // Ensures the input content (including placeholder) is vertically centered
+                            alignItems: 'center', 
                         },
                         '& .MuiInputBase-input': {
-                            padding: '0', // Remove unnecessary padding
-                            height: '100%', // Ensure the input spans the full height
-                            lineHeight: '30px', // Match the line height to the TextField height
+                            padding: '0',
+                            height: '100%', 
+                            lineHeight: '30px', 
                             paddingLeft: '5px'
                         },
                         '& .MuiInputBase-input::placeholder': {
-                            color: 'gray', // Adjust placeholder color
-                            fontSize: '0.85rem', // Adjust placeholder font size
+                            color: 'gray', 
+                            fontSize: '0.85rem', 
                             verticalAlign: 'middle',
                             paddingLeft: '5px'
                         },
@@ -194,23 +144,23 @@ const SortableList = ({
 
 
                     <FormControl size="small" sx={{
-                        minWidth: 102, // Increase width by 2px (100 -> 102)
+                        minWidth: 102, 
                         height: '40px',
                         marginTop: '2px',
                         position: 'relative',
                         '& .MuiInputBase-root': {
-                            height: '30px', // Ensure the Select input matches the parent height
-                            lineHeight: '30px', // Align the text vertically
+                            height: '30px',
+                            lineHeight: '30px', 
                         },
                         '& .MuiSelect-select': {
-                            padding: '0 8px', // Adjust padding for consistent appearance
+                            padding: '0 8px', 
                             display: 'flex',
-                            alignItems: 'center', // Vertically center the dropdown content
+                            alignItems: 'center',
                         },
                     }}>
                         <InputLabel sx={{
                             position: 'absolute',
-                            top: '50%', // Vertically center
+                            top: '50%', 
                             transform: 'translateY(-75%)',
                             left: '35px',
 

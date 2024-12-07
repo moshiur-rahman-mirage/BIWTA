@@ -38,22 +38,23 @@ export const handleApiRequest = async ({
         });
         
     } catch (error) {
+       
         if (error.response && error.response.status === 400) {
             const errorMessages = error.response.data.message;
-            console.log(errorMessages)
+            console.log(errorMessages.message)
             if (typeof errorMessages === 'object') {
               
-                let formattedErrors = '';
-                for (const field in errorMessages) {
+                // let formattedErrors = '';
+                // for (const field in errorMessages) {
                     
-                    formattedErrors += `${field}: ${errorMessages[field]}<br>`;
-                }
-                if (onValidationError) onValidationError(formattedErrors);
+                //     formattedErrors += `${field}: ${errorMessages[field]}<br>`;
+                // }
+                // if (onValidationError) onValidationError(formattedErrors);
                 
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Errors',
-                    html: formattedErrors,
+                    html: errorMessages,
                     confirmButtonText: 'Okay',
                    
                 });

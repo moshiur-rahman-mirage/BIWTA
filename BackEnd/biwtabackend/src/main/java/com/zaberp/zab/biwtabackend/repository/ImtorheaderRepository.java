@@ -19,14 +19,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ImtorheaderRepository extends JpaRepository<Imtorheader, ImtorheaderId>, CustomImtorheaderRepository {
-
-
-    Optional<Imtorheader> findByZidAndXtornum(int zid, String xtornum);
+public interface ImtorheaderRepository extends JpaRepository<Imtorheader, ImtorheaderId> {
 
 
 
-    void deleteByZidAndXtornum(int zid, String xtornum);
 
 
 

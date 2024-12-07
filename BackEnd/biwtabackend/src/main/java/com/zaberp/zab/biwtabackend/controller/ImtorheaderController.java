@@ -29,8 +29,8 @@ public class ImtorheaderController extends BaseController<Imtorheader,Imtorheade
     public ResponseEntity<Imtorheader> createItem(
             @RequestBody Imtorheader imtorheader,
             @RequestParam("action") String action) {
-        Imtorheader createDam = service.createTransaction(imtorheader,action);
-        return ResponseEntity.ok(createDam);
+        Imtorheader createTor = service.createTransaction(imtorheader,action);
+        return ResponseEntity.ok(createTor);
     }
 
 

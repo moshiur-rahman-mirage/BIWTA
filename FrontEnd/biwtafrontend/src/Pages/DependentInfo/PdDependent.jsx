@@ -109,6 +109,17 @@ const PdDependent = ({ xstaff, xname }) => {
 
     const handleAdd = async () => {
 
+        const errors = validateForm(formData, ['xname','xrelation','xgender']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
         const endpoint = addEndpoint;
         const data = {
             ...formData,
@@ -121,6 +132,7 @@ const PdDependent = ({ xstaff, xname }) => {
                 console.log(response)
                 setFormData((prev) => ({ ...prev, xrow: response.xrow }));
                 setUpdateCount(prevCount => prevCount + 1);
+                setFormErrors({});
             } else {
                 // alert('Supplier added successfully.');
             }
@@ -272,6 +284,8 @@ const PdDependent = ({ xstaff, xname }) => {
                                         label="Family member Name"
                                         name='xname'
                                         variant={variant}
+                                        error={!!formErrors.xname}  
+                                        helperText={formErrors.xname}
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
@@ -326,8 +340,8 @@ const PdDependent = ({ xstaff, xname }) => {
                                     mb={2} // margin-bottom
                                 >
                                     <XcodesDropDown
-                                        id='xsex'
-                                        name='xsex'
+                                        id='xgender'
+                                        name='xgender'
                                         variant={variant}
                                         label="Gender"
                                         size="small"
@@ -339,8 +353,10 @@ const PdDependent = ({ xstaff, xname }) => {
 
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
-                                        fontSize="0.9rem" // Smaller font size for dropdown options
+                                        fontSize="0.9rem" 
                                         captionSize="0.9rem"
+                                        error={!!formErrors.xgender}  
+                                        helperText={formErrors.xgender}
 
 
                                     />
@@ -362,6 +378,8 @@ const PdDependent = ({ xstaff, xname }) => {
                                             onSelect={(value) => handleDropdownSelect("xrelation", value)}
                                             value={formData.xrelation}
                                             defaultValue=""
+                                            error={!!formErrors.xrelation}  
+                                            helperText={formErrors.xrelation}
                                         />
 
                                     </Stack>
@@ -444,7 +462,7 @@ const PdDependent = ({ xstaff, xname }) => {
                                     apiUrl={apiBaseUrl}
                                     caption="Dependents List"
                                     columns={[
-                                        { field: 'xrow', title: 'Row', width: '40%' },
+                                       
                                         { field: 'xname', title: 'Name', width: '40%' },
                                         { field: 'xrelation', title: 'Relation', width: '30%' },
                                         { field: 'xcontact', title: 'Contact?', width: '30%', align: 'center' },

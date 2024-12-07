@@ -200,7 +200,7 @@ const Imtorheader = () => {
             zauserid: zemail,
             zid: zid
         };
-
+       
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xtornum) {
 
@@ -249,6 +249,7 @@ const Imtorheader = () => {
                 transactionNumber: formData.xtornum
             },
             onSuccess: (response) => {
+                setUpdateCount(prevCount => prevCount + 1);
                 setFormData({
                     zid: zid,
                     xtornum: '',
@@ -290,7 +291,7 @@ const Imtorheader = () => {
             xlong: formData.xlong
 
         };
-        const whereConditions = { xstaff: formData.xstaff, zid: zid };
+        const whereConditions = { xtornum: formData.xtornum, zid: zid };
 
         const data = {
             tableName,
@@ -305,9 +306,10 @@ const Imtorheader = () => {
             data,
             method: 'PUT',
         });
-
+        setUpdateCount(prevCount => prevCount + 1);
         setFormErrors({});
     };
+
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -337,7 +339,7 @@ const Imtorheader = () => {
 
             try {
 
-                const response = await axiosInstance.post("/api/imtorheader/confirmSR", params);
+                const response = await axiosInstance.post("/api/imtorheader/confirmsr", params);
                 setStatus(response.data);
 
                 Swal.fire({
@@ -600,9 +602,6 @@ const Imtorheader = () => {
                                         }}
                                     />
 
-
-
-
                                     {/* Mobile */}
                                     <TextField
                                         id="xfwhdesc"
@@ -632,8 +631,6 @@ const Imtorheader = () => {
 
 
 
-
-
                                     <XlongDropDown
                                         variant={variant}
                                         label="To Store"
@@ -643,7 +640,7 @@ const Imtorheader = () => {
                                         onSelect={(value) => handleDropdownSelect("xtwh", value)}
                                         value={formData.xtwh}
                                         defaultValue=""
-                                        error={!!formErrors.xtwh}  // Check if there's an error for this field
+                                        error={!!formErrors.xtwh}  
                                         helperText={formErrors.xtwh}
                                         withXlong="false"
                                         InputLabelProps={{

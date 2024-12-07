@@ -47,7 +47,6 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
         String transactionPrefix = determineTransactionPrefix(action);
         String tempStatus = determineTempStatus(action);
 
-        // Generate primary key and set values
         String generatedKey = primaryKeyService.getGeneratedPrimaryKey(
                 imtorheader.getZid(), "Transfer Transaction", transactionPrefix, 6
         );
@@ -56,7 +55,6 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
         imtorheader.setZtime(LocalDateTime.now());
         imtorheader.setXstatustor(tempStatus);
         imtorheader.setXtrn(transactionPrefix);
-
         return repository.save(imtorheader);
     }
 
@@ -143,12 +141,13 @@ public class ImtorheaderService extends CommonServiceImpl<Imtorheader, Imtorhead
     }
 
     private String determineTempStatus(String action) {
-        return "damage".equalsIgnoreCase(action) ? "Open" : "Approved";
+        return "damage".equalsIgnoreCase(action) ? "Open" : "Open";
     }
 
 
     @Override
     public JpaRepository<Imtorheader, ImtorheaderId> getRepository() {
+
         return repository;
     }
 

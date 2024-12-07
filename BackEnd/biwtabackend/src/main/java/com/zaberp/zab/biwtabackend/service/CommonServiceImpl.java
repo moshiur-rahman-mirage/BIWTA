@@ -241,7 +241,6 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
             isFirstCondition = false;
         }
 
-
         Query query = entityManager.createQuery(queryBuilder.toString());
 
 
@@ -280,10 +279,22 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
     private void setParameter(Query query, String paramName, Object value) {
         try {
+            if (value instanceof String) {
+                String valueStr = (String) value;
+                if (valueStr.matches("\\d{4}-\\d{2}-\\d{2}")) { // If matches yyyy-MM-dd format
+                    query.setParameter(paramName, java.sql.Date.valueOf(valueStr));
+                    return;
+                }
+            } else if (value instanceof java.time.LocalDate) {
+                query.setParameter(paramName, java.sql.Date.valueOf((java.time.LocalDate) value));
+                return;
+            } else if (value instanceof java.util.Date) {
+                query.setParameter(paramName, new java.sql.Date(((java.util.Date) value).getTime()));
+                return;
+            }
 
             query.setParameter(paramName, value);
         } catch (Exception e) {
-
             e.printStackTrace();
             throw e;
         }

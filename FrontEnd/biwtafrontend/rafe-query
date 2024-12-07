@@ -1,0 +1,23 @@
+select * from mmprescription
+
+delete from mmprescription
+
+select * from mmpreschistory
+
+ALTER TABLE mmprescription
+ADD xage VARCHAR(255);
+
+ALTER TABLE mmprescription
+ADD xdepartment VARCHAR(255);
+
+ALTER TABLE mmprescription
+ADD xsex VARCHAR(255);
+
+select * from xusers
+
+select * from pdmst
+
+delete from mmprescription
+
+
+

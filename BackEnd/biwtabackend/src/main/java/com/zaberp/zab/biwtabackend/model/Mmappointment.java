@@ -1,52 +1,21 @@
 package com.zaberp.zab.biwtabackend.model;
 
-<<<<<<< HEAD
 
-import com.zaberp.zab.biwtabackend.id.CacusId;
 import com.zaberp.zab.biwtabackend.id.MmappointmentId;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-=======
-import com.zaberp.zab.biwtabackend.id.MmappointmentId;
-import com.zaberp.zab.biwtabackend.id.PogrndetailId;
-import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
->>>>>>> 0ae2933b3b2aa0526bb66f144bcd669cbe51a58f
+
 
 @Data
 @Entity
 @Table(name = "mmappointment")
-<<<<<<< HEAD
-@IdClass(MmappointmentId.class) // For composite primary key
-public class Mmappointment {
-
-    @Id
-    @Column(name="zid")
-    private int zid; // Part of composite primary key
-
-    @Id
-    @Column(name="xcase")
-    private String xcase;
-
-    private LocalDateTime ztime;
-    private LocalDateTime zutime;
-    private String xstatus;
-    private String xstatuspharma;
-    private String xdoctor;
-    private String xstaff;
-    private String xsex;
-    private String xapptype;
-    private String xdependent;
-    private String xpatient;
-
-=======
 @IdClass(MmappointmentId.class)
 public class Mmappointment {
 
@@ -198,5 +167,5 @@ public class Mmappointment {
 
     @Column(name = "xlasa", length = 2000)
     private String xlasa;
->>>>>>> 0ae2933b3b2aa0526bb66f144bcd669cbe51a58f
+
 }

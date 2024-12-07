@@ -1,51 +1,15 @@
 package com.zaberp.zab.biwtabackend.controller;
 
-<<<<<<< HEAD
-
-import com.zaberp.zab.biwtabackend.model.Cacus;
-import com.zaberp.zab.biwtabackend.model.Mmappointment;
-import com.zaberp.zab.biwtabackend.service.MmappointmentService;
-import org.springframework.beans.factory.annotation.Autowired;
-=======
 import com.zaberp.zab.biwtabackend.id.MmappointmentId;
 import com.zaberp.zab.biwtabackend.model.Mmappointment;
 import com.zaberp.zab.biwtabackend.service.MmappointmentService;
 import org.springframework.http.ResponseEntity;
->>>>>>> 0ae2933b3b2aa0526bb66f144bcd669cbe51a58f
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-<<<<<<< HEAD
 @RestController
-@RequestMapping("/api/mmappointment")
-public class MmappointmentController {
-    @Autowired
-    private MmappointmentService service;
-
-    @GetMapping()
-    public List<Mmappointment> findAll(
-            @RequestParam("zid") int zid
-    ) {
-        return service.getAll(zid);
-    }
-
-
-//    api/appintment?zid=100000
-
-//    api/mmappontment/100000/Case-00000000001
-
-    @GetMapping("{zid}/{xcase}")
-    public Mmappointment findByCase(
-            @PathVariable("zid") int zid,
-            @PathVariable("case") String xcase
-    ){
-        return service.getAllItems(zid,xcase);
-    }
-}
-=======
-    @RestController
-    @RequestMapping("/api/mmappointments")
+    @RequestMapping("/api/mmappointment")
     public class MmappointmentController {
 
         private final MmappointmentService service;
@@ -93,4 +57,4 @@ public class MmappointmentController {
         }
     }
 
->>>>>>> 0ae2933b3b2aa0526bb66f144bcd669cbe51a58f
+

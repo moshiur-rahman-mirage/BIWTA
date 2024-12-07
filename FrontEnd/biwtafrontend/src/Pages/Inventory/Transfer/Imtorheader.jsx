@@ -41,7 +41,8 @@ const Imtorheader = () => {
         xtwh: '',
         xtwhdesc: '',
         xnote: '',
-        xlong: ''
+        xlong: '',
+        xsign1:''
 
 
     });
@@ -236,7 +237,8 @@ const Imtorheader = () => {
             xtwh: '',
             xtwhdesc: '',
             xnote: '',
-            xlong: ''
+            xlong: '',
+            xsign1:'',
 
         });
         alert('Form cleared.');
@@ -263,7 +265,8 @@ const Imtorheader = () => {
                     xtwh: '',
                     xtwhdesc: '',
                     xnote: '',
-                    xlong: ''
+                    xlong: '',
+                    xsign1:''
 
                 });
 
@@ -291,7 +294,8 @@ const Imtorheader = () => {
             xfwh: formData.xwh,
             xtwh: formData.xtwh,
             xnote: formData.xnote,
-            xlong: formData.xlong
+            xlong: formData.xlong,
+            xsign1:formData.xsign1
 
         };
         const whereConditions = { xtornum: formData.xtornum, zid: zid };
@@ -328,18 +332,6 @@ const Imtorheader = () => {
 
 
     const handleUpdateBeforeConfirm = async () => {
-        // const errors = validateForm(formData, ['xfwh']);
-        // if (Object.keys(errors).length > 0) {
-        //     setFormErrors(errors);
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: 'Invalid Input',
-        //         text: 'Please fix the errors before proceeding.',
-        //     });
-        //     return;
-        // }
-        setUpdateCount(prevCount => prevCount + 1);
-    
         const tableName = "Imtorheader"; 
         const updates ={ xsign1: formData.xsign1 }; 
         const whereConditions = { xtornum: formData.xtornum, zid: zid }; 
@@ -352,9 +344,10 @@ const Imtorheader = () => {
             updates: updates,
         };
 
-    
+        console.log(data)
+
         const endpoint = `api/imtorheader/update`; 
-    
+        console.log(endpoint);
         await handleApiRequest({
             endpoint,
             data,
@@ -416,7 +409,7 @@ const Imtorheader = () => {
                 return;
             }
             const requestBody = {
-                selectedFields: ["xtornum", "xstatustor"], 
+                selectedFields: [ "xstatustor"], 
                 whereConditions: {
                     zid: zid,
                     xtornum: formData.xtornum
@@ -429,7 +422,10 @@ const Imtorheader = () => {
     
            
             if (response?.data) {
-                setFormData(response.data[0]);
+                setFormData((prevFormData) => ({
+                    ...prevFormData, 
+                    ...response.data[0],
+                }));
             } else {
                 console.warn("No data received from the API.");
             }

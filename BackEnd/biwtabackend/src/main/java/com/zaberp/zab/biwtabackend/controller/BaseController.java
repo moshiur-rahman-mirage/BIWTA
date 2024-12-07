@@ -201,7 +201,6 @@ public abstract class BaseController<T, Id> {
         String wh = confirmTrnDto.getWh();
         String tornum = confirmTrnDto.getTornum();
         String request = confirmTrnDto.getRequest();
-        String updated=confirmTrnDto.getUpdated();
 
             System.out.println("Details:");
             System.out.println("ZID: " + zid);

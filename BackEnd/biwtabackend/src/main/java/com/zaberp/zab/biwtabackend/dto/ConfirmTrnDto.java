@@ -23,9 +23,9 @@ public class ConfirmTrnDto {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+//    public void setStatus(String status) {
+//        this.status = status;
+//    }
 
     private String updated;
 
@@ -133,16 +133,6 @@ public class ConfirmTrnDto {
         return request;
     }
 
-    public void setRequest(String request) {
-        this.request = request;
-    }
 
-    public String getXstatustor() {
-        return xstatustor;
-    }
-
-    public void setXstatustor(String xstatustor) {
-        this.xstatustor = xstatustor;
-    }
 }
 

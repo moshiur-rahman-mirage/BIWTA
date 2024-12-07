@@ -75,7 +75,6 @@ const Imtorheaderapp = () => {
     const deleteEndpoint = `api/imtorheader/${zid}/transaction`;
     const mainSideListEndpoint = `api/imtorheader/${zid}/paginated`;
 
-    // const endpoint = 'api/imtorheader/findByZidAndOther/xtrn/SR--';
 
 
     // Handle dropdown value change
@@ -187,36 +186,6 @@ const Imtorheaderapp = () => {
     }, [updateCount]);
 
 
-    const handleAdd = async () => {
-        const errors = validateForm(formData, ['xfwh']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-
-        const endpoint = 'api/imtorheader?action=requisition';
-        const data = {
-            ...formData,
-            zauserid: zemail,
-            zid: zid
-        };
-
-        addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xtornum) {
-
-                setFormData((prev) => ({ ...prev, xtornum: response.xtornum, xstatustor: response.xstatustor }));
-                setUpdateCount(prevCount => prevCount + 1);
-                setFormErrors({});
-            } else {
-                // alert('Supplier added successfully.');
-            }
-        });
-    };
 
 
     const handleItemSelect = useCallback((item) => {
@@ -244,194 +213,32 @@ const Imtorheaderapp = () => {
         alert('Form cleared.');
     };
 
-    const handleDelete = async () => {
-        const endpoint = deleteEndpoint;
-        await handleApiRequest({
-            endpoint,
-            method: 'DELETE',
-            params: {
-                column: 'xtornum',
-                transactionNumber: formData.xtornum
-            },
-            onSuccess: (response) => {
-                setUpdateCount(prevCount => prevCount + 1);
-                setFormData({
-                    zid: zid,
-                    xtornum: '',
-                    xstatustor: '',
-                    xdate: new Date().toISOString().split('T')[0],
-                    xfwh: xwh,
-                    xfwhdesc: '',
-                    xtwh: '',
-                    xtwhdesc: '',
-                    xnote: '',
-                    xlong: ''
-
-                });
-
-            },
-        });
-    };
-
-
-    const handleUpdate = async () => {
-        const errors = validateForm(formData, ['xfwh']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-
-        const tableName = "Imtorheader";
-        const updates = {
-
-            xdate: formData.xdate,
-            xfwh: formData.xwh,
-            xtwh: formData.xtwh,
-            xnote: formData.xnote,
-            xlong: formData.xlong
-
-        };
-        const whereConditions = { xtornum: formData.xtornum, zid: zid };
-
-        const data = {
-            tableName,
-            whereConditions,
-            updates: updates,
-        };
-
-        const endpoint = updateEndpoint;
-
-        await handleApiRequest({
-            endpoint,
-            data,
-            method: 'PUT',
-        });
-        setUpdateCount(prevCount => prevCount + 1);
-        setFormErrors({});
-    };
-
-
-    const handleOpen = () => {
-        document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
-        document.body.style.overflow = "hidden";
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        document.body.style.paddingRight = "";
-        document.body.style.overflow = "";
-        setOpen(false);
-    };
-
-
-    const handleUpdateBeforeConfirm = async () => {
-        // const errors = validateForm(formData, ['xfwh']);
-        // if (Object.keys(errors).length > 0) {
-        //     setFormErrors(errors);
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: 'Invalid Input',
-        //         text: 'Please fix the errors before proceeding.',
-        //     });
-        //     return;
-        // }
-        setUpdateCount(prevCount => prevCount + 1);
-    
-        const tableName = "Imtorheader"; 
-        const updates ={ xsign1: formData.xsign1 }; 
-        const whereConditions = { xtornum: formData.xtornum, zid: zid }; 
-        
-        
-        
-        const data = {
-            tableName,
-            whereConditions, 
-            updates: updates,
-        };
-
-    
-        const endpoint = `api/imtorheader/update`; 
-    
-        await handleApiRequest({
-            endpoint,
-            data,
-            method: 'PUT',
-        });
-    
-        setFormErrors({});
-    };
-
-
-    const handleConfirm = async () => {
-        if (window.confirm('Confirm This Requisition?')) {
-            setStatus("Processing...");
-            handleUpdateBeforeConfirm();
-            const params = {
-                zid: 100000,
-                user: zemail,
-                position:zemail,
-                wh:formData.xfwh,
-                tornum: formData.xtornum,
-                request:'SR_WR Approval'
-
-            };
-
-            try {
-
-                const response = await axiosInstance.post("/api/imtorheader/confirmRequest", params);
-                console.log(response)
-                setStatus(response.data);
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Operation completed successfully'
-                });
-                reloadFormData();
-                setUpdateCount(prevCount => prevCount + 1);
-                // handleItemSelect();
-            } catch (error) {
-           
-                setStatus("Error: " + (error.response?.data || error.message));
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong. Please try again.'
-                });
-            }
-        }
-    };
-
-
 
     const reloadFormData = async () => {
         try {
-            
+
             if (!zid || !formData?.xtornum) {
                 console.error("Missing required parameters: zid or xtornum");
                 return;
             }
             const requestBody = {
-                selectedFields: [ "xstatustor"], 
+                selectedFields: [ "xstatustor"],
                 whereConditions: {
                     zid: zid,
                     xtornum: formData.xtornum
                 }
             };
-    
-           
+
+
             const response = await axiosInstance.post("/api/imtorheader/fetch", requestBody);
             console.log("API Response:", response);
-    
-           
+
+
             if (response?.data) {
-                setFormData(response.data[0]);
+                setFormData((prevFormData) => ({
+                    ...prevFormData, 
+                    ...response.data[0],
+                }));
             } else {
                 console.warn("No data received from the API.");
             }
@@ -447,31 +254,61 @@ const Imtorheaderapp = () => {
     };
 
 
+
+
+    const handleUpdateBeforeConfirm = async () => {
+
+        setUpdateCount(prevCount => prevCount + 1);
+
+        const tableName = "Imtorheader";
+        const updates = { xsign1: formData.xsign1 };
+        const whereConditions = { xtornum: formData.xtornum, zid: zid };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+        const endpoint = `api/imtorheader/update`;
+
+        await handleApiRequest({
+            endpoint,
+            data,
+            method: 'PUT',
+        });
+
+        setFormErrors({});
+    };
+
+
+
     const handleApprove = async () => {
         if (window.confirm('Are You Sure to Approve This Requisition?')) {
             setStatus("Processing...");
+            handleUpdateBeforeConfirm()
             const params = {
                 zid: 100000,
                 user: zemail,
-                position:zemail,
-                tornum:formData.xtornum,
-                status:formData.xstatustor,
-                request:'SR_WR Approval'
+                position: zemail,
+                tornum: formData.xtornum,
+                status: formData.xstatustor,
+                request: 'SR_WR Approval'
             };
-            
+
             try {
 
-               const response = await axiosInstance.post("/api/imtorheader/approveRequest", params);
-               console.log(params)
-               console.log("app response"+response.data)
-               setStatus(response.data);
-               setUpdateCount(prevCount => prevCount + 1);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Operation completed successfully'
-                });
-                // reloadFormData();
+                const response = await axiosInstance.post("/api/imtorheader/approveRequest", params);
+                console.log(params)
+                console.log("app response" + response.data)
+                setStatus(response.data);
+                setUpdateCount(prevCount => prevCount + 1);
+                // Swal.fire({
+                //     icon: 'success',
+                //     title: 'Success!',
+                //     text: 'Operation completed successfully'
+                // });
+                reloadFormData();
             } catch (error) {
                 setStatus("Error: " + (error.response?.data || error.message));
 
@@ -483,7 +320,7 @@ const Imtorheaderapp = () => {
             }
         }
     };
-    
+
 
 
 
@@ -529,10 +366,8 @@ const Imtorheaderapp = () => {
                 {/* Sidebar with Action Buttons */}
                 <div className="col-span-1">
                     <SideButtons
-                        onAdd={handleAdd}
+
                         onClear={handleClear}
-                        onUpdate={handleUpdate}
-                        onDelete={handleDelete}
                         showAdd={false}
                         showUpdate={false}
                         showDelete={false}
@@ -866,9 +701,9 @@ const Imtorheaderapp = () => {
                 <Box sx={{
                     gridColumn: 'span 6',
                     px: 0,
-                  
+
                     borderRadius: '8px', // Optional: Rounded corners
-                    
+
                 }}>
 
                     <SortableList

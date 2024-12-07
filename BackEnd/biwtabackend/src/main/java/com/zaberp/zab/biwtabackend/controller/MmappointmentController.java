@@ -19,7 +19,7 @@ import java.util.List;
             this.service = service;
         }
 
-        
+
 
         @PostMapping
         public ResponseEntity<Mmappointment> createAppointment(@RequestBody Mmappointment mmAppointment) {

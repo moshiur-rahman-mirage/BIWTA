@@ -3,11 +3,13 @@ package com.zaberp.zab.biwtabackend.service;
 
 import com.zaberp.zab.biwtabackend.id.MmappointmentId;
 import com.zaberp.zab.biwtabackend.model.Mmappointment;
+import com.zaberp.zab.biwtabackend.model.PdDependent;
 import com.zaberp.zab.biwtabackend.repository.MmappointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -61,8 +63,11 @@ public class MmappointmentService extends CommonServiceImpl<Mmappointment,Mmappo
 
     @Override
     protected RowMapper<Mmappointment> getRowMapper() {
-        return null;
+        return
+                new BeanPropertyRowMapper<>(Mmappointment.class);
     }
+
+
 
     public Mmappointment findByZidAndXcase(int zid, String xcase) {
         return repository.findByZidAndXcase(zid, xcase);

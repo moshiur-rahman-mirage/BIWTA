@@ -143,6 +143,9 @@ public class ImtorheaderController extends BaseController<Imtorheader,Imtorheade
         String zemail=imtor.getUser();
         String xtornum = imtor.getXtornum();
         Date xdate = imtor.getXdate();
+        if (xdate == null) {
+            xdate = new Date();
+        }
         String xfwh = imtor.getXfwh();
         String xstatustor=imtor.getXstatustor();
         return service.checkSR(zid, zemail,xtornum,xdate,xfwh,xstatustor);

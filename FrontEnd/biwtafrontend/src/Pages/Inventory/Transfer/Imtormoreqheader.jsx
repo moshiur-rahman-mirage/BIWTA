@@ -196,7 +196,7 @@ const Imtormoreqheader = () => {
     const handleConfirm = async () => {
         if (window.confirm('Issue Item?')) {
             setStatus("Processing...");
-            const xlen=8;
+            const xlen = 8;
             const params = {
                 zid: 100000,
                 zemail: zemail,
@@ -205,7 +205,7 @@ const Imtormoreqheader = () => {
                 xfwh: formData.xfwh,
                 xwh: formData.xtwh,
                 xstatustor: formData.xstatustor,
-                xlen: xlen 
+                xlen: xlen
             };
 
             try {
@@ -219,6 +219,7 @@ const Imtormoreqheader = () => {
                     text: 'Operation completed successfully'
                 });
                 reloadFormData();
+                setUpdateCount(prevCount => prevCount + 1);
             } catch (error) {
                 // Handle error response
                 setStatus("Error: " + (error.response?.data || error.message));
@@ -318,6 +319,28 @@ const Imtormoreqheader = () => {
 
         <div>
 
+            <Button
+                onClick={''}
+                variant="outlined"
+                sx={{
+                    marginLeft: 'auto', // Automatically push the button to the center horizontally
+                    marginRight: 'auto', // Same as above
+                    paddingX: 2, // Horizontal padding
+                    paddingY: 0.5, // Vertical padding (adjusted in conjunction with height)
+                    paddingTop: '2px', // Explicit padding for top
+                    paddingBottom: '2px', // Explicit padding for bottom
+                    whiteSpace: 'nowrap',
+                    height: '2.5rem',
+                    display: 'block', // Ensure the button takes up its own space
+                    '&:hover': {
+                        backgroundColor: '#F59E0B',
+                    },
+                }}
+                size="medium"
+            >
+                View Report
+            </Button>
+
             <div className='grid grid-cols-12 gap-1 mb-2'>
                 <div className='col-span-1'>
                 </div>
@@ -372,6 +395,7 @@ const Imtormoreqheader = () => {
                         },
                     }}
                     size="medium"
+                    
 
                 >
                     Issue
@@ -665,7 +689,7 @@ const Imtormoreqheader = () => {
                         directFetch='Yes'
                         apiUrl={`api/imtorheader/confirmed`}
                         isFolded={false}
-                        caption="Damage Requisition List"
+                        caption="Requisition List"
                         columns={[
                             { field: 'xtornum', title: 'Requisition Number', width: '25%', align: 'left' },
                             { field: 'xfwh', title: 'Store', width: '25%', align: 'left' },

@@ -19,5 +19,7 @@ public interface CacusRepository extends JpaRepository<Cacus, CacusId> {
     @Query("SELECT e FROM Cacus e WHERE e.zid = :zid and e.xorg LIKE %:searchText% OR e.xcus LIKE %:searchText% or e.xmadd like %:searchText% ")
     List<Cacus> findBySearchTextAndZid(@Param("zid") int zid, @Param("searchText") String searchText);
 
+    public boolean findByZidAndXcus(int zid,String xcus);
+
 
 }

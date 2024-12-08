@@ -41,7 +41,6 @@ public abstract class BaseController<T, Id> {
     }
 
 
-
     @GetMapping("/{zid}/rows")
     public ResponseEntity<List<T>> findRows(
             @PathVariable int zid,
@@ -73,7 +72,7 @@ public abstract class BaseController<T, Id> {
             @RequestParam String transactionNumber,
             @RequestParam int row
     ) {
-        getService().deleteByConditions(zid, column, transactionNumber,row);
+        getService().deleteByConditions(zid, column, transactionNumber, row);
         return ResponseEntity.noContent().build();
     }
 
@@ -117,13 +116,11 @@ public abstract class BaseController<T, Id> {
 
         if (result == null || result.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
-        }else {
+        } else {
             System.out.println(result);
             return ResponseEntity.ok(result);
         }
     }
-
-
 
 
     @PostMapping("/fetch")
@@ -148,11 +145,6 @@ public abstract class BaseController<T, Id> {
             ));
         }
     }
-
-
-
-
-
 
 
     @PutMapping("/update")
@@ -193,30 +185,30 @@ public abstract class BaseController<T, Id> {
         }
     }
 
-        @PostMapping("/confirmRequest")
-    public String confirmRequest(@RequestBody ConfirmTrnDto confirmTrnDto){
+    @PostMapping("/confirmRequest")
+    public String confirmRequest(@RequestBody ConfirmTrnDto confirmTrnDto) {
         int zid = confirmTrnDto.getZid();
-        String user=confirmTrnDto.getUser();
-        String position=confirmTrnDto.getUser();
+        String user = confirmTrnDto.getUser();
+        String position = confirmTrnDto.getUser();
         String wh = confirmTrnDto.getWh();
         String tornum = confirmTrnDto.getTornum();
         String request = confirmTrnDto.getRequest();
 
-            System.out.println("Details:");
-            System.out.println("ZID: " + zid);
-            System.out.println("User: " + user);
-            System.out.println("Position: " + position);
-            System.out.println("Warehouse (WH): " + wh);
-            System.out.println("TORNUM: " + tornum);
-            System.out.println("Request: " + request);
+        System.out.println("Details:");
+        System.out.println("ZID: " + zid);
+        System.out.println("User: " + user);
+        System.out.println("Position: " + position);
+        System.out.println("Warehouse (WH): " + wh);
+        System.out.println("TORNUM: " + tornum);
+        System.out.println("Request: " + request);
 
-        return getService().confirmRequest(zid, user, position,wh,tornum,request);
+        return getService().confirmRequest(zid, user, position, wh, tornum, request);
     }
 
 
-        @PostMapping("/approveRequest")
+    @PostMapping("/approveRequest")
     public String approveRequest(@RequestBody ConfirmTrnDto confirmTrnDto) {
-            System.out.println("Received DTO: " + confirmTrnDto);
+        System.out.println("Received DTO: " + confirmTrnDto);
         if (confirmTrnDto == null) {
             return "Error: Request body is null";
         }
@@ -228,13 +220,13 @@ public abstract class BaseController<T, Id> {
         String status = confirmTrnDto.getStatus();
         String aprcs = confirmTrnDto.getRequest();
 
-            System.out.println("Details:");
-            System.out.println("ZID: " + zid);
-            System.out.println("User: " + user);
-            System.out.println("Position: " + position);
-            System.out.println("TORNUM: " + tornum);
-            System.out.println("status: " + status);
-            System.out.println("Request: " + aprcs);
+        System.out.println("Details:");
+        System.out.println("ZID: " + zid);
+        System.out.println("User: " + user);
+        System.out.println("Position: " + position);
+        System.out.println("TORNUM: " + tornum);
+        System.out.println("status: " + status);
+        System.out.println("Request: " + aprcs);
 
         if (user == null || position == null || tornum == null || status == null || aprcs == null) {
             return "Error: Missing required fields";
@@ -247,5 +239,18 @@ public abstract class BaseController<T, Id> {
         } catch (Exception e) {
             return "Error processing request: " + e.getMessage();
         }
+    }
+
+    @GetMapping("/valid/{column}")
+    public boolean validityCheck(
+            @PathVariable String column,
+            @RequestParam int zid,
+            @RequestParam String trnnum
+    ) {
+        System.out.println(column);
+        System.out.println(zid);
+        System.out.println(trnnum);
+        System.out.println(getService().isDataPresent(zid, column, trnnum));
+        return getService().isDataPresent(zid, column, trnnum);
     }
 }

@@ -62,7 +62,7 @@ const XlongDropDown = ({
     return (
         <FormControl fullWidth variant={variant} size="small">
             <InputLabel
-            shrink
+            // shrink
                 sx={{
                     fontSize: '1rem',
                     fontWeight: {fontWeight},

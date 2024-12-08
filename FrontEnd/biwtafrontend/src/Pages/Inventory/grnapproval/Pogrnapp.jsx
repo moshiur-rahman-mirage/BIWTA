@@ -43,7 +43,7 @@ const Pogrnapp = () => {
         xwh: '',
         xref: '',
         xstatus: 'Open',
-        xstatusdoc:'',
+        xstatusdoc: '',
         xnote: '',
 
 
@@ -143,13 +143,13 @@ const Pogrnapp = () => {
 
     const handleGenericSelect = (fieldName, value) => {
         console.log(value)
-           setFormData((prevState) => ({
-               ...prevState,
-               [fieldName]: value,
+        setFormData((prevState) => ({
+            ...prevState,
+            [fieldName]: value,
 
-              
 
-           }));
+
+        }));
     };
 
     // console.log(formData)
@@ -216,7 +216,7 @@ const Pogrnapp = () => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xgrnnum: item.xgrnnum, xwh: item.xwh, xcus: item.xcus, xref: item.xref, xorg: item.xorg, xlong: item.xlong,xstatusdoc:item.xstatusdoc
+            xgrnnum: item.xgrnnum, xwh: item.xwh, xcus: item.xcus, xref: item.xref, xorg: item.xorg, xlong: item.xlong, xstatusdoc: item.xstatusdoc
         }));
     }, []);
 
@@ -298,7 +298,7 @@ const Pogrnapp = () => {
 
 
 
-    
+
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -326,13 +326,13 @@ const Pogrnapp = () => {
                 status: formData.xstatusdoc,
                 request: 'GRN Approval'
             };
-            
+
             try {
 
-               const response = await axiosInstance.post("/api/pogrnheader/approveRequest", params);
-               console.log(params)
-               setStatus(response.data);
-               setUpdateCount(prevCount => prevCount + 1);
+                const response = await axiosInstance.post("/api/pogrnheader/approveRequest", params);
+                console.log(params)
+                setStatus(response.data);
+                setUpdateCount(prevCount => prevCount + 1);
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -408,7 +408,7 @@ const Pogrnapp = () => {
                 </div>
 
 
-              
+
                 {/* Modal */}
 
                 <Box sx={{
@@ -647,7 +647,7 @@ const Pogrnapp = () => {
 
 
 
-                                    <TextField
+                                    {/* <TextField
                                         id="xlong"
                                         name="xlong"
                                         label="Store Name"
@@ -672,20 +672,7 @@ const Pogrnapp = () => {
                                                 fontSize: '.9rem'
                                             },
                                         }}
-                                    />
-
-
-                                    {/* Fax */}
-
-
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(3, 1fr)"
-                                    gap={2}
-                                    mb={2} // margin-bottom
-                                >
-
+                                    /> */}
 
                                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
                                         <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
@@ -701,6 +688,21 @@ const Pogrnapp = () => {
                                             {formData.xstatusdoc}
                                         </Typography>
                                     </Box>
+
+
+
+                                    {/* Fax */}
+
+
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+
+
 
                                     <TextField
                                         id='xref'
@@ -720,7 +722,7 @@ const Pogrnapp = () => {
                                         // disabled
                                         required
                                         sx={{
-                                            gridColumn: 'span 2',
+                                            gridColumn: 'span 3',
                                             '& .MuiInputBase-input': {
                                                 // Remove unnecessary padding
                                                 // Ensure the input spans the full height
@@ -829,7 +831,7 @@ const Pogrnapp = () => {
                                 setRefreshTrigger(false);
                             }
                         }}
-                        
+
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"

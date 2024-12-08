@@ -23,6 +23,7 @@ import { validateForm } from '../../../ReusableComponents/validateForm';
 import Imtordetaildam from './Imtordetaildam';
 import SortableList from '../../../ReusableComponents/SortableList';
 import Imtordetail from './Imtordetail';
+import Moreqdetailstore from './Moreqdetailstore';
 
 
 const Imtormoreqheader = () => {
@@ -361,12 +362,12 @@ const Imtormoreqheader = () => {
                         },
                     }}
                     size="medium"
-
+                    disabled={formData.xstatustor === "Confirmed" || formData.xtornum === "" }
                 >
                     Check And Hold
                 </Button>
                 <Button
-                    onClick={handleCheck}
+                    onClick={handleOpen}
                     variant='outlined'
                     sx={{
                         marginLeft: 1,
@@ -378,6 +379,7 @@ const Imtormoreqheader = () => {
                         },
                     }}
                     size="medium"
+                    disabled={formData.xtornum === ""}
                 >
                     Detail
                 </Button>
@@ -395,7 +397,7 @@ const Imtormoreqheader = () => {
                         },
                     }}
                     size="medium"
-                    
+                    disabled={formData.xstatustor === "Confirmed" || formData.xtornum === "" }
 
                 >
                     Issue
@@ -445,7 +447,7 @@ const Imtormoreqheader = () => {
                         p: 4,
                         zIndex: 10,
                     }}>
-                        <Imtordetail xtornum={formData.xtornum} />
+                        <Moreqdetailstore xtornum={formData.xtornum} />
                     </Box>
                 </Modal>
                 {/* Modal */}

@@ -64,7 +64,7 @@ const XcodesDropDown = ({
     return (
         <FormControl fullWidth variant={variant} size="small">
             <InputLabel
-              shrink
+            //   shrink
                 sx={{
                     fontSize: '1rem',
                     fontWeight: {fontWeight},
@@ -83,9 +83,9 @@ const XcodesDropDown = ({
                     // displayEmpty
                     sx={{
                         '& .MuiMenuItem-root': {
-                            fontSize, // Apply fontSize to menu items
+                            fontSize, 
                         },
-                        fontSize, // Apply fontSize to selected value in dropdown
+                        fontSize, 
                     }}
                 >
                     <MenuItem value="">
@@ -98,7 +98,7 @@ const XcodesDropDown = ({
                             key={index}
                             value={option.xcode} // Use xcode as the value
                             sx={{
-                                fontSize, // Apply fontSize to each menu item
+                                fontSize, 
                             }}
                         >
                             {option.xcode} 

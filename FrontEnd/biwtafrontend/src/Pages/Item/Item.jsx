@@ -69,7 +69,7 @@ const Item = () => {
     const triggerRef = useRef(null);
 
 
-    const variant = 'standard';
+    const variant = 'outlined';
     const apiBaseUrl = `api/products/`;
     const addEndpoint = 'api/products';
     const updateEndpoint = `api/products/update`;
@@ -378,10 +378,9 @@ const Item = () => {
                                     name="xitem"
                                     label="Item Code"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true, 
+                                    // }}
                                     value={formData.xitem}
                                     variant={variant}
                                     fullWidth
@@ -411,10 +410,10 @@ const Item = () => {
                                     value={formData.xdesc}
                                     variant={variant}
                                     fullWidth
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
-                                    }}
+                                    // }}
                                     onChange={handleChange}
                                     sx={{ gridColumn: 'span 2' }}
                                 />
@@ -436,10 +435,9 @@ const Item = () => {
                                     value={formData.xgenericname}
                                     variant={variant}
                                     fullWidth
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true, 
+                                    // }}
                                     onChange={handleChange}
                                     sx={{ gridColumn: 'span 1' }}
                                 />
@@ -452,10 +450,10 @@ const Item = () => {
                                     value={formData.xgenericdesc}
                                     variant={variant}
                                     fullWidth
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
-                                    }}
+                                    // }}
                                     onChange={handleChange}
                                     sx={{ gridColumn: 'span 2' }}
                                 />
@@ -479,10 +477,10 @@ const Item = () => {
                                     value={formData.xdrugtype}
                                     variant={variant}
                                     fullWidth
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
-                                    }}
+                                    // }}
                                     onChange={handleChange}
                                 />
                                 {/* Mobile */}
@@ -491,10 +489,10 @@ const Item = () => {
                                     name="xroute"
                                     label="Route"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
-                                    }}
+                                    // }}
                                     value={formData.xroute}
                                     variant={variant}
                                     fullWidth
@@ -506,10 +504,10 @@ const Item = () => {
                                     name="xstrength"
                                     label="Strength"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
-                                    }}
+                                    // }}
                                     value={formData.xstrength}
                                     variant={variant}
                                     fullWidth
@@ -531,11 +529,11 @@ const Item = () => {
                                     variant={variant}
                                     label="Group"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
 
-                                    }}
+                                    // }}
                                     name="xgitem"
                                     type="Item Group"
                                     apiUrl={apiBaseUrl} 
@@ -549,11 +547,9 @@ const Item = () => {
                                     variant={variant}
                                     label="Category"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                       
-                                        
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     name="xcatitem"
                                     type="Category"
                                     apiUrl={apiBaseUrl}
@@ -570,10 +566,9 @@ const Item = () => {
                                     defaultValue={1}
                                     onChange={handleChange}
                                     value={formData.xcfpur}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true, 
+                                    // }}
                                     fullWidth
                                     required
                                 />
@@ -590,10 +585,9 @@ const Item = () => {
                                     label="Unit"
                                     name='xunit'
                                     variant={variant}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     size="small"
                                     onChange={handleChange}
                                     value={formData.xunit}
@@ -604,10 +598,9 @@ const Item = () => {
                                     label="Purchase Unit"
                                     name='xunitpur'
                                     variant={variant}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     size="small"
                                     onChange={handleChange}
                                     value={formData.xunitpur}

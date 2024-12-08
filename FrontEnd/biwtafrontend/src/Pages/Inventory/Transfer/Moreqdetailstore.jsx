@@ -24,40 +24,42 @@ import DynamicDropdown from '../../../ReusableComponents/DynamicDropdown';
 import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import { validateForm } from '../../../ReusableComponents/validateForm';
 import Swal from 'sweetalert2';
-import axiosInstance from '../../../Middleware/AxiosInstance';
-import { toast } from 'react-toastify';
 import { addFunction } from '../../../ReusableComponents/addFunction';
 
 
-const Pogrndetail = ({ xgrnnum = '' }) => {
+const Moreqdetailstore = ({ xtornum = '' }) => {
     const { zid } = useAuth();
     const variant = 'standard'
     const [formErrors, setFormErrors] = useState({});
     const itemRef = useRef(null);
-    const [updateCount, setUpdateCount] = useState(0);
     const [isTyping, setIsTyping] = useState(false);
     const [refreshCallback, setRefreshCallback] = useState(null); // Store the refresh function
     const [refreshTrigger, setRefreshTrigger] = useState(false);
-    const apiBaseUrl = `api/pogrndetails?zid=${zid}&xgrnnum=${xgrnnum}`;
+    const apiBaseUrl = `api/imtordetail?zid=${zid}&xtornum=${xtornum}`;
+
+    const addEndpoint = 'api/imtordetail';
+    const updateEndpoint = `api/imtordetail/update`;
+    const deleteEndpoint = `api/imtordetail/delete/details`;
+    const mainSideListEndpoint = `api/imtordetail/${zid}/paginated`;
+
+    const [updateCount, setUpdateCount] = useState(0);
+
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [itemDropdownOpen, setItemDropdownOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [rect, setBoundingRect] = useState(null)
-    const apiListUrl = `api/pogrndetails/${zid}/${xgrnnum}`
+    const apiListUrl = `api/imtordetail/${zid}/${xtornum}`
     const [formData, setFormData] = useState({
         zid: zid,
         zauserid: '',
-        xgrnnum: '',
+        xtornum: '',
         xrow: '',
         xitem: '',
-        xqtygrn: '',
-        xrategrn: '',
+        xprepqty: '',
         xbatch: '',
-        xdateexp: new Date().toISOString().split('T')[0],
         xlong: '',
-        xlineamt: '',
-        xunitpur: ''
+        xunit: ''
 
 
     });
@@ -66,7 +68,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
     const itemConfig = [
         { header: 'Item Code', field: 'xitem' },
         { header: 'Name', field: 'xdesc' },
-        { header: 'Purchase Unit', field: 'xunitpur' },
+        { header: 'Unit', field: 'xunit' },
     ];
 
     const handleItemSelect = useCallback((item) => {
@@ -98,18 +100,26 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
         }
     }, [refreshCallback]);
 
-    useEffect(() => {
 
-        if (refreshTrigger) {
-            handleRefresh();
-            setRefreshTrigger(false); // Reset trigger
+
+    useEffect(() => {
+        if (refreshCallback && formData.xtornum) {
+            refreshCallback(); // Trigger the refresh callback from SortableList
         }
-    }, [refreshTrigger, handleRefresh]);
+    }, [formData.xtornum, refreshCallback]);
+
 
     useEffect(() => {
         setRefreshTrigger(true);
     }, [updateCount]);
 
+    useEffect(() => {
+        console.log("33")
+        if (refreshTrigger) {
+            handleRefresh();
+            setRefreshTrigger(false); 
+        }
+    }, [refreshTrigger, handleRefresh]);
 
     useEffect(() => {
         // Check if the ref is attached and available after the component mounts
@@ -131,50 +141,8 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
     };
 
 
-    const handleAdd = async () => {
-        const errors = validateForm(formData, ['xitem', 'xqtygrn','xrate']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-
-       
-        const itemResponse = await axiosInstance.get(`api/products/valid/xitem?zid=${zid}&trnnum=${formData.xitem}`);
-
-        if (!itemResponse.data) {
-            toast.error('Invalid Item Selected.', {
-                position: "top-right",
-                autoClose: 3000,
-            });
-
-            return;
-        }
 
 
-        const endpoint = 'api/pogrndetail';
-        const data = {
-            ...formData,
-            zid: zid,
-            xgrnnum: xgrnnum
-        };
-
-        addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xrow) {
-
-                setFormData((prev) => ({ ...prev, xrow: response.xrow }));
-                setUpdateCount(prevCount => prevCount + 1);
-                setFormErrors({});
-            } else {
-                // alert('Supplier added successfully.');
-            }
-        });
-
-    };
 
 
     const handleAction = async (method) => {
@@ -182,21 +150,18 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
         const data = {
 
             zid: zid,
-            xgrnnum: xgrnnum,
+            xtornum: xtornum,
             zauserid: formData.zauserid,
             xrow: formData.xrow,
             xitem: formData.xitem,
-            xqtygrn: formData.xqtygrn,
-            xrategrn: formData.xrategrn,
+            xprepqty: formData.xprepqty,
             xbatch: formData.xbatch,
-            xdateexp: formData.xdateexp,
-            xlong: formData.xlong,
-            xlineamt: formData.xlineamt
+            xlong: formData.xlong
 
         };
 
 
-        const errors = validateForm(formData, ['xitem', 'xqtygrn','xrategrn']);
+        const errors = validateForm(formData, ['xitem']);
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
             Swal.fire({
@@ -208,7 +173,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
         }
 
 
-        const endpoint = "/api/pogrndetails";
+        const endpoint = "/api/imtordetail";
 
         await handleApiRequest({
             endpoint,
@@ -230,20 +195,19 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                     setFormData({
                         zid: zid,
                         zauserid: '',
-                        xgrnnum: '',
+                        xtornum: '',
                         xrow: '',
                         xitem: '',
-                        xqtygrn: '',
+                        xprepqty: '',
                         xrate: '',
                         xbatch: '',
-                        xdateexp: '',
                         xlong: '',
                         xlineamt: ''
                     });
                 }
 
             },
-            params: { zid: formData.zid, xgrnnum: formData.xgrnnum, xrow: formData.xrow }
+            params: { zid: formData.zid, xtornum: formData.xtornum, xrow: formData.xrow }
         });
     };
 
@@ -257,16 +221,14 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
         setFormData({
             zid: zid,
             zauserid: '',
-            xgrnnum: '',
+            xtornum: '',
             xrow: '',
             xitem: '',
-            xqtygrn: '',
-            xrategrn: '',
+            xprepqty: '',
             xbatch: '',
-            xdateexp: new Date().toISOString().split('T')[0],
             xlong: '',
             xlineamt: '',
-            xunitpur: ''
+            xunit: ''
 
         });
         alert('Form cleared.');
@@ -286,14 +248,126 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
 
 
 
+    const handleAdd = async () => {
+        const errors = validateForm(formData, ['xitem','xprepqty']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+        const endpoint = 'api/imtordetail';
+        const data = {
+            ...formData,
+            zid: zid,
+            xtornum:xtornum
+        };
+
+        addFunction(data, endpoint, 'POST', (response) => {
+            if (response && response.xrow) {
+
+                setFormData((prev) => ({ ...prev, xrow: response.xrow }));
+                setUpdateCount(prevCount => prevCount + 1);
+                setFormErrors({});
+            } else {
+                // alert('Supplier added successfully.');
+            }
+        });
+    };
+
+
+    const handleDelete = async () => {
+        const endpoint = deleteEndpoint;
+
+
+        const params = {
+            zid:zid,
+            column: 'xtornum',
+            transactionNumber: formData.xtornum,
+            row:formData.xrow
+        };
+
+
+        await handleApiRequest({
+            endpoint,
+            method: 'DELETE',
+            params: params,
+            onSuccess: (response) => {
+                setFormData({
+                    zauserid: '',
+                    xtornum: '',
+                    xrow: '',
+                    xitem: '',
+                    xprepqty: '',
+                    xbatch: '',
+                    xlong: '',
+                    xlineamt: '',
+                    xunit: ''
+                });
+                setUpdateCount(prevCount => prevCount + 1);
+            },
+        });
+    };
+
+
+
+
+    const handleUpdate = async () => {
+        const errors = validateForm(formData, ['xitem']);
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Input',
+                text: 'Please fix the errors before proceeding.',
+            });
+            return;
+        }
+
+        const tableName = "Imtordetail";
+        const updates = {
+
+            xitem: formData.xitem,
+            xprepqty: formData.xprepqty,
+            xbatch: formData.xbatch,
+            xlong: formData.xlong,
+            xlineamt: formData.xlineamt,
+            xunit: formData.xunit
+
+        };
+        const whereConditions = { xtornum: formData.xtornum, zid: zid, xrow: formData.xrow };
+
+        const data = {
+            tableName,
+            whereConditions,
+            updates: updates,
+        };
+
+        const endpoint = updateEndpoint;
+
+        await handleApiRequest({
+            endpoint,
+            data,
+            method: 'PUT',
+        });
+
+        setFormErrors({});
+    };
+
+
+
 
     return (
         <div className='grid grid-cols-12 gap-5 z-40'>
             <div className="">
                 <SideButtons
-                    onAdd={() => handleAction('POST')}
-                    onUpdate={() => handleAction('PUT')}
-                    onDelete={() => handleAction('DELETE')}
+                    onAdd={handleAdd}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
                     onClear={handleClear}
                 // onShow={handleShow}
                 />
@@ -327,7 +401,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                 borderRadius: '8px',
                                 padding: 2,
                             }}>
-                                <Caption title={"Receive Entry Detail of " + xgrnnum} />
+                                <Caption title={"Requisition Detail of " + xtornum} />
                                 <Box
                                     display="grid"
 
@@ -361,11 +435,11 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
 
                                     <TextField
                                         label="Unit"
-                                        name='xunitpur'
+                                        name='xunit'
                                         variant={variant}
                                         size="small"
                                         onChange={handleChange}
-                                        value={formData.xunitpur}
+                                        value={formData.xunit}
                                         fullWidth
                                         sx={{
                                             '& .MuiInputBase-input': {
@@ -412,7 +486,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         name="xitem"
                                         required
                                         label="Item Code"
-                                        error={!!formErrors.xitem} 
+                                        error={!!formErrors.xitem}
                                         helperText={formErrors.xitem}
                                         InputLabelProps={{
                                             shrink: true,
@@ -488,16 +562,16 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
 
                                 >
                                     <TextField
-                                        label="Receive Qty"
+                                        label="Requisition Qty"
                                         variant={variant}
                                         size="small"
                                         fullWidth
-                                        type="number"
-                                        name='xqtygrn'
+                                        id="xprepqty"
+                                        name='xprepqty'
                                         onChange={handleChange}
-                                        error={!!formErrors.xqtygrn} 
-                                        helperText={formErrors.xqtygrn}
-                                        value={formData.xqtygrn}
+                                        error={!!formErrors.xprepqty}
+                                        helperText={formErrors.xprepqty}
+                                        value={formData.xprepqty}
                                         required
                                         sx={{
                                             gridColumn: 'span 1',
@@ -513,12 +587,11 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         }}
                                     />
 
-                                    <TextField
+                                    {/* <TextField
                                         label="Rate"
                                         variant={variant}
                                         size="small"
                                         fullWidth
-                                        type="number"
                                         name='xrategrn'
                                         error={!!formErrors.xrategrn} 
                                         helperText={formErrors.xrategrn}
@@ -536,7 +609,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                                 fontWeight: 600, // Adjust font size here
                                             },
                                         }}
-                                    />
+                                    /> */}
 
                                 </Box>
                                 <Box
@@ -547,50 +620,8 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                     mb={2} // margin-bottom
 
                                 >
-                                    <TextField
-                                        label="Batch"
-                                        variant={variant}
-                                        size="small"
-                                        fullWidth
-                                        name='xbatch'
-                                        onChange={handleChange}
-                                        value={formData.xbatch}
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                    />
 
-                                    <TextField
-                                        label="Expiration Date"
-                                        type='date'
-                                        variant={variant}
-                                        size="small"
-                                        fullWidth
-                                        name='xdateexp'
-                                        onChange={handleChange}
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        value={formData.xdateexp}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                    />
+
 
                                 </Box>
                             </Box>
@@ -604,13 +635,13 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                 <SortableList
                                     apiUrl={apiListUrl}
 
-                                    caption="Receive Entry Detail List"
+                                    caption="Requisition Detail List"
                                     columns={[
-                                        { field: 'xrow', title: 'Serial', width: '5%', },
-                                        { field: 'xitem', title: 'Item', width: '10%' },
-                                        { field: 'xdesc', title: 'Item Code', width: '65%', align: 'center' },
-                                        { field: 'xqtygrn', title: 'GRN Qty', width: '10%', align: 'center' },
-                                        { field: 'xrategrn', title: 'Rate', width: '10%', align: 'center' },
+                                        { field: 'xrow', title: 'Serial', width: '5%', align: 'left' },
+                                        { field: 'xitem', title: 'Item', width: '10%', align: 'left' },
+                                        { field: 'xdesc', title: 'Item Code', width: '65%', align: 'left' },
+                                        { field: 'xprepqty', title: 'Required Quantity', width: '65%', align: 'left' },
+
                                     ]}
                                     onItemSelect={handleItemSelect}
                                     onRefresh={(refresh) => {
@@ -621,7 +652,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                     }}
                                     pageSize={10}
                                     // onSortChange={handleSortChange}
-                                    sortField="xgrnnum"
+                                    sortField="xtornum"
                                     additionalParams={{}}
                                     captionFont=".9rem"
                                     xclass="py-4 pl-2"
@@ -654,4 +685,4 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
     );
 };
 
-export default Pogrndetail;
+export default Moreqdetailstore;

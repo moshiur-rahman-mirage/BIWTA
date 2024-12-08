@@ -22,5 +22,6 @@ public interface CaitemRepository extends JpaRepository<Caitem, CaitemId> {
 
 
     Page<Caitem> findByZid(int zid, Pageable pageable);
+    boolean findByZidAndXitem(int zid,String xitem);
 }
 

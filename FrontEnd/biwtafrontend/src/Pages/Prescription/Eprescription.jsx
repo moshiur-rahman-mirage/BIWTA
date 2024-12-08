@@ -182,7 +182,7 @@ const [refreshTrigger, setRefreshTrigger] = useState(false);
                           labelId="patient-type-label"
                           id="xdependent"
                           value={xdependent}
-                          label="Patient Type"
+                          label="Dependent Name"
                           onChange={handleChangexdependent}
                         >
                           <MenuItem value="A">A</MenuItem>

@@ -34,4 +34,8 @@ public interface CommonService<T,Id> {
     );
 
 
+
+    public boolean isDataPresent(int zid, String transactionColumn, String transactionNumber);
+
+
 }

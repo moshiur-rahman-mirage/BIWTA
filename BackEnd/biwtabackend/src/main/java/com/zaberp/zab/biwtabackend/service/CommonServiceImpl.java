@@ -437,4 +437,13 @@ public abstract class CommonServiceImpl<T, ID> implements CommonService<T, ID> {
 
 
 
+    @Override
+    public boolean isDataPresent(int zid, String transactionColumn, String transactionNumber) {
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE zid = ? AND %s = ?", getTableName(), transactionColumn);
+        Integer count = jdbcTemplate.queryForObject(query, Integer.class, zid, transactionNumber);
+        return count != null && count > 0;
+    }
+
+
+
 }

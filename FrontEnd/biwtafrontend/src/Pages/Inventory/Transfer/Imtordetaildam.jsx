@@ -432,6 +432,7 @@ const Imtordetaildam = ({ xtornum = '' }) => {
                                         size="small"
                                         fullWidth
                                         name='xprepqty'
+                                        type='number'
                                         onChange={handleChange}
                                         error={!!formErrors.xprepqty} 
                                         helperText={formErrors.xprepqty}

@@ -25,6 +25,8 @@ import { handleSearch } from '../../../ReusableComponents/handleSearch';
 import { validateForm } from '../../../ReusableComponents/validateForm';
 import Swal from 'sweetalert2';
 import { addFunction } from '../../../ReusableComponents/addFunction';
+import axiosInstance from '../../../Middleware/AxiosInstance';
+import { toast } from 'react-toastify';
 
 
 const Imtordetail = ({ xtornum = '' }) => {
@@ -117,7 +119,7 @@ const Imtordetail = ({ xtornum = '' }) => {
         console.log("33")
         if (refreshTrigger) {
             handleRefresh();
-            setRefreshTrigger(false); 
+            setRefreshTrigger(false);
         }
     }, [refreshTrigger, handleRefresh]);
 
@@ -145,71 +147,7 @@ const Imtordetail = ({ xtornum = '' }) => {
 
 
 
-    const handleAction = async (method) => {
 
-        const data = {
-
-            zid: zid,
-            xtornum: xtornum,
-            zauserid: formData.zauserid,
-            xrow: formData.xrow,
-            xitem: formData.xitem,
-            xprepqty: formData.xprepqty,
-            xbatch: formData.xbatch,
-            xlong: formData.xlong
-
-        };
-
-
-        const errors = validateForm(formData, ['xitem']);
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors);
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Input',
-                text: 'Please fix the errors before proceeding.',
-            });
-            return;
-        }
-
-
-        const endpoint = "/api/imtordetail";
-
-        await handleApiRequest({
-            endpoint,
-            data,
-            method,
-            onSuccess: (response) => {
-                handleRefresh();
-                setRefreshTrigger(true);
-
-                if (response && response.data.xrow) {
-                    setFormData((prev) => ({ ...prev, xrow: response.data.xrow }));
-                    setFormErrors({});
-                } else {
-                    // alert('Supplier added successfully.');
-                }
-
-                if (method === 'DELETE') {
-
-                    setFormData({
-                        zid: zid,
-                        zauserid: '',
-                        xtornum: '',
-                        xrow: '',
-                        xitem: '',
-                        xprepqty: '',
-                        xrate: '',
-                        xbatch: '',
-                        xlong: '',
-                        xlineamt: ''
-                    });
-                }
-
-            },
-            params: { zid: formData.zid, xtornum: formData.xtornum, xrow: formData.xrow }
-        });
-    };
 
     const handleOnRefresh = useCallback((refreshFn) => {
         setRefreshCallback(() => refreshFn);
@@ -249,7 +187,7 @@ const Imtordetail = ({ xtornum = '' }) => {
 
 
     const handleAdd = async () => {
-        const errors = validateForm(formData, ['xitem','xprepqty']);
+        const errors = validateForm(formData, ['xitem', 'xprepqty']);
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
             Swal.fire({
@@ -260,11 +198,24 @@ const Imtordetail = ({ xtornum = '' }) => {
             return;
         }
 
+       
+        const itemResponse = await axiosInstance.get(`api/products/valid/xitem?zid=${zid}&trnnum=${formData.xitem}`);
+
+        if (!itemResponse.data) {
+            toast.error('Invalid Item Selected.', {
+                position: "top-right",
+                autoClose: 3000,
+            });
+
+            return;
+        }
+
+
         const endpoint = 'api/imtordetail';
         const data = {
             ...formData,
             zid: zid,
-            xtornum:xtornum
+            xtornum: xtornum
         };
 
         addFunction(data, endpoint, 'POST', (response) => {
@@ -277,6 +228,7 @@ const Imtordetail = ({ xtornum = '' }) => {
                 // alert('Supplier added successfully.');
             }
         });
+
     };
 
 
@@ -285,10 +237,10 @@ const Imtordetail = ({ xtornum = '' }) => {
 
 
         const params = {
-            zid:zid,
+            zid: zid,
             column: 'xtornum',
             transactionNumber: formData.xtornum,
-            row:formData.xrow
+            row: formData.xrow
         };
 
 
@@ -363,6 +315,7 @@ const Imtordetail = ({ xtornum = '' }) => {
 
     return (
         <div className='grid grid-cols-12 gap-5 z-40'>
+
             <div className="">
                 <SideButtons
                     onAdd={handleAdd}
@@ -566,8 +519,9 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         variant={variant}
                                         size="small"
                                         fullWidth
+                                        type="number"
                                         id="xprepqty"
-                                        name='xprepqty'
+                                        name="xprepqty"
                                         onChange={handleChange}
                                         error={!!formErrors.xprepqty}
                                         helperText={formErrors.xprepqty}
@@ -585,7 +539,9 @@ const Imtordetail = ({ xtornum = '' }) => {
                                                 fontWeight: 600, // Adjust font size here
                                             },
                                         }}
+                                        
                                     />
+
 
                                     {/* <TextField
                                         label="Rate"

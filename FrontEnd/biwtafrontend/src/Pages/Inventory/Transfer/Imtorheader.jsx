@@ -187,6 +187,7 @@ const Imtorheader = () => {
 
 
     const handleAdd = async () => {
+        // Step 1: Validate the form data
         const errors = validateForm(formData, ['xfwh']);
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors);
@@ -197,25 +198,50 @@ const Imtorheader = () => {
             });
             return;
         }
+    
+        // Step 2: Check data validity via the API
+        // const column = 'yourColumnName'; // Replace with the actual column you need to check
 
-        const endpoint = 'api/imtorheader?action=requisition';
-        const data = {
-            ...formData,
-            zauserid: zemail,
-            zid: zid
-        };
-
-        addFunction(data, endpoint, 'POST', (response) => {
-            if (response && response.xtornum) {
-
-                setFormData((prev) => ({ ...prev, xtornum: response.xtornum, xstatustor: response.xstatustor }));
-                setUpdateCount(prevCount => prevCount + 1);
-                setFormErrors({});
-            } else {
-                // alert('Supplier added successfully.');
-            }
-        });
+    
+        try {
+            // const validityResponse = await fetch(`/valid/${column}?zid=${zid}&trnnum=${formData.xtornum}`);
+            // const isValid = await validityResponse.json();
+    
+            // if (!isValid) {
+            //     Swal.fire({
+            //         icon: 'error',
+            //         title: 'Invalid Data',
+            //         text: 'The data is invalid or already exists. Please check.',
+            //     });
+            //     return;
+            // }
+    
+            // Step 3: Proceed with adding data if valid
+            const endpoint = 'api/imtorheader?action=requisition';
+            const data = {
+                ...formData,
+                zauserid: zemail,
+                zid: zid
+            };
+            addFunction(data, endpoint, 'POST', (response) => {
+                if (response && response.xtornum) {
+                    setFormData((prev) => ({ ...prev, xtornum: response.xtornum, xstatustor: response.xstatustor }));
+                    setUpdateCount(prevCount => prevCount + 1);
+                    setFormErrors({});
+                } else {
+                    // alert('Supplier added successfully.');
+                }
+            });
+        } catch (error) {
+            console.error('Error checking validity:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error checking the data validity.',
+            });
+        }
     };
+    
 
 
     const handleItemSelect = useCallback((item) => {
@@ -467,6 +493,7 @@ const Imtorheader = () => {
                         },
                     }}
                     size="medium"
+                    disabled={formData.xstatustor !== "Open" || formData.xtornum === "" }
                 >
                     Detail
                 </Button>
@@ -483,6 +510,7 @@ const Imtorheader = () => {
                         },
                     }}
                     size="medium"
+                    disabled={formData.xstatustor !== "Open" || formData.xtornum === "" }
 
                 >
                     Confirm

@@ -44,7 +44,7 @@ const Pogrndirect = () => {
         xwh: '',
         xref: '',
         xstatus: 'Open',
-        xstatusdoc:'',
+        xstatusdoc: 'Open',
         xnote: '',
         xsign1: ''
 
@@ -145,13 +145,13 @@ const Pogrndirect = () => {
 
     const handleGenericSelect = (fieldName, value) => {
         console.log(value)
-           setFormData((prevState) => ({
-               ...prevState,
-               [fieldName]: value,
+        setFormData((prevState) => ({
+            ...prevState,
+            [fieldName]: value,
 
-              
 
-           }));
+
+        }));
     };
 
     console.log(formData)
@@ -218,7 +218,7 @@ const Pogrndirect = () => {
         console.log(item)
         setFormData((prev) => ({
             ...prev,
-            xgrnnum: item.xgrnnum, xwh: item.xwh, xcus: item.xcus, xref: item.xref, xorg: item.xorg, xlong: item.xlong,xstatusdoc:item.xstatusdoc
+            xgrnnum: item.xgrnnum, xwh: item.xwh, xcus: item.xcus, xref: item.xref, xorg: item.xorg, xlong: item.xlong, xstatusdoc: item.xstatusdoc
         }));
     }, []);
 
@@ -310,33 +310,33 @@ const Pogrndirect = () => {
             return;
         }
         setUpdateCount(prevCount => prevCount + 1);
-    
-        const tableName = "Pogrnheader"; 
-        const updates ={ xsign1: formData.xsign1 }; 
-        const whereConditions = { xgrnnum: formData.xgrnnum, zid: zid }; 
-        
-        
-        
+
+        const tableName = "Pogrnheader";
+        const updates = { xsign1: formData.xsign1 };
+        const whereConditions = { xgrnnum: formData.xgrnnum, zid: zid };
+
+
+
         const data = {
             tableName,
-            whereConditions, 
+            whereConditions,
             updates: updates,
         };
 
-    
-        const endpoint = `api/pogrnheader/update`; 
-    
+
+        const endpoint = `api/pogrnheader/update`;
+
         await handleApiRequest({
             endpoint,
             data,
             method: 'PUT',
         });
-    
+
         setFormErrors({});
     };
 
 
-    
+
 
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
@@ -357,20 +357,20 @@ const Pogrndirect = () => {
         if (window.confirm('Are You Sure to Confirm This GRN?')) {
             setStatus("Processing...");
             handleUpdateBeforeConfirm();
-          
+
             const params = {
                 zid: 100000,
                 user: zemail,
-                position:zemail,
+                position: zemail,
                 wh: formData.xwh,
-                tornum:formData.xgrnnum,
-                request:'GRN Approval'
+                tornum: formData.xgrnnum,
+                request: 'GRN Approval'
             };
 
             try {
 
-               const response = await axiosInstance.post("/api/pogrnheader/confirmRequest", params);
-               setStatus(response.data);
+                const response = await axiosInstance.post("/api/pogrnheader/confirmRequest", params);
+                setStatus(response.data);
 
                 Swal.fire({
                     icon: 'success',
@@ -393,27 +393,27 @@ const Pogrndirect = () => {
 
     const reloadFormData = async () => {
         try {
-            
+
             if (!zid || !formData?.xgrnnum) {
                 console.error("Missing required parameters: zid or xtornum");
                 return;
             }
             const requestBody = {
-                selectedFields: [ "xstatusdoc"], 
+                selectedFields: ["xstatusdoc"],
                 whereConditions: {
                     zid: zid,
                     xgrnnum: formData.xgrnnum
                 }
             };
-    
-           
+
+
             const response = await axiosInstance.post("/api/pogrnheader/fetch", requestBody);
             console.log("API Response:", response);
-    
-           
+
+
             if (response?.data) {
                 setFormData((prevFormData) => ({
-                    ...prevFormData, 
+                    ...prevFormData,
                     ...response.data[0],
                 }));
             } else {
@@ -458,6 +458,7 @@ const Pogrndirect = () => {
                         },
                     }}
                     size="medium"
+                    disabled={formData.xstatusdoc === "Approved"}
 
                 >
                     Detail
@@ -476,6 +477,7 @@ const Pogrndirect = () => {
                         },
                     }}
                     size="medium"
+                    disabled={formData.xstatusdoc === "Approved"}
 
                 >
                     Confirm
@@ -765,7 +767,7 @@ const Pogrndirect = () => {
 
 
 
-                                    <TextField
+                                    {/* <TextField
                                         id="xlong"
                                         name="xlong"
                                         label="Store Name"
@@ -790,19 +792,7 @@ const Pogrndirect = () => {
                                                 fontSize: '.9rem'
                                             },
                                         }}
-                                    />
-
-
-                                    {/* Fax */}
-
-
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(3, 1fr)"
-                                    gap={2}
-                                    mb={2} // margin-bottom
-                                >
+                                    /> */}
 
 
                                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
@@ -819,6 +809,21 @@ const Pogrndirect = () => {
                                             {formData.xstatusdoc}
                                         </Typography>
                                     </Box>
+
+
+                                    {/* Fax */}
+
+
+                                </Box>
+                                <Box
+                                    display="grid"
+                                    gridTemplateColumns="repeat(3, 1fr)"
+                                    gap={2}
+                                    mb={2} // margin-bottom
+                                >
+
+
+
 
                                     <TextField
                                         id='xref'
@@ -838,7 +843,7 @@ const Pogrndirect = () => {
                                         // disabled
                                         required
                                         sx={{
-                                            gridColumn: 'span 2',
+                                            gridColumn: 'span 3',
                                             '& .MuiInputBase-input': {
                                                 // Remove unnecessary padding
                                                 // Ensure the input spans the full height
@@ -950,7 +955,7 @@ const Pogrndirect = () => {
                         pageSize={10}
                         onSortChange={handleSortChange}
                         sortField="xgrnnum"
-                        additionalParams={{ zid: zid, user: zemail,superior:'' }}
+                        additionalParams={{ zid: zid, user: zemail, superior: '',status:"open" }}
                         captionFont=".9rem"
                         xclass="py-4 pl-2"
                         bodyFont=".8rem"

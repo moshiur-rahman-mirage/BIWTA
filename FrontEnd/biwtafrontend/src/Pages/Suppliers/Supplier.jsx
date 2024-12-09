@@ -67,8 +67,8 @@ const Supplier = () => {
     const triggerRef = useRef(null);
 
     // Configuration
-    const variant = 'standard';
-    const apiBaseUrl = `api/cacus/${zid}/type/supplier`;
+    const variant = 'outlined';
+    const apiBaseUrl = `api/cacus/${zid}`;
 
     const addEndpoint = 'api/cacus';
     const updateEndpoint = `api/cacus/update`;
@@ -164,7 +164,7 @@ const Supplier = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-
+        handleClear();
         setSelectedItem(item);
     }, []);
 
@@ -186,7 +186,7 @@ const Supplier = () => {
             xcontact: '',
             xtype: xtype,
         });
-        alert('Form cleared.');
+       
     };
 
     const handleDelete = async () => {
@@ -313,7 +313,7 @@ const Supplier = () => {
                         <Box
                             component="form"
                             sx={{
-                                '& > :not(style)': { my: 1 },
+                                '& > :not(style)': { my: 2 },
                                 mx: 'auto',
                                 gap: 2,
                                 borderRadius: 2,
@@ -468,9 +468,9 @@ const Supplier = () => {
                                 display="grid"
                                 gridTemplateColumns="repeat(3, 1fr)"
                                 gap={2}
-                                mb={2} // margin-bottom
+                              
                             >
-                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
+                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} >
 
                                     <TextField
 
@@ -515,7 +515,6 @@ const Supplier = () => {
                                 display="grid"
                                 gridTemplateColumns="repeat(3, 1fr)"
                                 gap={2}
-                                mb={2} // margin-bottom
                             >
                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
 
@@ -546,12 +545,15 @@ const Supplier = () => {
                                 />
 
 
-                                <FormControl fullWidth>
+                                <FormControl fullWidth
+                                size="small"
+                                >
                                     <InputLabel id="status-label">Status</InputLabel>
                                     <Select
                                         labelId="status-label"
                                         value={formData.xstatus}
                                         name='xstatus'
+                                        label="Status"
                                         onChange={handleChange}
                                         onSelect={(value) => handleDropdownSelect("xstatus", value)}
                                         variant={variant}

@@ -31,7 +31,7 @@ import { addFunction } from '../../../ReusableComponents/addFunction';
 
 const Pogrndetail = ({ xgrnnum = '' }) => {
     const { zid } = useAuth();
-    const variant = 'standard'
+    const variant = 'outlined'
     const [formErrors, setFormErrors] = useState({});
     const itemRef = useRef(null);
     const [updateCount, setUpdateCount] = useState(0);
@@ -330,7 +330,6 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                 <Caption title={"Receive Entry Detail of " + xgrnnum} />
                                 <Box
                                     display="grid"
-
                                     gridTemplateColumns="repeat(2, 1fr)"
                                     gap={2}
                                     mb={2} // margin-bottom
@@ -344,19 +343,17 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         onChange={handleChange}
                                         value={formData.xrow}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        // sx={{
+                                        //     '& .MuiInputBase-input': {
+                                        //         fontSize: '.9rem'
+                                        //     },
+                                        // }}
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600,
+                                        //     },
+                                        // }}
                                     />
 
                                     <TextField
@@ -367,24 +364,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         onChange={handleChange}
                                         value={formData.xunitpur}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                fontWeight: 600
-                                            }
-                                        }}
+                                        
                                     />
 
                                 </Box>
@@ -414,12 +394,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         label="Item Code"
                                         error={!!formErrors.xitem} 
                                         helperText={formErrors.xitem}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                         size="small"
                                         value={formData.xitem || ''}
                                         variant={variant}
@@ -441,9 +416,7 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -455,22 +428,10 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         size="small"
                                         fullWidth
                                         name='xdesc'
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                fontSize: '.8rem',
-                                            }
-                                        }}
+                                        
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                         onChange={handleChange}
                                         value={formData.xdesc}
@@ -501,16 +462,9 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         required
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                     />
 
                                     <TextField
@@ -525,17 +479,12 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         onChange={handleChange}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            // '& .MuiInputBase-input': {
+                                            //     fontSize: '.9rem'
+                                            // },
                                         }}
                                         value={formData.xrategrn}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                     />
 
                                 </Box>
@@ -557,16 +506,9 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         value={formData.xbatch}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                     />
 
                                     <TextField
@@ -579,17 +521,10 @@ const Pogrndetail = ({ xgrnnum = '' }) => {
                                         onChange={handleChange}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                         value={formData.xdateexp}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                     />
 
                                 </Box>

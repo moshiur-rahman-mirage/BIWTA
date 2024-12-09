@@ -24,6 +24,7 @@ import Imtordetaildam from './Imtordetaildam';
 import SortableList from '../../../ReusableComponents/SortableList';
 import Imtordetail from './Imtordetail';
 import Moreqdetailstore from './Moreqdetailstore';
+import useEscape from '../../../utility/useEscape';
 
 
 const Imtormoreqheader = () => {
@@ -70,9 +71,11 @@ const Imtormoreqheader = () => {
         setStatus(event.target.value);
     };
 
+
+
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
-    const variant = 'standard';
+    const variant = 'outlined';
     const apiBaseUrl = `api/imtorheader`;
     const apiListUrl2 = `api/imtorheader/confirmed`;
 
@@ -91,6 +94,8 @@ const Imtormoreqheader = () => {
         setSortOrder((prevOrder) => (field === sortField && prevOrder === 'asc' ? 'desc' : 'asc'));
         setSortField(field);
     };
+
+
 
 
     useEffect(() => {
@@ -192,7 +197,7 @@ const Imtormoreqheader = () => {
         setOpen(false);
     };
 
-
+    useEscape(handleClose)
 
     const handleConfirm = async () => {
         if (window.confirm('Issue Item?')) {
@@ -467,7 +472,7 @@ const Imtormoreqheader = () => {
                             <Box
                                 component="form"
                                 sx={{
-                                    '& > :not(style)': { my: 1 },
+                                    '& > :not(style)': { my: 2 },
                                     mx: 'auto',
                                     gap: 2,
                                     px: 1,
@@ -500,12 +505,7 @@ const Imtormoreqheader = () => {
                                         id="xtornum"
                                         name="xtornum"
                                         label="SR Number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         size="small"
                                         value={formData.xtornum || ''}
                                         variant={variant}
@@ -529,11 +529,7 @@ const Imtormoreqheader = () => {
                                         }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
                                     {/* Company Field */}
@@ -541,12 +537,7 @@ const Imtormoreqheader = () => {
                                         id="xdate"
                                         name="xdate"
                                         label="SR Date"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         type="date"
                                         size="small"
                                         value={formData.xdate}
@@ -555,11 +546,7 @@ const Imtormoreqheader = () => {
                                         onChange={handleChange}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -586,14 +573,12 @@ const Imtormoreqheader = () => {
                                         error={!!formErrors.xfwh}  // Check if there's an error for this field
                                         helperText={formErrors.xfwh}
                                         withXlong="false"
-                                        fontWeight={600}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
+                                        
+                                        
                                     />
 
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gridColumn: 'span 1' }}>
                                         <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
                                             Status:
                                         </Typography>
@@ -610,34 +595,7 @@ const Imtormoreqheader = () => {
 
 
                                 </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(2, 1fr)"
-                                    gap={2}
-                                    mb={2}
-                                >
 
-
-
-
-
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(3, 1fr)"
-                                    gap={2}
-                                    mb={2} // margin-bottom
-                                >
-
-
-
-                                    <div>
-
-                                    </div>
-
-
-
-                                </Box>
 
                                 <Box
                                     display="grid"
@@ -653,22 +611,13 @@ const Imtormoreqheader = () => {
                                         onChange={handleChange}
                                         value={formData.xnote}
                                         readOnly
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         fullWidth
                                         required
                                         multiline
                                         sx={{
                                             gridColumn: 'span 3',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -740,9 +689,9 @@ const Imtormoreqheader = () => {
                         // onSortChange={handleSortChange}
                         sortField="xtornum"
                         additionalParams={{}}
-                        captionFont=".9rem"
+                        // captionFont=".9rem"
                         xclass="py-0 pl-2"
-                        bodyFont=".7rem"
+                      
                         mt={2}
                         page={1}
                     // isModal

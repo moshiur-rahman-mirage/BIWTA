@@ -32,6 +32,7 @@ import { handleSearch } from '../../ReusableComponents/handleSearch';
 import { addFunction } from '../../ReusableComponents/addFunction';
 import { validateForm } from '../../ReusableComponents/validateForm';
 import Swal from 'sweetalert2';
+import useEscape from '../../utility/useEscape';
 
 
 const Pdmsthrd = () => {
@@ -56,21 +57,16 @@ const Pdmsthrd = () => {
 
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [isTyping, setIsTyping] = useState(false); // To handle typing state
-    const [selectedCode, setSelectedCode] = useState(''); // To store selected code
-    const [checked, setChecked] = useState(false);
-    const [xtypeobj, setXtypeobj] = useState('');
-    const [isListOpen, setListOpen] = useState(false)
+
     const listRef = useRef(null);
     const formRef = useRef(null);
     const inputRef = useRef(null);
     const [errors, setErrors] = useState({});
-    const [gender, setGender] = useState('Male');
-    const [xstaff, setXstaff] = useState("");
     const [formErrors, setFormErrors] = useState({});
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const triggerRef = useRef(null);
     const apiBaseUrl = "api/employee";
-    const variant = 'standard'
+    const variant = 'outlined'
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
 
@@ -153,6 +149,9 @@ const Pdmsthrd = () => {
     };
 
 
+    
+
+
     const handleOpen = () => {
         document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
         document.body.style.overflow = "hidden";
@@ -164,6 +163,9 @@ const Pdmsthrd = () => {
         document.body.style.overflow = "";
         setOpen(false);
     };
+
+
+    useEscape(handleClose)
 
     const handleGenderChange = (event) => {
         const value = event.target.value;
@@ -361,12 +363,13 @@ const Pdmsthrd = () => {
             <div className='col-span-11 shadow-lg'>
                 <Button
                     onClick={handleOpen}
-                    variant='outlined'
+                   variant='outlined'
                     sx={{
                         marginLeft: 1,
                         paddingX: 2,
                         paddingY: 0.5,
                         height: '2.5rem',
+                        mb:2,
                         '&:hover': {
                             backgroundColor: '#F59E0B', // Yellow-600
                         },
@@ -412,8 +415,7 @@ const Pdmsthrd = () => {
                                 '& > :not(style)': { my: 1 },
                                 mx: 'auto',
                                 gap: 2,
-                                mt: 1,
-
+                                mt: 2,
                                 borderRadius: 2,
                                 bgcolor: 'white',
                             }}
@@ -427,6 +429,8 @@ const Pdmsthrd = () => {
                                 gridTemplateColumns="repeat(4, 1fr)"
                                 gap={2}
                                 mb={2}
+                               
+                               
                             >
 
                                 <DynamicDropdown
@@ -446,13 +450,12 @@ const Pdmsthrd = () => {
                                     name='xstaff'
                                     label="Employee ID"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600,
-                                        },
-
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600,
+                                    //     },
+                                    // }}
                                     value={formData.xstaff}
                                     variant={variant}
                                     fullWidth
@@ -484,12 +487,12 @@ const Pdmsthrd = () => {
                                     // disabled
                                     required
                                     sx={{ gridColumn: 'span 3' }}
-                                    InputLabelProps={{
-                                        shrink: true, // Ensures the label stays above the input field
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true, // Ensures the label stays above the input field
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
+                                    // }}
                                 />
                             </Box>
 
@@ -508,13 +511,13 @@ const Pdmsthrd = () => {
                                         variant={variant}
                                         label="Salutation"
                                         size="small"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600,
+                                        //     },
 
-                                        }}
+                                        // }}
                                         type="salutation"
                                         apiUrl={apiBaseUrl}
                                         onSelect={(value) => handleDropdownSelect("xsalute", value)}
@@ -529,13 +532,12 @@ const Pdmsthrd = () => {
                                     name='xfstname'
                                     variant={variant}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
-
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
+                                    // }}
                                     onChange={handleChange}
                                     value={formData.xfstname}
                                     fullWidth
@@ -546,13 +548,13 @@ const Pdmsthrd = () => {
                                     name='xmname'
                                     variant={variant}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
 
-                                    }}
+                                    // }}
                                     onChange={handleChange}
                                     value={formData.xmname}
                                     fullWidth
@@ -563,13 +565,13 @@ const Pdmsthrd = () => {
                                     name='xlastname'
                                     variant={variant}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
 
-                                    }}
+                                    // }}
                                     onChange={handleChange}
                                     value={formData.xlastname}
                                     fullWidth
@@ -600,10 +602,10 @@ const Pdmsthrd = () => {
                                     <FormLabel
                                         id="gender-label"
                                         size="small"
-                                        sx={{
-                                            fontSize: '0.8rem',
-                                            fontWeight: 600
-                                        }}
+                                        // sx={{
+                                        //     fontSize: '0.8rem',
+                                        //     fontWeight: 600
+                                        // }}
                                     >
                                         Gender
                                     </FormLabel>
@@ -662,9 +664,9 @@ const Pdmsthrd = () => {
                                     size="small"
                                     InputLabelProps={{
                                         shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                        // sx: {
+                                        //     fontWeight: 600, // Adjust font size here
+                                        // },
 
                                     }}
                                     onChange={handleChange}
@@ -677,13 +679,13 @@ const Pdmsthrd = () => {
                                     name='xnid'
                                     onChange={handleChange}
                                     variant={variant}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
 
-                                    }}
+                                    // }}
                                     label="National ID"
                                     value={formData.xnid}
                                     fullWidth required
@@ -693,11 +695,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     label="Designation"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     name="xdesignation"
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     type="Designation"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xdesignation", value)}
@@ -719,13 +721,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     name='xdeptname'
                                     label="Department"
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     type="Department"
 
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
@@ -738,12 +738,12 @@ const Pdmsthrd = () => {
                                     name="xreligion"
                                     variant={variant}
                                     label="Religion"
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
-                                    }}
+                                    // }}
                                     type="Religion"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xreligion", value)}
@@ -774,13 +774,11 @@ const Pdmsthrd = () => {
                                     name="xmstat"
                                     variant={variant}
                                     label="Marital Status"
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     type="Marital Status"
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
                                     onSelect={(value) => handleDropdownSelect("xmstat", value)}
@@ -800,13 +798,13 @@ const Pdmsthrd = () => {
                             >
                                 <TextField label="Personal Mobile No."
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
 
-                                    }}
+                                    // }}
                                     name='xmobile'
                                     onChange={handleChange}
                                     value={formData.xmobile}
@@ -817,13 +815,13 @@ const Pdmsthrd = () => {
 
                                 <TextField label="Email"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        sx: {
-                                            fontWeight: 600, // Adjust font size here
-                                        },
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    //     sx: {
+                                    //         fontWeight: 600, // Adjust font size here
+                                    //     },
 
-                                    }}
+                                    // }}
                                     name='xemail'
                                     onChange={handleChange}
                                     value={formData.xemail}
@@ -839,7 +837,7 @@ const Pdmsthrd = () => {
                                         
 
                                     }}
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     type="Job Title"
                                     onSelect={(value) => handleDropdownSelect("xjobtitle", value)}
                                     value={formData.xjobtitle}
@@ -854,13 +852,11 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     label="Job Location"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        
-
-                                    }}
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
                                     type="Job Location"
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     onSelect={(value) => handleDropdownSelect("xlocation", value)}
                                     value={formData.xlocation}
                                     apiUrl={apiBaseUrl} // Replace with your API endpoint
@@ -882,13 +878,13 @@ const Pdmsthrd = () => {
                                     variant={variant}
                                     label="Employee Type"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
 
-                                    }}
+                                    // }}
                                     name="xemptype"
-                                    fontWeight={600}
+                                    // fontWeight={600}
                                     type="Employee Type"
                                     onSelect={(value) => handleDropdownSelect("xemptype", value)}
                                     value={formData.xemptype}
@@ -903,12 +899,12 @@ const Pdmsthrd = () => {
                                     onChange={handleChange}
                                     value={formData.xregino}
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
 
-                                    }}
-                                    fontWeight={600}
+                                    // }}
+                                    // fontWeight={600}
                                     // InputLabelProps={{ shrink: true }}
                                     variant={variant}
                                     fullWidth
@@ -917,12 +913,12 @@ const Pdmsthrd = () => {
                                 <TextField
                                     label="Credentials"
                                     size="small"
-                                    InputLabelProps={{
-                                        shrink: true,
+                                    // InputLabelProps={{
+                                    //     shrink: true,
                                         
 
-                                    }}
-                                    fontWeight={600}
+                                    // }}
+                                    // fontWeight={600}
                                     id="xprofdegree"
                                     name="xprofdegree"
                                     onChange={handleChange}
@@ -956,7 +952,7 @@ const Pdmsthrd = () => {
                                             // size:'small',
                                             '& .MuiFormControlLabel-label': {
                                                 fontSize: '0.875rem',
-                                                fontWeight: '600',
+                                                // fontWeight: '600',
                                             }
                                         }} />
                                 </FormGroup>

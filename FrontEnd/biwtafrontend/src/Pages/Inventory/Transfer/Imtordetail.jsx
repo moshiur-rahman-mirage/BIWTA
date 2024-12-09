@@ -31,7 +31,7 @@ import { toast } from 'react-toastify';
 
 const Imtordetail = ({ xtornum = '' }) => {
     const { zid } = useAuth();
-    const variant = 'standard'
+    const variant = 'outlined'
     const [formErrors, setFormErrors] = useState({});
     const itemRef = useRef(null);
     const [isTyping, setIsTyping] = useState(false);
@@ -60,6 +60,7 @@ const Imtordetail = ({ xtornum = '' }) => {
         xitem: '',
         xprepqty: '',
         xbatch: '',
+        xdesc:'',
         xlong: '',
         xunit: ''
 
@@ -371,19 +372,8 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         onChange={handleChange}
                                         value={formData.xrow}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
+                                        
                                     />
 
                                     <TextField
@@ -394,24 +384,7 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         onChange={handleChange}
                                         value={formData.xunit}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                fontWeight: 600
-                                            }
-                                        }}
+                                        
                                     />
 
                                 </Box>
@@ -441,12 +414,6 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         label="Item Code"
                                         error={!!formErrors.xitem}
                                         helperText={formErrors.xitem}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
                                         size="small"
                                         value={formData.xitem || ''}
                                         variant={variant}
@@ -466,42 +433,25 @@ const Imtordetail = ({ xtornum = '' }) => {
                                                 { zid }
                                             );
                                         }}
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
+                                        
                                     />
 
 
 
                                     <TextField
+                                        id='xdesc'
                                         label="Item Name"
                                         variant={variant}
                                         size="small"
+                                        value={formData.xdesc}
                                         fullWidth
                                         name='xdesc'
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                fontSize: '.8rem',
-                                            }
-                                        }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                         onChange={handleChange}
-                                        value={formData.xdesc}
-
+                                       
 
                                     />
                                 </Box>
@@ -529,16 +479,9 @@ const Imtordetail = ({ xtornum = '' }) => {
                                         required
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                         
                                     />
 

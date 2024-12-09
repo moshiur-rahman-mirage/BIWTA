@@ -29,7 +29,7 @@ import { handleSearch } from '../../ReusableComponents/handleSearch';
 import axiosInstance from '../../Middleware/AxiosInstance';
 const ApprovalLayer = () => {
 
-    const variant = 'standard'
+    const variant = 'outlined'
     const { zid, zemail } = useAuth();
     const fieldConfig = [
         { header: 'Row', field: 'xrow' },
@@ -50,7 +50,7 @@ const ApprovalLayer = () => {
         xrow: '',
         xtypetrn: '',
         xnofsignatory: '',
-        xyesno: 'Yes',
+        xyesno: '',
 
     });
 
@@ -241,7 +241,7 @@ const ApprovalLayer = () => {
                                 <Caption title={"Approval Layer"} />
                                 <Box
                                     display="grid"
-
+                                    mt={2}
                                     gridTemplateColumns="repeat(2, 1fr)"
                                     gap={2}
                                     mb={2} // margin-bottom
@@ -282,18 +282,18 @@ const ApprovalLayer = () => {
                                         }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            // '& .MuiInputBase-input': {
+                                            //     fontSize: '.9rem'
+                                            // },
                                         }}
                                         value={formData.xrow}
                                         fullWidth
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600,
+                                        //     },
+                                        // }}
                                     />
 
                                     <XcodesDropDown
@@ -341,41 +341,41 @@ const ApprovalLayer = () => {
                                         helperText={formErrors.xnofsignatory}
                                         fullWidth
                                         sx={{
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            // '& .MuiInputBase-input': {
+                                            //     fontSize: '.9rem'
+                                            // },
                                         }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600,
+                                        //     },
+                                        // }}
                                     />
 
                                     <FormControl fullWidth variant={variant} size="small">
                                         <InputLabel
-                                            shrink
-                                            sx={{
-                                                fontSize: '1rem',
-                                                fontWeight: 600,
-                                            }}
+                                            // shrink
+                                            // sx={{
+                                            //     fontSize: '1rem',
+                                            //     fontWeight: 600,
+                                            // }}
                                         >
                                             Approval Mandatory?
 
                                         </InputLabel>
                                         <Select
                                             value={formData.xyesno}
-                                            defaultValue="Yes"
+                                            defaultValue=""
                                             onChange={(event) =>
                                                 handleDropdownSelect("xyesno", event.target.value)
                                             }
                                             label="Approval Mandatory?"
                                             sx={{
-                                                '& .MuiMenuItem-root': {
-                                                    fontSize: '0.8rem',
-                                                },
-                                                fontSize: '0.8rem',
+                                                // '& .MuiMenuItem-root': {
+                                                //     fontSize: '0.8rem',
+                                                // },
+                                                // fontSize: '0.8rem',
                                             }}
                                         >
                                             <MenuItem value="Yes">Yes</MenuItem>
@@ -456,7 +456,7 @@ const ApprovalLayer = () => {
                                     additionalParams={{}}
                                     captionFont=".9rem"
                                     xclass="py-4 pl-2"
-                                    bodyFont=".7rem"
+                                    // bodyFont=".7rem"
                                     mt={0}
                                     page={1}
                                     isModal

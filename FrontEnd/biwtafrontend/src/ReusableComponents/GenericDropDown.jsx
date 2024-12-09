@@ -4,7 +4,7 @@ import axiosInstance from '../Middleware/AxiosInstance';
 import { useAuth } from '../Provider/AuthProvider';
 
 const GenericDropDown = ({
-    variant = "standard",
+    variant = "outlined",
     value,
     api,
     label,
@@ -13,6 +13,7 @@ const GenericDropDown = ({
     onSelect,
     defaultValue = '',
     fontSize = '0.875rem',
+    span
 }) => {
     const { zid } = useAuth();
     const [options, setOptions] = useState([]); 
@@ -49,13 +50,12 @@ const GenericDropDown = ({
     };
 
     return (
-        <FormControl fullWidth variant={variant} size="small">
+        <FormControl fullWidth variant={variant} size="small" 
+        sx={{
+            gridColumn: span ? `span ${span}` : 'span 1',
+        }}
+        >
             <InputLabel
-                shrink
-                sx={{
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                }}
             >
                 {label}
             </InputLabel>
@@ -79,7 +79,7 @@ const GenericDropDown = ({
                     {options.map((option, index) => (
                         <MenuItem
                             key={index}
-                            value={option[xpkey]} // Dynamically fetch value based on xpkey
+                            value={option[xpkey]}
                             sx={{
                                 fontSize,
                             }}

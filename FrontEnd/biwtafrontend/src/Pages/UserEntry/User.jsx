@@ -54,7 +54,7 @@ const User = () => {
     const staffRef = useRef(null);
 
     // Configuration
-    const variant = 'standard';
+    const variant = 'outlined';
     const apiBaseUrl = `api/xusers/search?zid=${zid}&searchtext={query}`;
     const apiSearchUrl = apiBaseUrl
     const apiStaffUrl = `/api/employee/searchtext?zid=${zid}&searchText={query}`;
@@ -136,7 +136,7 @@ const User = () => {
 
     useEffect(() => {
         if (selectedItem) {
-          
+
             setFormData({
                 ...selectedItem
             });
@@ -161,7 +161,7 @@ const User = () => {
         };
         addFunction(data, endpoint, 'POST', (response) => {
             if (response && response.xitem) {
-             
+
                 setFormData((prev) => ({ ...prev, xitem: response.xitem }));
                 setUpdateCount(prevCount => prevCount + 1);
             } else {
@@ -176,7 +176,7 @@ const User = () => {
 
 
     const handleItemSelect = useCallback((item) => {
-       
+
         setSelectedItem(item,);
     }, []);
 
@@ -195,7 +195,7 @@ const User = () => {
     };
 
     const handleDelete = async () => {
-     
+
         const endpoint = `api/xusers/${zid}/${formData.zemail}`;
         await handleApiRequest({
             endpoint,
@@ -224,7 +224,7 @@ const User = () => {
             ...formData,
             zid: zid
         };
-    
+
 
         await handleApiRequest({
             endpoint,
@@ -356,19 +356,7 @@ const User = () => {
                                     onChange={handleChange}
                                     sx={{ gridColumn: 'span 1' }}
                                 />
-                                {/* Mailing Address */}
-                                {/* <TextField
-                                    id="xwh"
-                                    name="xwh"
-                                    label="Store"
-                                    size="small"
-                                    value={formData.xwh}
-                                    variant={variant}
-                                    fullWidth
-                                    onChange={handleChange}
-                                    sx={{ gridColumn: 'span 1' }}
-                                /> */}
-                                {/* Email */}
+
 
                                 <XcodesDropDown
                                     id="xmstat"
@@ -382,7 +370,13 @@ const User = () => {
                                     value={formData.xwh}
                                     defaultValue=""
                                 />
-
+                            </Box>
+                            <Box
+                                display="grid"
+                                gridTemplateColumns="repeat(2, 1fr)"
+                                gap={2}
+                                mb={2}
+                            >
                                 <TextField
                                     id="xposition"
                                     ref={staffRef}

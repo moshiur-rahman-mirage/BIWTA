@@ -76,7 +76,7 @@ const Pogrnapp = () => {
     // References
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
-    const variant = 'standard';
+    const variant = 'outlined';
     const apiBaseUrl = `api/pogrnheader`;
 
     const fieldConfig = [
@@ -459,12 +459,7 @@ const Pogrnapp = () => {
                                         id="xgrnnum"
                                         name="xgrnnum"
                                         label="GRN Number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         size="small"
                                         value={formData.xgrnnum || ''}
                                         variant={variant}
@@ -486,11 +481,7 @@ const Pogrnapp = () => {
                                         }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
                                     {/* Company Field */}
@@ -498,12 +489,7 @@ const Pogrnapp = () => {
                                         id="xdate"
                                         name="xdate"
                                         label="Date"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         type="date"
                                         size="small"
                                         value={formData.xdate}
@@ -512,11 +498,7 @@ const Pogrnapp = () => {
                                         onChange={handleChange}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -551,21 +533,12 @@ const Pogrnapp = () => {
                                         value={formData.xcus}
                                         error={!!formErrors.xcus}
                                         helperText={formErrors.xcus}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         variant={variant}
                                         fullWidth
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                         onChange={(e) => {
                                             handleChange(e);
@@ -591,12 +564,7 @@ const Pogrnapp = () => {
                                         size="small"
                                         value={formData.xorg}
                                         variant={variant}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         inputProps={{
                                             readOnly: true,
                                         }}
@@ -604,11 +572,7 @@ const Pogrnapp = () => {
                                         onChange={handleChange}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
                                     {/* Phone */}
@@ -637,12 +601,7 @@ const Pogrnapp = () => {
                                         error={!!formErrors.xwh}  // Check if there's an error for this field
                                         helperText={formErrors.xwh}
                                         withXlong="false"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                     />
 
 
@@ -674,7 +633,7 @@ const Pogrnapp = () => {
                                         }}
                                     /> */}
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gridColumn: 'span 1' }}>
                                         <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
                                             Status:
                                         </Typography>
@@ -712,22 +671,13 @@ const Pogrnapp = () => {
                                         value={formData.xref}
                                         variant={variant}
                                         onChange={handleChange}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         fullWidth
                                         // disabled
                                         required
                                         sx={{
                                             gridColumn: 'span 3',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
 
                                     />
@@ -749,22 +699,13 @@ const Pogrnapp = () => {
                                         size="small"
                                         onChange={handleChange}
                                         value={formData.xnote}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         fullWidth
                                         required
                                         multiline
                                         sx={{
                                             gridColumn: 'span 3',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
                                 </Box>
@@ -785,16 +726,8 @@ const Pogrnapp = () => {
                                         value={formData.xsign1}
                                         size="small"
                                         defaultValue=""
-                                        sx={{
-                                            gridColumn: 'span 2', // Span 2 columns in the grid
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-
-                                            },
-                                        }}
+                                        span={2}
+                                        
                                     />
 
 

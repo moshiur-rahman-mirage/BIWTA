@@ -27,7 +27,7 @@ import Swal from 'sweetalert2';
 
 const PdDependent = ({ xstaff, xname }) => {
     const { zid, zemail } = useAuth();
-    const variant = 'standard'
+    const variant = 'outlined'
 
     const addEndpoint = 'api/dependent';
     const updateEndpoint = `api/dependent/update`;
@@ -277,6 +277,7 @@ const PdDependent = ({ xstaff, xname }) => {
 
                                     gridTemplateColumns="repeat(2, 1fr)"
                                     gap={2}
+                                    mt={2}
                                     mb={2} // margin-bottom
                                 >
 
@@ -287,13 +288,13 @@ const PdDependent = ({ xstaff, xname }) => {
                                         error={!!formErrors.xname}  
                                         helperText={formErrors.xname}
                                         size="small"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600, // Adjust font size here
+                                        //     },
 
-                                        }}
+                                        // }}
                                         onChange={handleChange}
                                         value={formData.xname}
                                         fullWidth
@@ -315,21 +316,20 @@ const PdDependent = ({ xstaff, xname }) => {
                                         size="small"
                                         InputLabelProps={{
                                             shrink: true,
-
                                         }}
                                         onChange={handleChange}
                                         value={formData.xbirthdate}
                                         variant={variant}
                                         fullWidth
 
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.9rem',
-                                            },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.9rem',
-                                            },
-                                        }}
+                                        // sx={{
+                                        //     '& .MuiInputLabel-root': {
+                                        //         fontSize: '0.9rem',
+                                        //     },
+                                        //     '& .MuiInputBase-input': {
+                                        //         fontSize: '0.9rem',
+                                        //     },
+                                        // }}
 
                                     />
                                 </Box>
@@ -345,16 +345,16 @@ const PdDependent = ({ xstaff, xname }) => {
                                         variant={variant}
                                         label="Gender"
                                         size="small"
-                                        InputLabelProps={{
-                                            shrink: true,
+                                        // InputLabelProps={{
+                                        //     shrink: true,
 
-                                        }}
+                                        // }}
                                         type="Gender"
 
                                         onSelect={(value) => handleDropdownSelect("xgender", value)}
                                         value={formData.xgender}
-                                        fontSize="0.9rem" 
-                                        captionSize="0.9rem"
+                                        // fontSize="0.9rem" 
+                                        // captionSize="0.9rem"
                                         error={!!formErrors.xgender}  
                                         helperText={formErrors.xgender}
 
@@ -369,10 +369,10 @@ const PdDependent = ({ xstaff, xname }) => {
                                             variant={variant}
                                             label="Relation"
                                             size="small"
-                                            InputLabelProps={{
-                                                shrink: true,
+                                            // InputLabelProps={{
+                                            //     shrink: true,
 
-                                            }}
+                                            // }}
                                             type="Relation"
                                             name='xrelation'
                                             onSelect={(value) => handleDropdownSelect("xrelation", value)}
@@ -398,27 +398,27 @@ const PdDependent = ({ xstaff, xname }) => {
                                         name='xnid'
                                         label="NID"
                                         size="small"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600
-                                            }
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600
+                                        //     }
 
-                                        }}
+                                        // }}
                                         onChange={handleChange}
                                         value={formData.xnid}
                                         variant={variant}
                                         fullWidth
                                         required
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.9rem',
-                                            },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.9rem',
-                                            },
-                                            gridColumn: 'span 1'
-                                        }}
+                                        // sx={{
+                                        //     '& .MuiInputLabel-root': {
+                                        //         fontSize: '0.9rem',
+                                        //     },
+                                        //     '& .MuiInputBase-input': {
+                                        //         fontSize: '0.9rem',
+                                        //     },
+                                        //     gridColumn: 'span 1'
+                                        // }}
 
                                     />
 
@@ -426,27 +426,27 @@ const PdDependent = ({ xstaff, xname }) => {
                                         label="Contact Number"
                                         variant={variant}
                                         size="small"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600
-                                            }
+                                        // InputLabelProps={{
+                                        //     shrink: true,
+                                        //     sx: {
+                                        //         fontWeight: 600
+                                        //     }
 
-                                        }}
+                                        // }}
                                         fullWidth
                                         name='xcontact'
                                         onChange={handleChange}
                                         value={formData.xcontact}
                                         required
-                                        sx={{
-                                            '& .MuiInputLabel-root': {
-                                                fontSize: '0.9rem',
-                                            },
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '0.9rem',
-                                            },
+                                        // sx={{
+                                        //     '& .MuiInputLabel-root': {
+                                        //         fontSize: '0.9rem',
+                                        //     },
+                                        //     '& .MuiInputBase-input': {
+                                        //         fontSize: '0.9rem',
+                                        //     },
 
-                                        }}
+                                        // }}
                                     />
 
                                 </Box>

@@ -29,7 +29,7 @@ import { addFunction } from '../../../ReusableComponents/addFunction';
 
 const Moreqdetailstore = ({ xtornum = '' }) => {
     const { zid } = useAuth();
-    const variant = 'standard'
+    const variant = 'outlined'
     const [formErrors, setFormErrors] = useState({});
     const itemRef = useRef(null);
     const [isTyping, setIsTyping] = useState(false);
@@ -57,6 +57,7 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
         xrow: '',
         xitem: '',
         xprepqty: '',
+        xdesc:'',
         xbatch: '',
         xlong: '',
         xunit: ''
@@ -225,6 +226,7 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
             xrow: '',
             xitem: '',
             xprepqty: '',
+            xdesc:'',
             xbatch: '',
             xlong: '',
             xlineamt: '',
@@ -418,19 +420,8 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         onChange={handleChange}
                                         value={formData.xrow}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
+                                        
                                     />
 
                                     <TextField
@@ -441,24 +432,8 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         onChange={handleChange}
                                         value={formData.xunit}
                                         fullWidth
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                fontWeight: 600
-                                            }
-                                        }}
+                                        
+                                       
                                     />
 
                                 </Box>
@@ -488,12 +463,7 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         label="Item Code"
                                         error={!!formErrors.xitem}
                                         helperText={formErrors.xitem}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                         size="small"
                                         value={formData.xitem || ''}
                                         variant={variant}
@@ -515,9 +485,7 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -529,22 +497,11 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         size="small"
                                         fullWidth
                                         name='xdesc'
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                        InputProps={{
-                                            sx: {
-                                                fontSize: '.8rem',
-                                            }
-                                        }}
+                                        
+                                        
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                         onChange={handleChange}
                                         value={formData.xdesc}
@@ -575,41 +532,12 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         required
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
+                                        
                                     />
 
-                                    {/* <TextField
-                                        label="Rate"
-                                        variant={variant}
-                                        size="small"
-                                        fullWidth
-                                        name='xrategrn'
-                                        error={!!formErrors.xrategrn} 
-                                        helperText={formErrors.xrategrn}
-                                        onChange={handleChange}
-                                        sx={{
-                                            gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem'
-                                            },
-                                        }}
-                                        value={formData.xrategrn}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600, // Adjust font size here
-                                            },
-                                        }}
-                                    /> */}
+                                   
 
                                 </Box>
                                 <Box
@@ -651,12 +579,12 @@ const Moreqdetailstore = ({ xtornum = '' }) => {
                                         }
                                     }}
                                     pageSize={10}
-                                    // onSortChange={handleSortChange}
+                                    
                                     sortField="xtornum"
                                     additionalParams={{}}
                                     captionFont=".9rem"
                                     xclass="py-4 pl-2"
-                                    bodyFont=".7rem"
+                                   
                                     mt={0}
                                     page={1}
                                     isModal

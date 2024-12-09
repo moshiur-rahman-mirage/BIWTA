@@ -84,7 +84,7 @@ const Imtorheaderapp = () => {
 
     const triggerRef = useRef(null);
     const supplierRef = useRef(null);
-    const variant = 'standard';
+    const variant = 'outlined';
     const apiBaseUrl = `api/imtorheader`;
 
     const fieldConfig = [
@@ -348,6 +348,7 @@ const Imtorheaderapp = () => {
                         },
                     }}
                     size="medium"
+                    disabled={formData.xstatustor === ""}
 
                 >
                     Approve
@@ -360,10 +361,10 @@ const Imtorheaderapp = () => {
 
 
 
-                {/* Helmet Title for Page */}
+               
                 <HelmetTitle title="Store Requisition(Transfer) Approval" />
 
-                {/* Sidebar with Action Buttons */}
+             
                 <div className="col-span-1">
                     <SideButtons
 
@@ -378,9 +379,8 @@ const Imtorheaderapp = () => {
 
                 <Box sx={{
                     gridColumn: 'span 5',
-                    // border: '1px solid #ccc', // Light gray border
-                    borderRadius: '8px', // Optional: Rounded corners
-                    // padding: 2,
+                    borderRadius: '8px',
+                   
                 }}>
 
 
@@ -424,12 +424,7 @@ const Imtorheaderapp = () => {
                                         id="xtornum"
                                         name="xtornum"
                                         label="SR Number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         size="small"
                                         value={formData.xtornum || ''}
                                         variant={variant}
@@ -451,11 +446,7 @@ const Imtorheaderapp = () => {
                                         }}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
                                     {/* Company Field */}
@@ -463,12 +454,7 @@ const Imtorheaderapp = () => {
                                         id="xdate"
                                         name="xdate"
                                         label="SR Date"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         type="date"
                                         size="small"
                                         value={formData.xdate}
@@ -477,11 +463,7 @@ const Imtorheaderapp = () => {
                                         onChange={handleChange}
                                         sx={{
                                             gridColumn: 'span 1',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -509,12 +491,7 @@ const Imtorheaderapp = () => {
                                         error={!!formErrors.xfwh}  // Check if there's an error for this field
                                         helperText={formErrors.xfwh}
                                         withXlong="false"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         sx={{
                                             pointerEvents: 'none', // Disables interaction with the dropdown
                                         }}
@@ -529,21 +506,14 @@ const Imtorheaderapp = () => {
                                         value={formData.xfwhdesc}
                                         variant={variant}
                                         hidden
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         inputProps={{
                                             readOnly: true,
                                         }}
                                         onChange={handleChange}
                                         sx={{
                                             display: 'none',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem',
-                                            },
+                                            
                                         }}
                                     />
 
@@ -561,70 +531,11 @@ const Imtorheaderapp = () => {
                                         error={!!formErrors.xtwh}
                                         helperText={formErrors.xtwh}
                                         withXlong="false"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                     />
 
 
-                                    {/* Mobile */}
-                                    <TextField
-                                        id="xtwhdesc"
-                                        name="xtwhdesc"
-                                        label="Store Name"
-                                        size="small"
-                                        value={formData.xtwhdesc}
-                                        variant={variant}
-                                        hidden
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
-                                        inputProps={{
-                                            readOnly: true,
-                                        }}
-                                        onChange={handleChange}
-                                        sx={{
-                                            display: 'none',
-                                            '& .MuiInputBase-input': {
-                                                fontSize: '.9rem',
-                                            },
-                                        }}
-                                    />
-
-                                </Box>
-                                <Box
-                                    display="grid"
-                                    gridTemplateColumns="repeat(3, 1fr)"
-                                    gap={2}
-                                    mb={2} // margin-bottom
-                                >
-
-
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2, gridColumn: 'span 1' }}>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
-                                            Status:
-                                        </Typography>
-                                        <Typography
-                                            variant="subtitle1"
-                                            sx={{
-                                                marginLeft: 1,
-                                                color: status === 'Open' ? 'green' : 'red', // Conditional styling
-                                            }}
-                                        >
-                                            {formData.xstatustor}
-                                        </Typography>
-                                    </Box>
-                                    <div>
-
-                                    </div>
-
-
+                                 
 
                                 </Box>
 
@@ -641,22 +552,13 @@ const Imtorheaderapp = () => {
                                         size="small"
                                         onChange={handleChange}
                                         value={formData.xnote}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-                                            },
-                                        }}
+                                        
                                         fullWidth
                                         required
                                         multiline
                                         sx={{
                                             gridColumn: 'span 3',
-                                            '& .MuiInputBase-input': {
-                                                // Remove unnecessary padding
-                                                // Ensure the input spans the full height
-                                                fontSize: '.9rem'
-                                            },
+                                            
                                         }}
                                     />
 
@@ -679,17 +581,24 @@ const Imtorheaderapp = () => {
                                         value={formData.xsign1}
                                         size="small"
                                         defaultValue=""
-                                        sx={{
-                                            gridColumn: 'span 2', // Span 2 columns in the grid
-                                        }}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                            sx: {
-                                                fontWeight: 600,
-
-                                            },
-                                        }}
+                                        span={2}
+                                        
                                     />
+
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gridColumn: 'span 1' }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 400, fontSize: '1rem' }}>
+                                            Status:
+                                        </Typography>
+                                        <Typography
+                                            variant="subtitle1"
+                                            sx={{
+                                                marginLeft: 1,
+                                                color: status === 'Open' ? 'green' : 'red', // Conditional styling
+                                            }}
+                                        >
+                                            {formData.xstatustor}
+                                        </Typography>
+                                    </Box>
 
 
                                 </Box>

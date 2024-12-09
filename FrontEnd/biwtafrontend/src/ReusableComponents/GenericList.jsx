@@ -33,7 +33,7 @@ const GenericList = ({
             setItems(response.data.data || response.data || []);
         } catch (error) {
             console.error('Error fetching list items:', error);
-            setError('Failed to load items. Please try again later.');  // Set error state
+            setError('No Item Present');  // Set error state
         } finally {
             setLoading(false);
         }

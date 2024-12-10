@@ -26,21 +26,41 @@ public class SecurityConfig {
     }
 
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf(csrf -> csrf.disable())
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .authorizeHttpRequests(authz -> authz
+//                        .requestMatchers("/auth/**").permitAll()
+//                        .requestMatchers("/auth/**").permitAll()
+//                        .requestMatchers("/public/**", "/status", "/error").permitAll()
+//                        .anyRequest().authenticated()
+////                                .anyRequest().permitAll()
+//                )
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/public/**", "/status", "/error").permitAll()
-                        .anyRequest().authenticated()
-//                                .anyRequest().permitAll()
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                                .requestMatchers("/auth/**").permitAll()
+//                                .requestMatchers("/auth/**").permitAll()
+//                                .requestMatchers("/public/**", "/status", "/error").permitAll()
+//                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+                );
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

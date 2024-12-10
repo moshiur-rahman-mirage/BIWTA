@@ -115,7 +115,7 @@ const Imtorheader = () => {
   };
 
 
-  useEscape(handleClose)
+  // useEscape(handleClose)
 
   const handleResultClick = (result) => {
     setDirectFetch("Yes");
